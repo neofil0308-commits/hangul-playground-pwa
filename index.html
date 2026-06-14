@@ -340,7 +340,11 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
 .story-world{margin-top:12px;background:#fff8eb;border-radius:22px;padding:13px 14px;box-shadow:inset 0 0 0 2px rgba(255,176,46,.18);}
 .story-world h4{margin:0 0 4px;color:var(--bat-d);font-size:1.05rem;}
 .story-world p{margin:0 0 10px;font-family:'Gaegu',cursive;font-weight:700;color:#8a715a;font-size:.95rem;line-height:1.22;}
-.story-pieces{display:inline-block;margin-bottom:9px;background:#fff2cc;color:#c27a00;border-radius:999px;padding:5px 10px;font-size:.86rem;}
+.story-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:9px;}
+.story-pieces{display:inline-block;background:#fff2cc;color:#c27a00;border-radius:999px;padding:5px 10px;font-size:.86rem;}
+.copy-story{border:none;border-radius:999px;background:#e9f8ec;color:var(--word-d);font-family:'Jua',sans-serif;padding:6px 11px;box-shadow:0 3px 0 #a9dcb4;cursor:pointer;}
+.copy-story:active{transform:translateY(2px);box-shadow:0 1px 0 #a9dcb4;}
+.copy-status{font-family:'Gaegu',cursive;font-weight:700;color:#8a715a;font-size:.88rem;}
 .story-chapters{display:flex;flex-direction:column;gap:7px;}
 .chapter-step{border:none;border-radius:16px;background:#f4e5cf;color:#8a715a;text-align:left;font-family:'Jua',sans-serif;padding:9px 11px;box-shadow:0 3px 0 #dcc5a6;}
 .chapter-step.chapter-current{background:#ffe4a9;color:var(--quiz-d);box-shadow:0 3px 0 #ffc45d;}
@@ -423,7 +427,11 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
       <section class="story-world" id="storyWorld" aria-label="한글 마을 이야기">
         <h4>한글 마을 이야기</h4>
         <p id="storyChapterText">깜깜해진 한글 마을에 빛 조각을 모아 주세요.</p>
-        <span class="story-pieces" id="storyLightPieces">빛 조각 0 / 3</span>
+        <div class="story-tools">
+          <span class="story-pieces" id="storyLightPieces">빛 조각 0 / 3</span>
+          <button class="copy-story" id="copyStoryText" aria-label="오늘의 한글 마을 이야기 복사">이야기 복사</button>
+          <span class="copy-status" id="copyStoryStatus" aria-live="polite"></span>
+        </div>
         <div class="story-chapters" id="storyChapters">
           <button class="chapter-step" id="chapterLetter">1장 글자 숲의 첫 불빛</button>
           <button class="chapter-step" id="chapterWord">2장 단어 동산의 꽃</button>
@@ -750,10 +758,40 @@ function updateStoryWorld(){
     el.classList.toggle('chapter-current',key===current);
   });
 }
+function getStoryCopyText(){
+  var story=document.getElementById('storyChapterText');
+  var pieces=document.getElementById('storyLightPieces');
+  var rows=[];
+  rows.push('한글 마을 이야기');
+  rows.push(story?story.textContent.trim():'');
+  rows.push(pieces?pieces.textContent.trim():'빛 조각 0 / 3');
+  rows.push('오늘의 모험');
+  [['1장 글자 숲의 첫 불빛','letter'],['2장 단어 동산의 꽃','word'],['3장 소리 동굴의 문','play']].forEach(function(ch){
+    rows.push((mission&&mission[ch[1]]?'✓ ':'○ ')+ch[0]);
+  });
+  return rows.filter(Boolean).join('\n');
+}
+function copyTextToClipboard(text){
+  if(navigator.clipboard&&navigator.clipboard.writeText){return navigator.clipboard.writeText(text);}
+  var area=document.createElement('textarea');
+  area.value=text;area.setAttribute('readonly','');area.style.position='fixed';area.style.left='-9999px';
+  document.body.appendChild(area);area.select();
+  var ok=document.execCommand('copy');
+  document.body.removeChild(area);
+  return ok?Promise.resolve():Promise.reject(new Error('copy failed'));
+}
+function handleStoryCopy(){
+  var status=document.getElementById('copyStoryStatus');
+  copyTextToClipboard(getStoryCopyText()).then(function(){
+    if(status)status.textContent='복사됐어요';
+    setTimeout(function(){if(status)status.textContent='';},1600);
+  }).catch(function(){if(status)status.textContent='길게 눌러 직접 복사해 주세요';});
+}
 buildAdventureMap();
 document.getElementById('routeLetter').addEventListener('click',openTodayLetter);
 document.getElementById('routeWord').addEventListener('click',function(){openWord(todayWord[0],todayWord[1]);});
 document.getElementById('routePlay').addEventListener('click',function(){go('listen');});
+document.getElementById('copyStoryText').addEventListener('click',handleStoryCopy);
 
 /* 글자 친구들 (자음/모음 통합) */
 const LETTER_WORDS={
