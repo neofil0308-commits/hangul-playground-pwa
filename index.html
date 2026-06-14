@@ -340,6 +340,9 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
 .story-world{margin-top:12px;background:#fff8eb;border-radius:22px;padding:13px 14px;box-shadow:inset 0 0 0 2px rgba(255,176,46,.18);}
 .story-world h4{margin:0 0 4px;color:var(--bat-d);font-size:1.05rem;}
 .story-world p{margin:0 0 10px;font-family:'Gaegu',cursive;font-weight:700;color:#8a715a;font-size:.95rem;line-height:1.22;}
+.story-prologue{background:#fffdf8;border-radius:16px;padding:9px 10px;box-shadow:inset 0 0 0 2px rgba(232,121,75,.10);}
+.story-scene,.story-clue{font-family:'Gaegu',cursive;font-weight:700;color:#8a715a;font-size:.92rem;line-height:1.18;margin:0 0 7px;}
+.story-clue{color:#9b6a38;}
 .story-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:9px;}
 .story-pieces{display:inline-block;background:#fff2cc;color:#c27a00;border-radius:999px;padding:5px 10px;font-size:.86rem;}
 .copy-story{border:none;border-radius:999px;background:#e9f8ec;color:var(--word-d);font-family:'Jua',sans-serif;padding:6px 11px;box-shadow:0 3px 0 #a9dcb4;cursor:pointer;}
@@ -347,6 +350,7 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
 .copy-status{font-family:'Gaegu',cursive;font-weight:700;color:#8a715a;font-size:.88rem;}
 .story-chapters{display:flex;flex-direction:column;gap:7px;}
 .chapter-step{border:none;border-radius:16px;background:#f4e5cf;color:#8a715a;text-align:left;font-family:'Jua',sans-serif;padding:9px 11px;box-shadow:0 3px 0 #dcc5a6;}
+.chapter-note{display:block;font-family:'Gaegu',cursive;font-weight:700;font-size:.82rem;line-height:1.1;margin-top:3px;color:#8a715a;}
 .chapter-step.chapter-current{background:#ffe4a9;color:var(--quiz-d);box-shadow:0 3px 0 #ffc45d;}
 .chapter-step.chapter-done{background:#d9f4df;color:var(--word-d);box-shadow:0 3px 0 #a9dcb4;}
 .home-workbench{display:grid;grid-template-columns:1fr;gap:16px;align-items:start;}
@@ -426,13 +430,16 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
       <div class="alldone" id="missionDone" style="display:none">한글 마을에 빛이 하나 켜졌어요! 모험 보상: 하니가 스티커를 준비했어요 🎉</div>
       <section class="story-world" id="storyWorld" aria-label="한글 마을 이야기">
         <h4>한글 마을 이야기</h4>
+        <p class="story-prologue" id="storyPrologue">어느 아침, 한글 마을의 별빛 우체국에 도착한 편지가 모두 하얗게 변했어요. 하니는 잃어버린 숨은 이름표와 빛 조각을 찾아 마을의 주문을 다시 깨우려 해요.</p>
         <p id="storyChapterText">깜깜해진 한글 마을에 빛 조각을 모아 주세요.</p>
+        <div class="story-scene" id="storySceneText">장면: 숲길 입구에서 작은 편지 봉투가 반짝여요.</div>
+        <div class="story-clue" id="storyClueText">단서: 오늘의 글자 소리를 찾으면 첫 이름표가 보여요.</div>
         <div class="story-tools">
           <span class="story-pieces" id="storyLightPieces">빛 조각 0 / 3</span>
           <button class="copy-story" id="copyStoryText" aria-label="오늘의 한글 마을 이야기 복사">이야기 복사</button>
           <span class="copy-status" id="copyStoryStatus" aria-live="polite"></span>
         </div>
-        <div class="story-chapters" id="storyChapters">
+        <div class="story-chapters" id="storyChapterList">
           <button class="chapter-step" id="chapterLetter">1장 글자 숲의 첫 불빛</button>
           <button class="chapter-step" id="chapterWord">2장 단어 동산의 꽃</button>
           <button class="chapter-step" id="chapterPlay">3장 소리 동굴의 문</button>
@@ -739,6 +746,20 @@ function updateQuestRoute(){
     el.classList.toggle('route-current',key===current);
   });
 }
+const STORY_CHAPTERS=[
+  {key:'letter',id:'chapterLetter',title:'1장 글자 숲의 첫 불빛',place:'글자 숲',scene:'낮잠 자던 글자들이 숲잎 뒤에 숨어 있어요.',clue:'오늘의 글자 소리를 따라가면 숨은 이름표가 반짝여요.',reward:'반짝 이름표'},
+  {key:'word',id:'chapterWord',title:'2장 단어 동산의 꽃',place:'단어 동산',scene:'단어 꽃은 글자 친구의 이름을 불러주면 피어나요.',clue:'오늘의 단어를 찾으면 꽃잎에 다음 길이 적혀요.',reward:'단어 꽃씨'},
+  {key:'play',id:'chapterPlay',title:'3장 소리 동굴의 문',place:'소리 동굴',scene:'문은 하니의 목소리와 같은 소리를 찾을 때 열려요.',clue:'소리를 듣고 같은 친구를 고르면 마을 주문이 깨어나요.',reward:'소리 종'},
+];
+function renderStoryChapterList(current){
+  STORY_CHAPTERS.forEach(function(ch){
+    var el=document.getElementById(ch.id);if(!el)return;
+    var lit=!!(mission&&mission[ch.key]);
+    el.innerHTML=ch.title+'<span class="chapter-note">'+ch.place+' · 보상: '+ch.reward+'</span>';
+    el.classList.toggle('chapter-done',lit);
+    el.classList.toggle('chapter-current',ch.key===current);
+  });
+}
 function updateStoryWorld(){
   if(!mission)return;
   var done=(mission.letter?1:0)+(mission.word?1:0)+(mission.play?1:0);
@@ -751,23 +772,27 @@ function updateStoryWorld(){
     else copy.textContent='세 빛 조각이 모였어요. 한글 마을의 오늘 이야기가 완성됐어요!';
   }
   var pieces=document.getElementById('storyLightPieces');if(pieces)pieces.textContent='빛 조각 '+done+' / 3';
-  [['chapterLetter','letter'],['chapterWord','word'],['chapterPlay','play']].forEach(function(pair){
-    var el=document.getElementById(pair[0]);if(!el)return;
-    var key=pair[1],lit=!!mission[key];
-    el.classList.toggle('chapter-done',lit);
-    el.classList.toggle('chapter-current',key===current);
-  });
+  var active=STORY_CHAPTERS.find(function(ch){return ch.key===current;})||STORY_CHAPTERS[STORY_CHAPTERS.length-1];
+  var scene=document.getElementById('storySceneText');if(scene)scene.textContent='장면: '+active.scene;
+  var clue=document.getElementById('storyClueText');if(clue)clue.textContent='단서: '+active.clue+' 보상: '+active.reward;
+  renderStoryChapterList(current);
 }
 function getStoryCopyText(){
+  var prologue=document.getElementById('storyPrologue');
   var story=document.getElementById('storyChapterText');
+  var scene=document.getElementById('storySceneText');
+  var clue=document.getElementById('storyClueText');
   var pieces=document.getElementById('storyLightPieces');
   var rows=[];
   rows.push('한글 마을 이야기');
+  rows.push(prologue?prologue.textContent.trim():'');
   rows.push(story?story.textContent.trim():'');
+  rows.push(scene?scene.textContent.trim():'');
+  rows.push(clue?clue.textContent.trim():'');
   rows.push(pieces?pieces.textContent.trim():'빛 조각 0 / 3');
   rows.push('오늘의 모험');
-  [['1장 글자 숲의 첫 불빛','letter'],['2장 단어 동산의 꽃','word'],['3장 소리 동굴의 문','play']].forEach(function(ch){
-    rows.push((mission&&mission[ch[1]]?'✓ ':'○ ')+ch[0]);
+  STORY_CHAPTERS.forEach(function(ch){
+    rows.push((mission&&mission[ch.key]?'✓ ':'○ ')+ch.title+' - '+ch.place+' / 보상: '+ch.reward);
   });
   return rows.filter(Boolean).join('\n');
 }
