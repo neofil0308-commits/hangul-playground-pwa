@@ -1,12 +1,14 @@
 {
   "name": "하니의 한글 모험",
   "short_name": "하니한글",
-  "start_url": "./index.html",
+  "description": "iPad에서 이어가는 하니의 한글 마을 모험",
+  "start_url": "./index.html?source=pwa",
   "scope": "./",
   "display": "standalone",
-  "orientation": "any",
+  "orientation": "landscape-primary",
   "background_color": "#fff7ec",
   "theme_color": "#ff7a59",
+  "categories": ["education", "kids", "games"],
   "icons": [
     {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
     {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}

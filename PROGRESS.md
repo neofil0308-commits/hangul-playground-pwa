@@ -1,6 +1,6 @@
 # 한글 놀이터 작업일지
 
-> 마지막 업데이트: 2026-06-14 19:34
+> 마지막 업데이트: 2026-06-14 19:48
 
 ## 현재 상태
 
@@ -48,6 +48,16 @@
 - [x] 변경사항 커밋
 
 ## 작업 이력
+
+### 2026-06-14 19:48 (Hermes / Telegram)
+
+- iPad PWA 사용성 1차 보강 완료.
+- iOS/iPadOS 홈 화면 실행을 고려해 `viewport-fit=cover`, `black-translucent` status bar, safe-area inset 여백, standalone 모드 CSS를 추가.
+- manifest를 iPad 중심으로 갱신: `start_url=./index.html?source=pwa`, `orientation=landscape-primary`, education/kids/games categories 추가.
+- service worker 캐시를 `hangul-playground-v22`로 갱신하고 PWA 시작 URL도 앱 셸 캐시에 포함.
+- 게임스토리 확장 1차 완료: `한글 마을 이야기`, `빛 조각 0 / 3`, 3개 챕터(`글자 숲의 첫 불빛`, `단어 동산의 꽃`, `소리 동굴의 문`) 추가.
+- 오늘의 모험 진행도에 따라 챕터가 `chapter-current`/`chapter-done`으로 바뀌고, 스토리 문구와 빛 조각 수가 갱신되도록 구현.
+- 검증: iPad PWA/story 테스트 RED-GREEN 완료, 전체 정적 테스트 14개 통과, JS 문법 체크 통과, 브라우저 smoke 및 console error 0건 확인.
 
 ### 2026-06-14 19:34 (Hermes / Telegram)
 

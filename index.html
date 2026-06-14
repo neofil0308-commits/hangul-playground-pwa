@@ -2,13 +2,13 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>하니의 한글 모험</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#ff7a59">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="하니의 한글 모험">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
@@ -23,7 +23,9 @@
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{margin:0;padding:0;}
-body{font-family:'Jua',sans-serif;color:var(--ink);min-height:100vh;overflow-x:hidden;
+html{min-height:100%;background:var(--bg1);}
+body{font-family:'Jua',sans-serif;color:var(--ink);min-height:100vh;min-height:100dvh;overflow-x:hidden;
+  padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);
   background:
     radial-gradient(circle at 12% 18%, rgba(255,255,255,.6) 0 8px, transparent 9px),
     radial-gradient(circle at 78% 9%, rgba(255,255,255,.5) 0 6px, transparent 7px),
@@ -335,6 +337,14 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
 .mission .mrow.done{background:#e9f8ec;}
 .mission .mrow.done .mck{color:var(--word-d);}
 .mission .alldone{text-align:center;font-family:'Gaegu',cursive;font-weight:700;color:var(--word-d);font-size:1.05rem;margin-top:2px;}
+.story-world{margin-top:12px;background:#fff8eb;border-radius:22px;padding:13px 14px;box-shadow:inset 0 0 0 2px rgba(255,176,46,.18);}
+.story-world h4{margin:0 0 4px;color:var(--bat-d);font-size:1.05rem;}
+.story-world p{margin:0 0 10px;font-family:'Gaegu',cursive;font-weight:700;color:#8a715a;font-size:.95rem;line-height:1.22;}
+.story-pieces{display:inline-block;margin-bottom:9px;background:#fff2cc;color:#c27a00;border-radius:999px;padding:5px 10px;font-size:.86rem;}
+.story-chapters{display:flex;flex-direction:column;gap:7px;}
+.chapter-step{border:none;border-radius:16px;background:#f4e5cf;color:#8a715a;text-align:left;font-family:'Jua',sans-serif;padding:9px 11px;box-shadow:0 3px 0 #dcc5a6;}
+.chapter-step.chapter-current{background:#ffe4a9;color:var(--quiz-d);box-shadow:0 3px 0 #ffc45d;}
+.chapter-step.chapter-done{background:#d9f4df;color:var(--word-d);box-shadow:0 3px 0 #a9dcb4;}
 .home-workbench{display:grid;grid-template-columns:1fr;gap:16px;align-items:start;}
 .adventure-map{position:relative;background:linear-gradient(180deg,#fffdf8,#fff6e7);border-radius:30px;padding:18px 16px 20px;margin:0 0 18px;box-shadow:0 7px 0 #ead2b4,0 11px 18px rgba(120,80,40,.14);overflow:hidden;}
 .map-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px;}
@@ -365,6 +375,7 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
 .map-more summary::-webkit-details-marker{display:none;}
 .map-more .menu{margin-top:12px;}
 @media (min-width:760px){.home-workbench{grid-template-columns:minmax(280px,.85fr) minmax(0,1.35fr);gap:22px;}.mission,.adventure-map{margin-bottom:0;}.mission{position:sticky;top:22px;}.map-grid{grid-template-columns:repeat(2,minmax(190px,1fr));gap:14px;}.map-node{min-height:104px;padding:15px;}.quest-route{padding:12px;gap:10px;}.route-step{font-size:1.05rem;padding:11px 13px;}}
+@media (display-mode:standalone){.wrap{padding-top:calc(18px + env(safe-area-inset-top));padding-bottom:calc(40px + env(safe-area-inset-bottom));}.homebtn{top:calc(12px + env(safe-area-inset-top));}body{overscroll-behavior:none;}}
 .bigplay{font-family:'Jua',sans-serif;border:none;cursor:pointer;color:#fff;background:var(--listen);box-shadow:0 6px 0 var(--listen-d);border-radius:30px;font-size:1.4rem;padding:16px 28px;margin:4px 0;}
 .bigplay:active{transform:translateY(4px);box-shadow:0 2px 0 var(--listen-d);}
 .cat-pills.lmode button{color:var(--listen-d);box-shadow:0 4px 0 #bfeaf0;}
@@ -409,6 +420,16 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
       <button class="mrow" id="mrowWord"><span class="mk" id="mkW">🦒</span><span class="mtx">단어 동산 <b id="mtW">기린</b><small>글자 친구가 좋아하는 단어를 찾아요</small></span><span class="mck" id="mcW">○</span></button>
       <button class="mrow" id="mrowPlay"><span class="mk">🔊</span><span class="mtx">소리 동굴 <b>듣고 찾기</b><small>소리를 듣고 문을 열어요</small></span><span class="mck" id="mcP">○</span></button>
       <div class="alldone" id="missionDone" style="display:none">한글 마을에 빛이 하나 켜졌어요! 모험 보상: 하니가 스티커를 준비했어요 🎉</div>
+      <section class="story-world" id="storyWorld" aria-label="한글 마을 이야기">
+        <h4>한글 마을 이야기</h4>
+        <p id="storyChapterText">깜깜해진 한글 마을에 빛 조각을 모아 주세요.</p>
+        <span class="story-pieces" id="storyLightPieces">빛 조각 0 / 3</span>
+        <div class="story-chapters" id="storyChapters">
+          <button class="chapter-step" id="chapterLetter">1장 글자 숲의 첫 불빛</button>
+          <button class="chapter-step" id="chapterWord">2장 단어 동산의 꽃</button>
+          <button class="chapter-step" id="chapterPlay">3장 소리 동굴의 문</button>
+        </div>
+      </section>
     </div>
     <section class="adventure-map" id="adventureMap" aria-label="한글 마을 지도">
       <div class="map-head"><div><h3>한글 마을 지도</h3><p>가고 싶은 장소를 눌러 모험을 이어가요.</p><span class="ipad-note">iPad 기준 · 어디서든 이어서 보기</span></div><div class="map-light" id="mapLight">한글 마을 불빛 0 / 3</div></div>
@@ -710,6 +731,25 @@ function updateQuestRoute(){
     el.classList.toggle('route-current',key===current);
   });
 }
+function updateStoryWorld(){
+  if(!mission)return;
+  var done=(mission.letter?1:0)+(mission.word?1:0)+(mission.play?1:0);
+  var current=!mission.letter?'letter':(!mission.word?'word':(!mission.play?'play':''));
+  var copy=document.getElementById('storyChapterText');
+  if(copy){
+    if(done===0)copy.textContent='하니와 함께 첫 빛 조각을 찾으러 글자 숲으로 떠나요.';
+    else if(!mission.word)copy.textContent='글자 숲에 첫 불빛이 켜졌어요. 이제 단어 동산의 꽃을 피워요.';
+    else if(!mission.play)copy.textContent='단어 꽃이 피었어요. 마지막 빛 조각은 소리 동굴 문 뒤에 있어요.';
+    else copy.textContent='세 빛 조각이 모였어요. 한글 마을의 오늘 이야기가 완성됐어요!';
+  }
+  var pieces=document.getElementById('storyLightPieces');if(pieces)pieces.textContent='빛 조각 '+done+' / 3';
+  [['chapterLetter','letter'],['chapterWord','word'],['chapterPlay','play']].forEach(function(pair){
+    var el=document.getElementById(pair[0]);if(!el)return;
+    var key=pair[1],lit=!!mission[key];
+    el.classList.toggle('chapter-done',lit);
+    el.classList.toggle('chapter-current',key===current);
+  });
+}
 buildAdventureMap();
 document.getElementById('routeLetter').addEventListener('click',openTodayLetter);
 document.getElementById('routeWord').addEventListener('click',function(){openWord(todayWord[0],todayWord[1]);});
@@ -940,6 +980,7 @@ function renderMission(){
   var md=document.getElementById('missionDone');if(md)md.style.display=(n===3)?'block':'none';
   updateAdventureMap();
   updateQuestRoute();
+  updateStoryWorld();
   twemojify(document.getElementById('mission'));
   if(n===3&&!mission.rewarded){mission.rewarded=true;saveMission();updateStreak();setTimeout(function(){confetti();earnSticker();},350);}
 }
