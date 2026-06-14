@@ -1,6 +1,6 @@
 # 한글 놀이터 작업일지
 
-> 마지막 업데이트: 2026-06-14 20:13
+> 마지막 업데이트: 2026-06-14 20:20
 
 ## 현재 상태
 
@@ -48,6 +48,15 @@
 - [x] 변경사항 커밋
 
 ## 작업 이력
+
+### 2026-06-14 20:20 (Hermes / Telegram)
+
+- 하니 반응 풍성화 1차 완료.
+- `하니의 반응` 라이브 패널을 추가해 모험 완료 직후 하니의 축하 대사/보물 반응/짧은 로그가 보이도록 구현.
+- `HANI_REACTIONS` 데이터 추가: 글자 숲, 단어 동산, 소리 동굴, 전체 완료마다 다른 배지/대사/기록 제공.
+- `completeMission(part)`가 `mission.lastReaction`을 저장하고 `showHaniReaction(part)`를 호출해 방금 완료한 모험 반응을 즉시 갱신하도록 변경.
+- 완료 상태에서는 반응 카드가 `reaction-lit`, 전체 완료 시 `reaction-complete`로 강조됨.
+- 검증: hani reactions 테스트 RED-GREEN 완료, 전체 정적 테스트 29개 통과, JS 문법 체크 통과, 브라우저 iPad smoke 및 console error 0건 확인.
 
 ### 2026-06-14 20:13 (Hermes / Telegram)
 
