@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>한글 놀이터</title>
+<title>하니의 한글 모험</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#ff7a59">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="한글 놀이터">
+<meta name="apple-mobile-web-app-title" content="하니의 한글 모험">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Jua&family=Gaegu:wght@400;700&display=swap');
@@ -319,6 +319,10 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
 #lscore{font-family:'Jua',sans-serif;font-size:1.15rem;color:var(--listen-d);margin-top:2px;}
 .mission{background:#fffdf8;border-radius:26px;padding:16px 16px 14px;margin:0 0 18px;box-shadow:0 6px 0 #efd9bb,0 9px 16px rgba(120,80,40,.12);}
 .mission h3{margin:0 0 2px;font-size:1.15rem;text-align:center;color:var(--con-d);}
+.story-hero{display:flex;gap:12px;align-items:center;background:#fff4df;border-radius:22px;padding:12px 14px;margin-bottom:12px;box-shadow:inset 0 0 0 2px rgba(255,176,46,.18);}
+.story-hero .story-face{font-size:2.4rem;line-height:1;animation:bob 2.2s ease-in-out infinite;}
+.story-hero .story-copy{flex:1;font-family:'Gaegu',cursive;font-weight:700;color:#8a715a;font-size:1.05rem;line-height:1.25;}
+.story-hero .story-copy b{display:block;font-family:'Jua',sans-serif;color:var(--con-d);font-size:1.05rem;margin-bottom:2px;}
 .mission .mbar{height:10px;border-radius:6px;background:#f0e2cf;overflow:hidden;margin:8px 0 12px;}
 .mission .mbar i{display:block;height:100%;background:var(--word);width:0;transition:width .4s;}
 .mission .mrow{display:flex;align-items:center;gap:12px;width:100%;border:none;background:#fbf4e8;border-radius:18px;padding:12px 14px;margin-bottom:8px;font-family:'Jua',sans-serif;font-size:1.05rem;color:var(--ink);cursor:pointer;text-align:left;transition:transform .08s;}
@@ -365,14 +369,15 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
 
 <div class="wrap">
   <section id="home" class="screen active">
-    <header><div class="mascot">🐥</div><div class="logo">한<b>글</b> 놀이터</div><div class="sub">무엇을 하고 놀까요?</div></header>
+    <header aria-label="하니의 한글 모험"><div class="mascot">🐥</div><div class="logo">하니의 한<b>글</b> 모험</div><div class="sub">한글 마을에 흩어진 글자 친구들을 찾아요</div></header>
     <div class="mission" id="mission">
-      <h3>오늘의 미션 🎯</h3>
+      <div class="story-hero" id="storyHero"><div class="story-face">🐥</div><div class="story-copy"><b>하니</b><span id="storyText">오늘의 글자 친구를 만나러 한글 마을로 떠나요!</span></div></div>
+      <h3>오늘의 모험 🎯</h3>
       <div class="mbar"><i id="mbarFill"></i></div>
-      <button class="mrow" id="mrowLetter"><span class="mk" id="mkL">ㄱ</span><span class="mtx">오늘의 글자 <b id="mtL">ㄱ</b><small>눌러서 배워요</small></span><span class="mck" id="mcL">○</span></button>
-      <button class="mrow" id="mrowWord"><span class="mk" id="mkW">🦒</span><span class="mtx">오늘의 단어 <b id="mtW">기린</b><small>눌러서 배워요</small></span><span class="mck" id="mcW">○</span></button>
-      <button class="mrow" id="mrowPlay"><span class="mk">🔊</span><span class="mtx">오늘의 놀이 <b>듣고 찾기</b><small>한 판 해요</small></span><span class="mck" id="mcP">○</span></button>
-      <div class="alldone" id="missionDone" style="display:none">오늘 미션 끝! 참 잘했어요 🎉</div>
+      <button class="mrow" id="mrowLetter"><span class="mk" id="mkL">ㄱ</span><span class="mtx">글자 숲 <b id="mtL">ㄱ</b><small>숨어 있는 글자 친구를 만나요</small></span><span class="mck" id="mcL">○</span></button>
+      <button class="mrow" id="mrowWord"><span class="mk" id="mkW">🦒</span><span class="mtx">단어 동산 <b id="mtW">기린</b><small>글자 친구가 좋아하는 단어를 찾아요</small></span><span class="mck" id="mcW">○</span></button>
+      <button class="mrow" id="mrowPlay"><span class="mk">🔊</span><span class="mtx">소리 동굴 <b>듣고 찾기</b><small>소리를 듣고 문을 열어요</small></span><span class="mck" id="mcP">○</span></button>
+      <div class="alldone" id="missionDone" style="display:none">한글 마을에 빛이 하나 켜졌어요! 모험 보상: 하니가 스티커를 준비했어요 🎉</div>
     </div>
     <div class="menu" id="menu"></div>
   </section>
@@ -603,7 +608,7 @@ function twemojify(root){
 /* 스티커(도장) */
 let stickerCount=parseInt(lsGet('hp_stickers','0'))||0;
 const stickerBtn=document.getElementById('stickerBtn'),toast=document.getElementById('toast'),toastE=document.getElementById('toastE'),toastT=document.getElementById('toastT');
-const PRAISE=['참 잘했어요!','최고예요!','멋져요!','대단해요!','와! 도장이다!'];
+const PRAISE=['하니가 스티커를 준비했어요!','한글 마을에 빛이 켜졌어요!','모험 성공! 정말 멋져요!','글자 친구가 돌아왔어요!','와! 모험 보상이에요!'];
 function earnSticker(){sfxReward();stickerCount++;lsSet('hp_stickers',stickerCount);stickerBtn.textContent='🏅 '+stickerCount;renderStickerBoard();const em=STICKERS[(stickerCount-1)%STICKERS.length];toastE.textContent=em;toastT.textContent=PRAISE[Math.floor(Math.random()*PRAISE.length)];toast.classList.remove('show');void toast.offsetWidth;twemojify(toast);toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1500);}
 function renderStickerBoard(){const g=document.getElementById('stickerGrid');g.innerHTML='';STICKERS.forEach((em,i)=>{const d=document.createElement('div');d.className='card sticker-slot'+(i<stickerCount?' got':'');d.innerHTML='<div class="big">'+(i<stickerCount?em:'❔')+'</div>';g.appendChild(d);});document.getElementById('stickerHint').textContent='모은 도장: '+stickerCount+'개 🏅';const sc2=document.getElementById('setStickerCount');if(sc2)sc2.textContent='모은 도장: '+stickerCount+'개';twemojify(document.getElementById('sticker'));twemojify(stickerBtn);}
 stickerBtn.addEventListener('click',()=>go('sticker'));
@@ -828,6 +833,14 @@ function renderMission(){
   var kW=document.getElementById('mkW');if(kW)kW.textContent=todayWord[1];
   setRow('mrowLetter','mcL',mission.letter);setRow('mrowWord','mcW',mission.word);setRow('mrowPlay','mcP',mission.play);
   var n=(mission.letter?1:0)+(mission.word?1:0)+(mission.play?1:0);
+  var story=document.getElementById('storyText');
+  if(story){
+    if(n===0)story.textContent='오늘은 '+todayLetter.ch+' 친구와 '+todayWord[0]+' 단어가 한글 마을에서 기다리고 있어요.';
+    else if(!mission.letter)story.textContent='먼저 글자 숲에서 '+todayLetter.ch+' 친구를 만나볼까요?';
+    else if(!mission.word)story.textContent='좋아요! 이제 단어 동산에서 '+todayWord[0]+' 단어를 찾아봐요.';
+    else if(!mission.play)story.textContent='마지막은 소리 동굴이에요. 소리를 듣고 문을 열어봐요!';
+    else story.textContent='한글 마을에 빛이 하나 켜졌어요. 하니가 모험 보상을 준비했어요!';
+  }
   var bf=document.getElementById('mbarFill');if(bf)bf.style.width=(n/3*100)+'%';
   var md=document.getElementById('missionDone');if(md)md.style.display=(n===3)?'block':'none';
   twemojify(document.getElementById('mission'));

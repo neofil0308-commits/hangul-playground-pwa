@@ -1,6 +1,6 @@
 {
-  "name": "한글 놀이터",
-  "short_name": "한글놀이터",
+  "name": "하니의 한글 모험",
+  "short_name": "하니한글",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
