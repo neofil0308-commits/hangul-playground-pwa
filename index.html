@@ -335,6 +335,28 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
 .mission .mrow.done{background:#e9f8ec;}
 .mission .mrow.done .mck{color:var(--word-d);}
 .mission .alldone{text-align:center;font-family:'Gaegu',cursive;font-weight:700;color:var(--word-d);font-size:1.05rem;margin-top:2px;}
+.adventure-map{position:relative;background:linear-gradient(180deg,#fffdf8,#fff6e7);border-radius:30px;padding:18px 16px 20px;margin:0 0 18px;box-shadow:0 7px 0 #ead2b4,0 11px 18px rgba(120,80,40,.14);overflow:hidden;}
+.map-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px;}
+.map-head h3{margin:0;color:var(--bat-d);font-size:1.22rem;}
+.map-head p{margin:3px 0 0;font-family:'Gaegu',cursive;font-weight:700;color:#9d7c60;font-size:.98rem;line-height:1.2;}
+.map-light{flex:0 0 auto;background:#fff2cc;color:#c27a00;border-radius:18px;padding:7px 11px;font-size:.92rem;box-shadow:inset 0 0 0 2px rgba(255,176,46,.22);}
+.map-path{position:absolute;left:35px;right:35px;top:112px;height:58%;border:4px dashed rgba(232,121,75,.24);border-left:none;border-bottom:none;border-radius:0 90px 0 0;pointer-events:none;}
+.map-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;}
+.map-node{font-family:'Jua',sans-serif;border:none;cursor:pointer;text-align:left;background:#fbf4e8;color:var(--ink);border-radius:22px;padding:12px 12px;min-height:86px;display:flex;gap:10px;align-items:center;box-shadow:0 5px 0 #e7cfb0;transition:transform .08s,background .2s,box-shadow .2s;}
+.map-node:active{transform:translateY(3px);box-shadow:0 2px 0 #e7cfb0;}
+.map-node .map-ic{width:46px;height:46px;border-radius:15px;display:flex;align-items:center;justify-content:center;background:#fff;font-size:1.55rem;flex:0 0 auto;}
+.map-node .map-copy{display:flex;flex-direction:column;gap:2px;}
+.map-node b{font-size:1.08rem;color:var(--con-d);}
+.map-node small{font-family:'Gaegu',cursive;font-weight:700;color:#9d7c60;font-size:.82rem;line-height:1.1;}
+.map-node.map-lit{background:#e9f8ec;box-shadow:0 5px 0 #a9dcb4;}
+.map-node.map-lit b{color:var(--word-d);}
+.map-node.map-current{background:#fff1d2;box-shadow:0 5px 0 #ffc45d;animation:pulse 1.8s ease-in-out infinite;}
+.map-node.map-current b{color:var(--quiz-d);}
+.map-node.map-locked{opacity:.72;}
+.map-more{margin-top:12px;}
+.map-more summary{cursor:pointer;color:#9d7c60;font-family:'Gaegu',cursive;font-weight:700;text-align:center;list-style:none;}
+.map-more summary::-webkit-details-marker{display:none;}
+.map-more .menu{margin-top:12px;}
 .bigplay{font-family:'Jua',sans-serif;border:none;cursor:pointer;color:#fff;background:var(--listen);box-shadow:0 6px 0 var(--listen-d);border-radius:30px;font-size:1.4rem;padding:16px 28px;margin:4px 0;}
 .bigplay:active{transform:translateY(4px);box-shadow:0 2px 0 var(--listen-d);}
 .cat-pills.lmode button{color:var(--listen-d);box-shadow:0 4px 0 #bfeaf0;}
@@ -379,7 +401,12 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
       <button class="mrow" id="mrowPlay"><span class="mk">🔊</span><span class="mtx">소리 동굴 <b>듣고 찾기</b><small>소리를 듣고 문을 열어요</small></span><span class="mck" id="mcP">○</span></button>
       <div class="alldone" id="missionDone" style="display:none">한글 마을에 빛이 하나 켜졌어요! 모험 보상: 하니가 스티커를 준비했어요 🎉</div>
     </div>
-    <div class="menu" id="menu"></div>
+    <section class="adventure-map" id="adventureMap" aria-label="한글 마을 지도">
+      <div class="map-head"><div><h3>한글 마을 지도</h3><p>가고 싶은 장소를 눌러 모험을 이어가요.</p></div><div class="map-light" id="mapLight">한글 마을 불빛 0 / 3</div></div>
+      <div class="map-path" aria-hidden="true"></div>
+      <div class="map-grid" id="mapGrid"></div>
+      <details class="map-more"><summary>더 많은 놀이터 보기</summary><div class="menu" id="menu"></div></details>
+    </section>
   </section>
 
   <section id="letters" class="screen"><div class="section-title">글자 친구들</div><div class="hint">탭을 고르고 카드를 누르면 자세히 볼 수 있어요 👀</div>
@@ -518,6 +545,16 @@ const MENU=[
   {id:'trace',ic:'✏️',label:'따라쓰기',cls:'m-trace'},{id:'match',ic:'🃏',label:'짝 맞추기',cls:'m-match'},
   {id:'quiz',ic:'🎯',label:'소리 퀴즈',cls:'m-quiz'},{id:'listen',ic:'🔊',label:'듣고 찾기',cls:'m-listen'},{id:'sticker',ic:'🏅',label:'내 스티커',cls:'m-sticker'},{id:'set',ic:'⚙️',label:'설정',cls:'m-set'},
 ];
+const MAP_PLACES=[
+  {id:'letters',target:'letters',ic:'🌳',place:'글자 숲',hint:'오늘의 글자 친구를 만나요',quest:'letter'},
+  {id:'syl',target:'syl',ic:'🧩',place:'글자 공방',hint:'자음과 모음을 조립해요'},
+  {id:'word',target:'word',ic:'🌼',place:'단어 동산',hint:'오늘의 단어 꽃을 찾아요',quest:'word'},
+  {id:'trace',target:'trace',ic:'💧',place:'쓰기 연못',hint:'손가락으로 글자를 그려요'},
+  {id:'match',target:'match',ic:'🃏',place:'카드 광장',hint:'짝꿍 글자와 단어를 찾아요'},
+  {id:'quiz',target:'quiz',ic:'🎯',place:'소리 동굴',hint:'소리를 듣고 문을 열어요',quest:'play'},
+  {id:'listen',target:'listen',ic:'🔊',place:'듣기 전망대',hint:'하니 목소리를 따라 찾아요',quest:'play'},
+  {id:'sticker',target:'sticker',ic:'🏅',place:'스티커 집',hint:'모험 보상을 모아봐요'},
+];
 const CHO=['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
 const JUNG=['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
 const JONG=['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
@@ -619,6 +656,36 @@ function go(id){if(id==='set'&&!parentUnlocked){showGate();return;}document.quer
 homeBtn.addEventListener('click',()=>go('home'));
 const menu=document.getElementById('menu');
 MENU.forEach(m=>{const b=document.createElement('button');b.className=m.cls;b.innerHTML='<span class="ic">'+m.ic+'</span>'+m.label;b.addEventListener('click',()=>go(m.id));menu.appendChild(b);});
+const mapGrid=document.getElementById('mapGrid');
+function buildAdventureMap(){
+  if(!mapGrid)return;
+  mapGrid.innerHTML='';
+  MAP_PLACES.forEach(function(p){
+    var b=document.createElement('button');
+    b.className='map-node';
+    b.dataset.target=p.target;
+    b.dataset.quest=p.quest||'';
+    b.innerHTML='<span class="map-ic">'+p.ic+'</span><span class="map-copy"><b>'+p.place+'</b><small>'+p.hint+'</small></span>';
+    b.addEventListener('click',function(){go(p.target);});
+    mapGrid.appendChild(b);
+  });
+  twemojify(mapGrid);
+}
+function updateAdventureMap(){
+  if(!mapGrid||!mission)return;
+  var done=(mission.letter?1:0)+(mission.word?1:0)+(mission.play?1:0);
+  var current=!mission.letter?'letter':(!mission.word?'word':(!mission.play?'play':''));
+  document.querySelectorAll('#mapGrid .map-node').forEach(function(node){
+    var q=node.dataset.quest;
+    var lit=!q||(q==='letter'&&mission.letter)||(q==='word'&&mission.word)||(q==='play'&&mission.play);
+    node.classList.toggle('map-lit',!!lit);
+    node.classList.toggle('map-current',!!q&&q===current);
+    node.classList.toggle('map-locked',!!q&&!lit&&q!==current);
+  });
+  var light=document.getElementById('mapLight');
+  if(light)light.textContent='한글 마을 불빛 '+done+' / 3';
+}
+buildAdventureMap();
 
 /* 글자 친구들 (자음/모음 통합) */
 const LETTER_WORDS={
@@ -843,6 +910,7 @@ function renderMission(){
   }
   var bf=document.getElementById('mbarFill');if(bf)bf.style.width=(n/3*100)+'%';
   var md=document.getElementById('missionDone');if(md)md.style.display=(n===3)?'block':'none';
+  updateAdventureMap();
   twemojify(document.getElementById('mission'));
   if(n===3&&!mission.rewarded){mission.rewarded=true;saveMission();updateStreak();setTimeout(function(){confetti();earnSticker();},350);}
 }
