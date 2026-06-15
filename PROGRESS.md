@@ -5,7 +5,7 @@
 ## 현재 상태
 
 - 정적 PWA 형태의 한글 학습 앱입니다.
-- 앱 핵심은 `index.html` 단일 파일에 집중되어 있습니다.
+- 앱 핵심은 `index.html`의 HTML/JavaScript와 `styles.css`의 스타일로 1차 분리되었습니다.
 - 오디오 MP3 리소스와 PWA manifest/service worker가 포함되어 있습니다.
 - 현재 중심 경험은 `하니의 한글 모험`입니다.
 - iPad 기준 홈 화면, 한글 마을 지도, 오늘의 모험, 한글 마을 이야기, 이야기 줄기, 스토리 바이블, 하니 반응까지 1차 고도화가 완료되었습니다.
@@ -53,11 +53,20 @@
 
 ## 다음 확장 후보
 
-- [ ] `index.html` 단일 파일에서 CSS/데이터/게임 로직을 단계적으로 분리
+- [x] `index.html`에서 CSS를 `styles.css`로 1차 분리
+- [ ] `index.html`에서 한글/단어/스토리 데이터 상수 분리
+- [ ] 게임 로직과 화면 초기화 로직을 단계적으로 분리
 - [ ] iPad 실기기에서 홈 화면 설치, standalone 실행, 오디오 재생, service worker 캐시 확인
 - [ ] 하니 스토리를 여러 날 이어지는 에피소드/저장 진행도로 확장
 
 ## 작업 이력
+
+### 2026-06-15 09:50 (Hermes / Telegram)
+
+- 구조 분리 1단계로 CSS를 `index.html`의 inline `<style>`에서 `styles.css`로 분리.
+- `index.html`에는 `styles.css` 외부 stylesheet link만 남김.
+- service worker 캐시를 `hangul-playground-v23`으로 올리고 `./styles.css`를 precache 목록에 추가.
+- 회귀 테스트 `tests/css_extraction_check.py` 추가: 외부 stylesheet, CSS 핵심 스타일, service worker 캐시 포함 여부 검증.
 
 ### 2026-06-15 09:30 (Hermes / Telegram)
 

@@ -4,7 +4,8 @@
 
 ## 현재 구조
 
-- `index.html` — 앱의 HTML/CSS/JavaScript 대부분이 들어있는 단일 파일
+- `index.html` — 앱의 HTML/JavaScript와 화면 구조
+- `styles.css` — 앱 전체 스타일, iPad/PWA 레이아웃, 스토리 UI 스타일
 - `manifest.json` — iPad/PWA 설치 설정
 - `sw.js` — 오프라인 캐시용 service worker
 - `audio/` — 한글 음성 MP3 리소스
@@ -126,5 +127,6 @@ PY
 
 - 큰 변경 전후로 git 커밋을 남깁니다.
 - 기능 추가보다 먼저 기존 앱이 깨지지 않는지 테스트와 브라우저 smoke test를 확인합니다.
-- 현재는 단일 파일 정적 앱입니다. 구조 분리는 별도 단계에서 진행합니다.
+- 현재는 CSS를 `styles.css`로 분리했고, JavaScript/데이터는 아직 `index.html`에 남아 있습니다.
+- 다음 구조 분리는 데이터 상수 → 게임 로직 → 화면 초기화 순서로 작게 진행합니다.
 - service worker/cache 변경 시 `sw.js`의 캐시 이름을 갱신하고 브라우저에서 stale cache 여부를 확인합니다.

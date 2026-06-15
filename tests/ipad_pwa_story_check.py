@@ -3,6 +3,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "index.html"
+STYLES = ROOT / "styles.css"
 MANIFEST = ROOT / "manifest.json"
 SW = ROOT / "sw.js"
 
@@ -11,13 +12,18 @@ def read_index():
     return INDEX.read_text(encoding="utf-8")
 
 
+def read_styles():
+    return STYLES.read_text(encoding="utf-8")
+
+
 def test_ipad_pwa_uses_safe_area_and_app_status_bar():
     html = read_index()
+    css = read_styles()
     assert 'apple-mobile-web-app-status-bar-style" content="black-translucent"' in html
     assert "viewport-fit=cover" in html
-    assert "env(safe-area-inset-top)" in html
-    assert "env(safe-area-inset-bottom)" in html
-    assert "@media (display-mode:standalone)" in html
+    assert "env(safe-area-inset-top)" in css
+    assert "env(safe-area-inset-bottom)" in css
+    assert "@media (display-mode:standalone)" in css
 
 
 def test_manifest_and_service_worker_are_ipad_pwa_ready():
@@ -27,7 +33,8 @@ def test_manifest_and_service_worker_are_ipad_pwa_ready():
     assert manifest["orientation"] == "landscape-primary"
     assert manifest["start_url"] == "./index.html?source=pwa"
     assert "categories" in manifest and "education" in manifest["categories"]
-    assert "hangul-playground-v22" in sw
+    assert "hangul-playground-v23" in sw
+    assert "./styles.css" in sw
     assert "./index.html?source=pwa" in sw
 
 
