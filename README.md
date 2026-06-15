@@ -7,6 +7,7 @@
 - `index.html` — 앱의 HTML/JavaScript와 화면 구조
 - `app-data.js` — 한글/단어/지도/스토리/보상 등 정적 데이터 상수
 - `app-state.js` — localStorage helper, 오늘의 선택, 미션/출석 상태 로직
+- `app-listen.js` — 듣고 찾기 게임 로직과 소리 동굴 버튼 초기화
 - `styles.css` — 앱 전체 스타일, iPad/PWA 레이아웃, 스토리 UI 스타일
 - `manifest.json` — iPad/PWA 설치 설정
 - `sw.js` — 오프라인 캐시용 service worker
@@ -113,10 +114,11 @@ fd.write(scripts); fd.close()
 try:
     subprocess.run(['node','--check','app-data.js'], check=True)
     subprocess.run(['node','--check','app-state.js'], check=True)
+    subprocess.run(['node','--check','app-listen.js'], check=True)
     subprocess.run(['node','--check',fd.name], check=True)
 finally:
     os.unlink(fd.name)
-print(f'js syntax ok: app-data.js + app-state.js + {len(scripts)} inline bytes')
+print(f'js syntax ok: app-data.js + app-state.js + app-listen.js + {len(scripts)} inline bytes')
 PY
 ```
 
@@ -131,6 +133,6 @@ PY
 
 - 큰 변경 전후로 git 커밋을 남깁니다.
 - 기능 추가보다 먼저 기존 앱이 깨지지 않는지 테스트와 브라우저 smoke test를 확인합니다.
-- 현재는 CSS를 `styles.css`, 정적 데이터를 `app-data.js`, 미션 상태 로직을 `app-state.js`로 분리했습니다.
-- 다음 구조 분리는 남은 게임 화면 로직 → 화면 초기화 순서로 작게 진행합니다.
+- 현재는 CSS를 `styles.css`, 정적 데이터를 `app-data.js`, 미션 상태 로직을 `app-state.js`, 듣고 찾기 로직을 `app-listen.js`로 분리했습니다.
+- 다음 구조 분리는 남은 게임/화면 초기화 로직을 작게 나눠 진행합니다.
 - service worker/cache 변경 시 `sw.js`의 캐시 이름을 갱신하고 브라우저에서 stale cache 여부를 확인합니다.
