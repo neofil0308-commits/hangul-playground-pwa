@@ -179,75 +179,8 @@
   <div class="modal-btns"><button class="mbtn" id="gateOk" style="background:var(--word);box-shadow:0 4px 0 var(--word-d)">확인</button><button class="mbtn" id="gateCancel" style="background:#b9a98f;box-shadow:0 4px 0 #9c8b72">취소</button></div>
 </div></div>
 
+<script src="app-data.js"></script>
 <script>
-const CONS=[
-  {ch:'ㄱ',name:'기역',word:'기린',emoji:'🦒',init:0},{ch:'ㄴ',name:'니은',word:'나비',emoji:'🦋',init:2},
-  {ch:'ㄷ',name:'디귿',word:'다람쥐',emoji:'🐿️',init:3},{ch:'ㄹ',name:'리을',word:'로봇',emoji:'🤖',init:5},
-  {ch:'ㅁ',name:'미음',word:'모자',emoji:'🧢',init:6},{ch:'ㅂ',name:'비읍',word:'바나나',emoji:'🍌',init:7},
-  {ch:'ㅅ',name:'시옷',word:'사과',emoji:'🍎',init:9},{ch:'ㅇ',name:'이응',word:'오리',emoji:'🦆',init:11},
-  {ch:'ㅈ',name:'지읒',word:'자동차',emoji:'🚗',init:12},{ch:'ㅊ',name:'치읓',word:'치즈',emoji:'🧀',init:14},
-  {ch:'ㅋ',name:'키읔',word:'코끼리',emoji:'🐘',init:15},{ch:'ㅌ',name:'티읕',word:'토끼',emoji:'🐰',init:16},
-  {ch:'ㅍ',name:'피읖',word:'포도',emoji:'🍇',init:17},{ch:'ㅎ',name:'히읗',word:'호랑이',emoji:'🐯',init:18},
-];
-const VOWS=[
-  {ch:'ㅏ',sound:'아',word:'아기',emoji:'👶',med:0},{ch:'ㅑ',sound:'야',word:'야구',emoji:'⚾',med:2},
-  {ch:'ㅓ',sound:'어',word:'어항',emoji:'🐠',med:4},{ch:'ㅕ',sound:'여',word:'여우',emoji:'🦊',med:6},
-  {ch:'ㅗ',sound:'오',word:'오이',emoji:'🥒',med:8},{ch:'ㅛ',sound:'요',word:'요요',emoji:'🪀',med:12},
-  {ch:'ㅜ',sound:'우',word:'우산',emoji:'☂️',med:13},{ch:'ㅠ',sound:'유',word:'유니콘',emoji:'🦄',med:17},
-  {ch:'ㅡ',sound:'으',word:'음악',emoji:'🎵',med:18},{ch:'ㅣ',sound:'이',word:'이빨',emoji:'🦷',med:20},
-];
-const FINALS=[{ch:'·',jong:0},{ch:'ㄱ',jong:1},{ch:'ㄴ',jong:4},{ch:'ㄷ',jong:7},{ch:'ㄹ',jong:8},{ch:'ㅁ',jong:16},{ch:'ㅂ',jong:17},{ch:'ㅅ',jong:19},{ch:'ㅇ',jong:21}];
-const WORDS={
-  '동물':[['강아지','🐶'],['고양이','🐱'],['토끼','🐰'],['호랑이','🐯'],['코끼리','🐘'],['기린','🦒'],['사자','🦁'],['곰','🐻'],['여우','🦊'],['오리','🦆']],
-  '먹거리':[['사과','🍎'],['바나나','🍌'],['포도','🍇'],['딸기','🍓'],['수박','🍉'],['우유','🥛'],['빵','🍞'],['치즈','🧀'],['김밥','🍙'],['사탕','🍬']],
-  '탈것·생활':[['자동차','🚗'],['기차','🚆'],['비행기','✈️'],['배','🚢'],['자전거','🚲'],['우산','☂️'],['모자','🧢'],['신발','👟'],['책','📖'],['시계','⏰']],
-};
-const SUBJ=[['고양이가','🐱'],['강아지가','🐶'],['아기가','👶'],['토끼가','🐰'],['곰이','🐻'],['오리가','🦆']];
-const OBJ=[['우유를','🥛'],['사과를','🍎'],['공을','⚽'],['책을','📖'],['밥을','🍚'],['물을','💧']];
-const VERB=[['먹어요','🍴'],['좋아해요','💕'],['봐요','👀'],['마셔요','🥤'],['던져요','🤾'],['찾아요','🔍']];
-const BATCHIM_SYLL=['강','산','곰','문','손','발','눈','별','빵','컵'];
-const TRACE_WORDS=['나비','사과','토끼','포도','우유','모자','우산','신발','사탕','강아지','바나나','코끼리'];
-const STICKERS=['⭐','🌈','🦋','🐥','🌸','🍭','🎈','🦄','🐻','🚀','🍓','👑','🐬','🌟','🎁','🦉'];
-const MENU=[
-  {id:'letters',ic:'🔤',label:'글자 친구들',cls:'m-con'},
-  {id:'syl',ic:'🧩',label:'글자 만들기',cls:'m-syl'},
-  {id:'word',ic:'📚',label:'단어 공부',cls:'m-word'},{id:'sent',ic:'✍️',label:'문장 쓰기',cls:'m-sent'},
-  {id:'trace',ic:'✏️',label:'따라쓰기',cls:'m-trace'},{id:'match',ic:'🃏',label:'짝 맞추기',cls:'m-match'},
-  {id:'quiz',ic:'🎯',label:'소리 퀴즈',cls:'m-quiz'},{id:'listen',ic:'🔊',label:'듣고 찾기',cls:'m-listen'},{id:'sticker',ic:'🏅',label:'내 스티커',cls:'m-sticker'},{id:'set',ic:'⚙️',label:'설정',cls:'m-set'},
-];
-const MAP_PLACES=[
-  {id:'letters',target:'letters',ic:'🌳',place:'글자 숲',hint:'오늘의 글자 친구를 만나요',quest:'letter'},
-  {id:'syl',target:'syl',ic:'🧩',place:'글자 공방',hint:'자음과 모음을 조립해요'},
-  {id:'word',target:'word',ic:'🌼',place:'단어 동산',hint:'오늘의 단어 꽃을 찾아요',quest:'word'},
-  {id:'trace',target:'trace',ic:'💧',place:'쓰기 연못',hint:'손가락으로 글자를 그려요'},
-  {id:'match',target:'match',ic:'🃏',place:'카드 광장',hint:'짝꿍 글자와 단어를 찾아요'},
-  {id:'quiz',target:'quiz',ic:'🎯',place:'소리 동굴',hint:'소리를 듣고 문을 열어요',quest:'play'},
-  {id:'listen',target:'listen',ic:'🔊',place:'듣기 전망대',hint:'하니 목소리를 따라 찾아요',quest:'play'},
-  {id:'sticker',target:'sticker',ic:'🏅',place:'스티커 집',hint:'모험 보상을 모아봐요'},
-];
-const CHO=['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
-const JUNG=['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
-const JONG=['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
-const STROKES={
-'ㄱ':[[[20,28],[78,28],[78,82]]],'ㄴ':[[[28,20],[28,80],[80,80]]],
-'ㄷ':[[[24,24],[78,24]],[[24,26],[24,80],[78,80]]],
-'ㄹ':[[[24,20],[72,20],[72,42]],[[24,42],[72,42]],[[24,42],[24,80],[72,80]]],
-'ㅁ':[[[28,22],[28,80]],[[28,22],[76,22],[76,80]],[[28,80],[76,80]]],
-'ㅂ':[[[28,20],[28,82]],[[74,20],[74,82]],[[28,50],[74,50]],[[28,82],[74,82]]],
-'ㅅ':[[[50,22],[26,82]],[[50,40],[78,82]]],'ㅇ':[{circle:[50,52,30]}],
-'ㅈ':[[[24,26],[76,26]],[[48,26],[26,80]],[[52,40],[78,80]]],
-'ㅊ':[[[44,14],[58,14]],[[24,32],[76,32]],[[48,32],[26,82]],[[52,46],[78,82]]],
-'ㅋ':[[[20,26],[76,26],[76,82]],[[24,52],[74,52]]],
-'ㅌ':[[[24,22],[76,22]],[[24,24],[24,80],[76,80]],[[24,51],[76,51]]],
-'ㅍ':[[[22,24],[78,24]],[[34,24],[34,78]],[[66,24],[66,78]],[[22,78],[78,78]]],
-'ㅎ':[[[40,12],[60,12]],[[22,32],[78,32]],{circle:[50,62,20]}],
-'ㅏ':[[[46,16],[46,84]],[[46,50],[80,50]]],'ㅑ':[[[48,16],[48,84]],[[48,38],[80,38]],[[48,62],[80,62]]],
-'ㅓ':[[[18,50],[52,50]],[[52,16],[52,84]]],'ㅕ':[[[18,38],[50,38]],[[18,62],[50,62]],[[50,16],[50,84]]],
-'ㅗ':[[[50,18],[50,56]],[[18,72],[82,72]]],'ㅛ':[[[38,20],[38,56]],[[62,20],[62,56]],[[18,72],[82,72]]],
-'ㅜ':[[[18,44],[82,44]],[[50,44],[50,84]]],'ㅠ':[[[18,42],[82,42]],[[38,42],[38,82]],[[62,42],[62,82]]],
-'ㅡ':[[[18,50],[82,50]]],'ㅣ':[[[50,14],[50,86]]],
-};
-
 function lsGet(k,d){try{const v=localStorage.getItem(k);return v===null?d:v;}catch(e){return d;}}
 function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 let RATE=parseFloat(lsGet('hp_rate','0.8'))||0.8;
@@ -315,7 +248,6 @@ function twemojify(root){
 /* 스티커(도장) */
 let stickerCount=parseInt(lsGet('hp_stickers','0'))||0;
 const stickerBtn=document.getElementById('stickerBtn'),toast=document.getElementById('toast'),toastE=document.getElementById('toastE'),toastT=document.getElementById('toastT');
-const PRAISE=['하니가 스티커를 준비했어요!','한글 마을에 빛이 켜졌어요!','모험 성공! 정말 멋져요!','글자 친구가 돌아왔어요!','와! 모험 보상이에요!'];
 function earnSticker(){sfxReward();stickerCount++;lsSet('hp_stickers',stickerCount);stickerBtn.textContent='🏅 '+stickerCount;renderStickerBoard();const em=STICKERS[(stickerCount-1)%STICKERS.length];toastE.textContent=em;toastT.textContent=PRAISE[Math.floor(Math.random()*PRAISE.length)];toast.classList.remove('show');void toast.offsetWidth;twemojify(toast);toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1500);}
 function renderStickerBoard(){const g=document.getElementById('stickerGrid');g.innerHTML='';STICKERS.forEach((em,i)=>{const d=document.createElement('div');d.className='card sticker-slot'+(i<stickerCount?' got':'');d.innerHTML='<div class="big">'+(i<stickerCount?em:'❔')+'</div>';g.appendChild(d);});document.getElementById('stickerHint').textContent='모은 도장: '+stickerCount+'개 🏅';const sc2=document.getElementById('setStickerCount');if(sc2)sc2.textContent='모은 도장: '+stickerCount+'개';twemojify(document.getElementById('sticker'));twemojify(stickerBtn);}
 stickerBtn.addEventListener('click',()=>go('sticker'));
@@ -365,12 +297,6 @@ function updateQuestRoute(){
     el.classList.toggle('route-current',key===current);
   });
 }
-const HANI_REACTIONS={
-  letter:{badge:'반짝 이름표가 빛나요',text:'좋아! 이름표가 반짝였어. 이제 편지가 자기 이름을 조금 기억해 냈어.',log:'글자 숲에서 첫 빛 조각을 찾았어요.'},
-  word:{badge:'노란 꽃씨 주머니가 흔들려요',text:'단어 꽃이 활짝 피었어. 하얀 편지에 따뜻한 색이 돌아오고 있어.',log:'단어 동산에서 두 번째 빛 조각을 모았어요.'},
-  play:{badge:'맑은 소리 종이 울려요',text:'소리 종이 맑게 울렸어. 마지막 문이 열리고 마을 주문이 깨어났어!',log:'소리 동굴에서 세 번째 빛 조각을 찾았어요.'},
-  all:{badge:'별빛 우체국이 환해졌어요',text:'오늘의 편지가 다시 읽히기 시작했어. 하니와 아이가 함께 만든 이야기야!',log:'오늘의 모험을 모두 완료했어요. 새 편지가 내일을 기다려요.'}
-};
 function renderHaniReaction(){
   var key=(mission&&mission.lastReaction)||'';
   var done=mission?((mission.letter?1:0)+(mission.word?1:0)+(mission.play?1:0)):0;
@@ -383,15 +309,6 @@ function renderHaniReaction(){
   if(panel){panel.classList.toggle('reaction-lit',!!key);panel.classList.toggle('reaction-complete',key==='all');}
 }
 function showHaniReaction(part){mission.lastReaction=part;saveMission();renderHaniReaction();}
-const STORY_ARC=[
-  {key:'premise',premise:true,label:'시작',text:'별빛 우체국의 편지가 하얗게 비어 버렸다.'},
-  {key:'inciting',inciting:true,label:'사건',text:'이름 없는 편지는 길을 잃고 한글 마을 곳곳에 흩어졌다.'},
-  {key:'conflict',conflict:true,label:'위기',text:'글자와 단어와 소리를 차례로 되찾아야 편지가 다시 읽힌다.'},
-  {key:'choice',choice:true,label:'선택',text:'아이가 하니의 탐험대장이 되어 오늘의 글자부터 불러준다.'},
-  {key:'climax',climax:true,label:'해결',text:'세 빛 조각이 모이면 하얀 편지에 오늘 배운 말이 떠오른다.'},
-  {key:'resolution',resolution:true,label:'약속',text:'한글 마을은 내일도 새 편지와 새 글자 친구를 보내기로 한다.'},
-  {key:'promise',promise:true,label:'다음 모험',text:'오늘 찾은 말은 별빛 우체국 앨범에 남아 다음 이야기를 열어 준다.'},
-];
 function renderStoryArc(){
   var list=document.getElementById('storyArcList');if(!list)return;
   list.innerHTML='';
@@ -401,11 +318,6 @@ function renderStoryArc(){
     list.appendChild(li);
   });
 }
-const STORY_CHAPTERS=[
-  {key:'letter',id:'chapterLetter',title:'1장 글자 숲의 첫 불빛',place:'글자 숲',scene:'낮잠 자던 글자들이 숲잎 뒤에 숨어 있어요.',clue:'오늘의 글자 소리를 따라가면 숨은 이름표가 반짝여요.',reward:'반짝 이름표',emotion:'편지 봉투가 바스락거리자 하니가 숨을 작게 들이마셔요.',secret:'글자 숲의 잎맥은 자음과 모음이 지나간 길을 기억해요.',next:'이름표가 깨어나면 단어 동산의 꽃봉오리가 열릴 거예요.',relic:'별빛 봉투',bond:'하니는 아이가 읽어주는 소리를 믿고 앞으로 걸어요.'},
-  {key:'word',id:'chapterWord',title:'2장 단어 동산의 꽃',place:'단어 동산',scene:'단어 꽃은 글자 친구의 이름을 불러주면 피어나요.',clue:'오늘의 단어를 찾으면 꽃잎에 다음 길이 적혀요.',reward:'단어 꽃씨',emotion:'하니는 꽃봉오리 앞에서 두 날개를 꼭 모으고 기다려요.',secret:'단어 동산의 꽃은 맞는 이름을 들으면 색깔을 되찾아요.',next:'꽃씨가 자라면 소리 동굴 입구에 작은 종소리가 울릴 거예요.',relic:'노란 꽃씨 주머니',bond:'아이가 단어를 말할 때마다 하니의 발자국이 더 환해져요.'},
-  {key:'play',id:'chapterPlay',title:'3장 소리 동굴의 문',place:'소리 동굴',scene:'문은 하니의 목소리와 같은 소리를 찾을 때 열려요.',clue:'소리를 듣고 같은 친구를 고르면 마을 주문이 깨어나요.',reward:'소리 종',emotion:'하니는 어두운 동굴 앞에서도 아이 손을 잡은 듯 씩씩해져요.',secret:'소리 동굴의 메아리는 오늘 배운 글자와 단어를 오래 기억해요.',next:'세 빛 조각이 모이면 별빛 우체국에 새 편지가 도착해요.',relic:'맑은 소리 종',bond:'하니와 아이가 함께 들은 소리가 마을의 문을 열어요.'},
-];
 function renderStoryChapterList(current){
   STORY_CHAPTERS.forEach(function(ch){
     var el=document.getElementById(ch.id);if(!el)return;
@@ -492,20 +404,6 @@ document.getElementById('routePlay').addEventListener('click',function(){go('lis
 document.getElementById('copyStoryText').addEventListener('click',handleStoryCopy);
 
 /* 글자 친구들 (자음/모음 통합) */
-const LETTER_WORDS={
- 'ㄱ':[['기린','🦒'],['고양이','🐱'],['김밥','🍙']],'ㄴ':[['나비','🦋'],['나무','🌳'],['눈사람','⛄']],
- 'ㄷ':[['다람쥐','🐿️'],['도넛','🍩'],['닭','🐔']],'ㄹ':[['로봇','🤖'],['라면','🍜'],['레몬','🍋']],
- 'ㅁ':[['모자','🧢'],['말','🐴'],['멜론','🍈']],'ㅂ':[['바나나','🍌'],['비행기','✈️'],['별','⭐']],
- 'ㅅ':[['사과','🍎'],['수박','🍉'],['사자','🦁']],'ㅇ':[['오리','🦆'],['우산','☂️'],['아기','👶']],
- 'ㅈ':[['자동차','🚗'],['지렁이','🪱'],['자전거','🚲']],'ㅊ':[['치즈','🧀'],['책','📕'],['칫솔','🪥']],
- 'ㅋ':[['코끼리','🐘'],['콩','🫛'],['케이크','🍰']],'ㅌ':[['토끼','🐰'],['토마토','🍅'],['튤립','🌷']],
- 'ㅍ':[['포도','🍇'],['피아노','🎹'],['펭귄','🐧']],'ㅎ':[['호랑이','🐯'],['해','🌞'],['하마','🦛']],
- 'ㅏ':[['아기','👶'],['아빠','👨'],['아이스크림','🍦']],'ㅑ':[['야구','⚾'],['야자수','🌴'],['양','🐑']],
- 'ㅓ':[['어항','🐠'],['엄마','👩'],['어린이','🧒']],'ㅕ':[['여우','🦊'],['여름','🌞'],['연필','✏️']],
- 'ㅗ':[['오리','🦆'],['오이','🥒'],['오렌지','🍊']],'ㅛ':[['요요','🪀'],['요리','🍳'],['욕조','🛁']],
- 'ㅜ':[['우산','☂️'],['우유','🥛'],['우주','🚀']],'ㅠ':[['유니콘','🦄'],['유령','👻'],['유모차','🚼']],
- 'ㅡ':[['음악','🎵'],['음식','🍲'],['응애','👶']],'ㅣ':[['이빨','🦷'],['이불','🛏️'],['이모','👩']],
-};
 const lettersGrid=document.getElementById('lettersGrid');
 let lettersTab='con';
 function renderLetters(){lettersGrid.className='grid '+lettersTab;lettersGrid.innerHTML='';const list=lettersTab==='con'?CONS:VOWS;list.forEach(it=>{const b=document.createElement('button');b.className='card';const sub=lettersTab==='con'?it.name:it.sound;b.innerHTML='<span class="arrow">▶</span><div class="big">'+it.ch+'</div><span class="nm">'+sub+'</span>';b.addEventListener('click',()=>openLetterDetail(it));lettersGrid.appendChild(b);});twemojify(lettersGrid);}
@@ -569,10 +467,8 @@ modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('s
 let selSub=SUBJ[0],selObj=OBJ[0],selVerb=VERB[0],writeText='고양이가 우유를 먹어요';
 const sentence=document.getElementById('sentence'),writeSentence=document.getElementById('writeSentence'),sentBoxes=document.getElementById('sentBoxes');
 function composedText(){return selSub[0]+' '+selObj[0]+' '+selVerb[0];}
-const PRESET_SENTS=['고양이가 우유를 마셔요','아기가 사과를 먹어요','강아지가 공을 던져요','토끼가 책을 봐요','곰이 밥을 먹어요','오리가 물을 마셔요'];
 const sentPresets=document.getElementById('sentPresets');
 PRESET_SENTS.forEach(s=>{const b=document.createElement('button');b.className='preset-sent';b.textContent=s;b.addEventListener('click',()=>{writeText=s;startWriting();});sentPresets.appendChild(b);});
-const CRAYONS=[['분홍','#ff6fa5'],['파랑','#4aa3ff'],['노랑','#ffb02e'],['초록','#3fb964']];
 let penColor=CRAYONS[0][1];
 const crayonsBox=document.getElementById('crayons');
 CRAYONS.forEach((c,i)=>{const b=document.createElement('button');b.className='crayon'+(i===0?' on':'');b.style.background=c[1];b.setAttribute('aria-label',c[0]);b.addEventListener('click',()=>{penColor=c[1];document.querySelectorAll('#crayons .crayon').forEach(x=>x.classList.remove('on'));b.classList.add('on');});crayonsBox.appendChild(b);});
@@ -661,10 +557,8 @@ const quizDiffBox=document.getElementById('quizDiff');
 document.getElementById('quizNew').addEventListener('click',newQuiz);
 window.addEventListener('resize',()=>{if(document.getElementById('quiz').classList.contains('active'))redrawLines();});
 
-const VOICES=[['여성','f'],['아이','kid'],['남성','m']];
 const voicePick=document.getElementById('voicePick');
 VOICES.forEach(vc=>{const b=document.createElement('button');if(vc[1]===VOICE)b.className='on';b.textContent=vc[0];b.addEventListener('click',()=>{VOICE=vc[1];lsSet('hp_voice',VOICE);document.querySelectorAll('#voicePick button').forEach(x=>x.classList.remove('on'));b.classList.add('on');probeMp3();setTimeout(()=>speak('안녕'),250);});voicePick.appendChild(b);});
-const SPEEDS=[['느리게',0.6],['보통',0.8],['빠르게',1.0]];
 const speedPick=document.getElementById('speedPick');
 SPEEDS.forEach(sp=>{const b=document.createElement('button');if(Math.abs(sp[1]-RATE)<0.01)b.className='on';b.textContent=sp[0];b.addEventListener('click',()=>{RATE=sp[1];lsSet('hp_rate',RATE);document.querySelectorAll('#speedPick button').forEach(x=>x.classList.remove('on'));b.classList.add('on');speak('안녕');});speedPick.appendChild(b);});
 document.getElementById('speedTest').addEventListener('click',()=>speak('가나다라마바사'));

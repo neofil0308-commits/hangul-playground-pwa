@@ -2,6 +2,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 HTML = (ROOT / "index.html").read_text(encoding="utf-8")
+DATA = (ROOT / "app-data.js").read_text(encoding="utf-8")
 
 
 def test_story_world_has_prologue_and_richer_chapter_elements():
@@ -10,13 +11,13 @@ def test_story_world_has_prologue_and_richer_chapter_elements():
     assert 'id="storyClueText"' in HTML
     assert 'id="storyChapterList"' in HTML
     assert "별빛 우체국" in HTML
-    assert "숨은 이름표" in HTML
-    assert "주문" in HTML
+    assert "숨은 이름표" in DATA
+    assert "주문" in DATA
 
 
 def test_story_chapters_have_scene_clue_and_reward_copy():
     for token in ["scene:", "clue:", "reward:", "place:"]:
-        assert token in HTML
+        assert token in DATA
     for copy in [
         "낮잠 자던 글자들이 숲잎 뒤에 숨어 있어요",
         "단어 꽃은 글자 친구의 이름을 불러주면 피어나요",
@@ -25,11 +26,11 @@ def test_story_chapters_have_scene_clue_and_reward_copy():
         "단어 꽃씨",
         "소리 종",
     ]:
-        assert copy in HTML
+        assert copy in DATA
 
 
 def test_story_update_renders_chapter_notes_and_copy_includes_richer_story():
-    assert "STORY_CHAPTERS" in HTML
+    assert "STORY_CHAPTERS" in DATA
     assert "renderStoryChapterList" in HTML
     assert "storySceneText" in HTML
     assert "storyClueText" in HTML

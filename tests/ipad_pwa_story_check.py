@@ -6,6 +6,7 @@ INDEX = ROOT / "index.html"
 STYLES = ROOT / "styles.css"
 MANIFEST = ROOT / "manifest.json"
 SW = ROOT / "sw.js"
+DATA = ROOT / "app-data.js"
 
 
 def read_index():
@@ -33,17 +34,19 @@ def test_manifest_and_service_worker_are_ipad_pwa_ready():
     assert manifest["orientation"] == "landscape-primary"
     assert manifest["start_url"] == "./index.html?source=pwa"
     assert "categories" in manifest and "education" in manifest["categories"]
-    assert "hangul-playground-v23" in sw
+    assert "hangul-playground-v24" in sw
     assert "./styles.css" in sw
+    assert "./app-data.js" in sw
     assert "./index.html?source=pwa" in sw
 
 
 def test_story_world_has_chapters_and_lore_panel():
     html = read_index()
+    data = DATA.read_text(encoding="utf-8")
     assert 'id="storyWorld"' in html
     assert "한글 마을 이야기" in html
     for chapter in ["1장 글자 숲의 첫 불빛", "2장 단어 동산의 꽃", "3장 소리 동굴의 문"]:
-        assert chapter in html
+        assert chapter in data
     assert "빛 조각" in html
     assert "chapter-current" in html
     assert "chapter-done" in html
