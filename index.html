@@ -180,9 +180,8 @@
 </div></div>
 
 <script src="app-data.js"></script>
+<script src="app-state.js"></script>
 <script>
-function lsGet(k,d){try{const v=localStorage.getItem(k);return v===null?d:v;}catch(e){return d;}}
-function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 let RATE=parseFloat(lsGet('hp_rate','0.8'))||0.8;
 let koVoice=null,koVoices=[];
 function loadVoices(){const vs=window.speechSynthesis?speechSynthesis.getVoices():[];const kos=vs.filter(v=>v.lang&&v.lang.toLowerCase().startsWith('ko'));koVoices=kos;koVoice=kos.find(v=>/yuna|enhanced|premium|siri/i.test(v.name))||kos[0]||null;}
@@ -567,29 +566,7 @@ stickerBtn.textContent='🏅 '+stickerCount;
 renderStickerBoard();
 
 /* ===== 통계 + 오늘의 미션 + 듣고찾기 + 부모잠금 ===== */
-function lsJSON(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
-function lsSetJSON(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
-function todayKey(){var d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
-function yKey(){var y=new Date();y.setDate(y.getDate()-1);return y.getFullYear()+'-'+(y.getMonth()+1)+'-'+y.getDate();}
-var MD=todayKey();
-var seenLetters=lsJSON('hp_seen_letters',[]);
-var seenWords=lsJSON('hp_seen_words',[]);
-var listenTry=parseInt(lsGet('hp_listen_try','0'))||0;
-var listenCorrect=parseInt(lsGet('hp_listen_correct','0'))||0;
-var streak=parseInt(lsGet('hp_streak','0'))||0;
-var lastDone=lsGet('hp_lastdone','');
-function markLetterSeen(ch){if(seenLetters.indexOf(ch)<0){seenLetters.push(ch);lsSetJSON('hp_seen_letters',seenLetters);}}
-function markWordSeen(w){if(seenWords.indexOf(w)<0){seenWords.push(w);lsSetJSON('hp_seen_words',seenWords);}}
-var ALL_LETTERS=CONS.concat(VOWS);
-var ALL_WORDS=[];Object.values(WORDS).forEach(function(a){a.forEach(function(w){ALL_WORDS.push(w);});});
-function hashStr(s){var h=5381;for(var i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h;}
-var todayLetter=null,todayWord=null;
-function pickToday(){var h=hashStr(MD);todayLetter=ALL_LETTERS[h%ALL_LETTERS.length];todayWord=ALL_WORDS[Math.floor(h/11)%ALL_WORDS.length];}
-var mission=lsJSON('hp_mission',{});
-function loadMission(){pickToday();if(mission.date!==MD){mission={date:MD,letter:false,word:false,play:false,rewarded:false};lsSetJSON('hp_mission',mission);}}
-function saveMission(){lsSetJSON('hp_mission',mission);}
 function setRow(rowId,ckId,done){var r=document.getElementById(rowId);if(!r)return;r.classList.toggle('done',!!done);var c=document.getElementById(ckId);if(c)c.textContent=done?'✓':'○';}
-function updateStreak(){if(lastDone===MD)return;streak=(lastDone===yKey())?streak+1:1;lastDone=MD;lsSet('hp_streak',streak);lsSet('hp_lastdone',lastDone);}
 function renderMission(){
   if(!todayLetter)pickToday();
   var eL=document.getElementById('mtL');if(eL)eL.textContent=todayLetter.ch;
@@ -615,7 +592,6 @@ function renderMission(){
   twemojify(document.getElementById('mission'));
   if(n===3&&!mission.rewarded){mission.rewarded=true;saveMission();updateStreak();setTimeout(function(){confetti();earnSticker();},350);}
 }
-function completeMission(part){if(!mission||mission[part])return;mission[part]=true;mission.lastReaction=part;saveMission();showHaniReaction(part);renderMission();}
 function openTodayLetter(){var isV=VOWS.indexOf(todayLetter)>=0;lettersTab=isV?'vow':'con';var tabs=document.querySelectorAll('#letterTabs button');tabs.forEach(function(x){x.classList.remove('con-on','vow-on');});if(tabs[isV?1:0])tabs[isV?1:0].classList.add(lettersTab+'-on');renderLetters();openLetterDetail(todayLetter);}
 /* 듣고 찾기 */
 var listenMode='letter',listenN=3,listenScore=0,listenTarget=null,listenBuilt=false,LISTEN_LEN=5;
