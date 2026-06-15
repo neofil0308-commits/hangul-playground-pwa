@@ -60,4 +60,4 @@ def test_learning_file_keeps_mission_and_audio_behavior_tokens():
 
 def test_service_worker_precaches_external_learning_file_with_new_cache_version():
     assert "./app-learning.js" in SW
-    assert "hangul-playground-v29" in SW
+    assert "hangul-playground-v30" in SW

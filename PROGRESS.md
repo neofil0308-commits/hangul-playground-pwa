@@ -1,11 +1,11 @@
 # 한글 놀이터 작업일지
 
-> 마지막 업데이트: 2026-06-15 17:15
+> 마지막 업데이트: 2026-06-15 18:54
 
 ## 현재 상태
 
 - 정적 PWA 형태의 한글 학습 앱입니다.
-- 앱 핵심은 `index.html`의 HTML/JavaScript, `styles.css`의 스타일, `app-data.js`의 정적 데이터, `app-state.js`의 미션 상태 로직, `app-listen.js`의 듣고 찾기 로직, `app-router.js`의 화면 이동/메뉴 초기화, `app-adventure.js`의 지도/스토리 렌더링, `app-learning.js`의 글자/단어 학습 로직으로 분리되었습니다.
+- 앱 핵심은 `index.html`의 HTML/JavaScript, `styles.css`의 스타일, `app-data.js`의 정적 데이터, `app-state.js`의 미션 상태 로직, `app-listen.js`의 듣고 찾기 로직, `app-router.js`의 화면 이동/메뉴 초기화, `app-adventure.js`의 지도/스토리 렌더링, `app-learning.js`의 글자/단어 학습 로직, `app-writing.js`의 쓰기/획순 로직으로 분리되었습니다.
 - 오디오 MP3 리소스와 PWA manifest/service worker가 포함되어 있습니다.
 - 현재 중심 경험은 `하니의 한글 모험`입니다.
 - iPad 기준 홈 화면, 한글 마을 지도, 오늘의 모험, 한글 마을 이야기, 이야기 줄기, 스토리 바이블, 하니 반응까지 1차 고도화가 완료되었습니다.
@@ -60,11 +60,20 @@
 - [x] 화면 이동/기능 메뉴 초기화 로직을 `app-router.js`로 분리
 - [x] 지도/스토리/하니 반응/이야기 복사 로직을 `app-adventure.js`로 분리
 - [x] 글자/단어 학습 화면 로직을 `app-learning.js`로 분리
-- [ ] 쓰기/획순 또는 남은 게임 로직을 단계적으로 분리
+- [x] 쓰기/획순 로직을 `app-writing.js`로 분리
+- [ ] 남은 게임 로직을 `app-games.js`로 분리
 - [ ] iPad 실기기에서 홈 화면 설치, standalone 실행, 오디오 재생, service worker 캐시 확인
 - [ ] 하니 스토리를 여러 날 이어지는 에피소드/저장 진행도로 확장
 
 ## 작업 이력
+
+### 2026-06-15 18:54 (Hermes / Telegram)
+
+- 구조 분리 8단계로 미니 따라쓰기, 글자 만들기, 문장 쓰기, 획순 따라쓰기 로직을 `app-writing.js`로 분리.
+- `mtSelect`, `renderBuilder`, `startWriting`, `strokeSVGMarkup`, `buildTraceChips`, `loadCustomTrace` 등 쓰기/획순 관련 함수는 외부 모듈에 두고, 초기 실행은 `initWritingScreens()`로 묶음.
+- `app-learning.js`의 글자 상세 화면이 호출하는 `mtSelect()` 전역 함수 연결은 유지.
+- service worker 캐시를 `hangul-playground-v30`으로 올리고 `./app-writing.js`를 precache 목록에 추가.
+- 회귀 테스트 `tests/writing_extraction_check.py` 추가.
 
 ### 2026-06-15 17:15 (Hermes / Telegram)
 
