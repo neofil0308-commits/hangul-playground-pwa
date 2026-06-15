@@ -3,6 +3,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 HTML = (ROOT / "index.html").read_text(encoding="utf-8")
 DATA = (ROOT / "app-data.js").read_text(encoding="utf-8")
+ADVENTURE = (ROOT / "app-adventure.js").read_text(encoding="utf-8")
 
 
 def test_storyline_has_visible_arc_panel_and_labels():
@@ -28,8 +29,8 @@ def test_storyline_has_clear_motivation_conflict_and_resolution():
 
 
 def test_storyline_render_and_copy_include_arc():
-    assert "renderStoryArc" in HTML
+    assert "renderStoryArc" in ADVENTURE
     assert "storyArcList" in HTML
     assert "이야기 줄기" in HTML
-    assert "getStoryCopyText" in HTML
-    assert "STORY_ARC.forEach" in HTML
+    assert "getStoryCopyText" in ADVENTURE
+    assert "STORY_ARC.forEach" in ADVENTURE

@@ -3,6 +3,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 HTML = (ROOT / "index.html").read_text(encoding="utf-8")
 DATA = (ROOT / "app-data.js").read_text(encoding="utf-8")
+ADVENTURE = (ROOT / "app-adventure.js").read_text(encoding="utf-8")
 
 
 def test_story_has_compact_bible_regions_for_richer_narrative():
@@ -34,13 +35,13 @@ def test_story_chapter_bible_contains_emotion_secret_next_and_relic():
 
 
 def test_story_bible_updates_and_copy_includes_new_sections():
-    assert "updateStoryBible" in HTML
+    assert "updateStoryBible" in ADVENTURE
     assert "storyEmotionText" in HTML
     assert "storySecretText" in HTML
     assert "storyNextText" in HTML
     assert "storyRelicText" in HTML
     assert "storyBonds" in HTML
-    assert "하니의 마음:" in HTML
-    assert "마을의 비밀:" in HTML
-    assert "다음 예고:" in HTML
-    assert "오늘의 보물:" in HTML
+    assert "하니의 마음:" in ADVENTURE
+    assert "마을의 비밀:" in ADVENTURE
+    assert "다음 예고:" in ADVENTURE
+    assert "오늘의 보물:" in ADVENTURE

@@ -4,6 +4,7 @@ ROOT = Path(__file__).resolve().parents[1]
 HTML = (ROOT / "index.html").read_text(encoding="utf-8")
 DATA = (ROOT / "app-data.js").read_text(encoding="utf-8")
 STATE = (ROOT / "app-state.js").read_text(encoding="utf-8")
+ADVENTURE = (ROOT / "app-adventure.js").read_text(encoding="utf-8")
 
 
 def test_hani_reaction_panel_exists_with_live_feedback():
@@ -35,10 +36,10 @@ def test_hani_reactions_have_per_quest_completion_copy():
 
 
 def test_reaction_state_updates_when_mission_completes():
-    assert "showHaniReaction" in HTML
-    assert "renderHaniReaction" in HTML
+    assert "showHaniReaction" in ADVENTURE
+    assert "renderHaniReaction" in ADVENTURE
     assert "mission.lastReaction" in STATE
-    assert "reaction-lit" in HTML
-    assert "reaction-complete" in HTML
+    assert "reaction-lit" in ADVENTURE
+    assert "reaction-complete" in ADVENTURE
     assert "completeMission(part)" in STATE
     assert "showHaniReaction(part)" in STATE

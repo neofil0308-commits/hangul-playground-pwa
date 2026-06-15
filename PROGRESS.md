@@ -1,11 +1,11 @@
 # 한글 놀이터 작업일지
 
-> 마지막 업데이트: 2026-06-15 10:33
+> 마지막 업데이트: 2026-06-15 17:06
 
 ## 현재 상태
 
 - 정적 PWA 형태의 한글 학습 앱입니다.
-- 앱 핵심은 `index.html`의 HTML/JavaScript, `styles.css`의 스타일, `app-data.js`의 정적 데이터, `app-state.js`의 미션 상태 로직, `app-listen.js`의 듣고 찾기 로직, `app-router.js`의 화면 이동/메뉴 초기화로 분리되었습니다.
+- 앱 핵심은 `index.html`의 HTML/JavaScript, `styles.css`의 스타일, `app-data.js`의 정적 데이터, `app-state.js`의 미션 상태 로직, `app-listen.js`의 듣고 찾기 로직, `app-router.js`의 화면 이동/메뉴 초기화, `app-adventure.js`의 지도/스토리 렌더링으로 분리되었습니다.
 - 오디오 MP3 리소스와 PWA manifest/service worker가 포함되어 있습니다.
 - 현재 중심 경험은 `하니의 한글 모험`입니다.
 - iPad 기준 홈 화면, 한글 마을 지도, 오늘의 모험, 한글 마을 이야기, 이야기 줄기, 스토리 바이블, 하니 반응까지 1차 고도화가 완료되었습니다.
@@ -58,11 +58,21 @@
 - [x] localStorage helper, 오늘의 선택, 미션/출석 상태 로직을 `app-state.js`로 분리
 - [x] 듣고 찾기 게임 로직을 `app-listen.js`로 분리
 - [x] 화면 이동/기능 메뉴 초기화 로직을 `app-router.js`로 분리
-- [ ] 지도/스토리 렌더링 또는 남은 게임 로직을 단계적으로 분리
+- [x] 지도/스토리/하니 반응/이야기 복사 로직을 `app-adventure.js`로 분리
+- [ ] 글자/단어 학습 화면 또는 남은 게임 로직을 단계적으로 분리
 - [ ] iPad 실기기에서 홈 화면 설치, standalone 실행, 오디오 재생, service worker 캐시 확인
 - [ ] 하니 스토리를 여러 날 이어지는 에피소드/저장 진행도로 확장
 
 ## 작업 이력
+
+### 2026-06-15 17:06 (Hermes / Telegram)
+
+- 구조 분리 6단계로 한글 마을 지도/스토리 렌더링 레이어를 `app-adventure.js`로 분리.
+- 분리 대상: 지도 생성/상태 갱신, 오늘의 모험 경로 상태, 하니 반응, 이야기 줄기/챕터/스토리 바이블 렌더링, 이야기 복사 및 clipboard fallback.
+- 즉시 실행되던 `renderStoryArc()`/`buildAdventureMap()`/경로 버튼 바인딩은 `initAdventureHome()`으로 묶고, 메인 inline script에서 helper 정의 후 호출하도록 정리.
+- `renderMission()`은 미션 카드 전용 DOM 갱신과 여러 모험 렌더러 호출을 묶고 있어 이번 단계에서는 `index.html`에 유지.
+- service worker 캐시를 `hangul-playground-v28`로 올리고 `./app-adventure.js`를 precache 목록에 추가.
+- 회귀 테스트 `tests/adventure_extraction_check.py` 추가.
 
 ### 2026-06-15 10:33 (Hermes / Telegram)
 

@@ -3,6 +3,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 HTML = (ROOT / "index.html").read_text(encoding="utf-8")
 DATA = (ROOT / "app-data.js").read_text(encoding="utf-8")
+ADVENTURE = (ROOT / "app-adventure.js").read_text(encoding="utf-8")
 
 
 def test_story_world_has_prologue_and_richer_chapter_elements():
@@ -31,7 +32,7 @@ def test_story_chapters_have_scene_clue_and_reward_copy():
 
 def test_story_update_renders_chapter_notes_and_copy_includes_richer_story():
     assert "STORY_CHAPTERS" in DATA
-    assert "renderStoryChapterList" in HTML
+    assert "renderStoryChapterList" in ADVENTURE
     assert "storySceneText" in HTML
     assert "storyClueText" in HTML
     assert "storyPrologue" in HTML
