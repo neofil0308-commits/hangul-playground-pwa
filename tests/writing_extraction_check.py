@@ -37,8 +37,9 @@ def test_writing_logic_lives_in_external_writing_file():
 def test_index_calls_writing_initializer_after_learning_before_games():
     assert "initLearningScreens();" in HTML
     assert "initWritingScreens();" in HTML
+    assert "initGameScreens();" in HTML
     assert HTML.index("initLearningScreens();") < HTML.index("initWritingScreens();")
-    assert HTML.index("initWritingScreens();") < HTML.index("/* 짝 맞추기 (글자 / 단어) */")
+    assert HTML.index("initWritingScreens();") < HTML.index("initGameScreens();")
 
 
 def test_writing_file_keeps_canvas_and_audio_behavior_tokens():
@@ -61,4 +62,4 @@ def test_writing_file_keeps_canvas_and_audio_behavior_tokens():
 
 def test_service_worker_precaches_external_writing_file_with_new_cache_version():
     assert "./app-writing.js" in SW
-    assert "hangul-playground-v30" in SW
+    assert "hangul-playground-v31" in SW

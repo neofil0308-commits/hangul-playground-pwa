@@ -23,4 +23,4 @@ def test_stylesheet_file_contains_existing_app_styles():
 
 def test_service_worker_precaches_external_stylesheet_with_new_cache_version():
     assert "./styles.css" in SW
-    assert "hangul-playground-v30" in SW
+    assert "hangul-playground-v31" in SW
