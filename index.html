@@ -184,6 +184,7 @@
 <script src="app-listen.js"></script>
 <script src="app-router.js"></script>
 <script src="app-adventure.js"></script>
+<script src="app-learning.js"></script>
 <script>
 let RATE=parseFloat(lsGet('hp_rate','0.8'))||0.8;
 let koVoice=null,koVoices=[];
@@ -256,20 +257,7 @@ stickerBtn.addEventListener('click',()=>go('sticker'));
 
 initAdventureHome();
 
-/* 글자 친구들 (자음/모음 통합) */
-const lettersGrid=document.getElementById('lettersGrid');
-let lettersTab='con';
-function renderLetters(){lettersGrid.className='grid '+lettersTab;lettersGrid.innerHTML='';const list=lettersTab==='con'?CONS:VOWS;list.forEach(it=>{const b=document.createElement('button');b.className='card';const sub=lettersTab==='con'?it.name:it.sound;b.innerHTML='<span class="arrow">▶</span><div class="big">'+it.ch+'</div><span class="nm">'+sub+'</span>';b.addEventListener('click',()=>openLetterDetail(it));lettersGrid.appendChild(b);});twemojify(lettersGrid);}
-const letterTabsBox=document.getElementById('letterTabs');
-[['con','자음 친구들'],['vow','모음 친구들']].forEach((t,i)=>{const b=document.createElement('button');b.textContent=t[1];if(i===0)b.classList.add(t[0]+'-on');b.addEventListener('click',()=>{lettersTab=t[0];document.querySelectorAll('#letterTabs button').forEach(x=>x.classList.remove('con-on','vow-on'));b.classList.add(t[0]+'-on');renderLetters();});letterTabsBox.appendChild(b);});
-renderLetters();
-
-/* 상세 화면 */
-const ldGlyph=document.getElementById('ldGlyph'),ldName=document.getElementById('ldName'),ldWords=document.getElementById('ldWords'),letterDetail=document.getElementById('letterDetail'),ldSound=document.getElementById('ldSound');
-let curLetter=null;
-function openLetterDetail(it){curLetter=it;markLetterSeen(it.ch);if(typeof todayLetter!=='undefined'&&todayLetter&&it.ch===todayLetter.ch)completeMission('letter');const isVow=lettersTab==='vow';letterDetail.classList.toggle('vow',isVow);ldGlyph.textContent=it.ch;ldName.textContent=isVow?('소리: '+it.sound):it.name;ldWords.innerHTML='';(LETTER_WORDS[it.ch]||[]).forEach(w=>{const b=document.createElement('button');b.className='ld-word';b.innerHTML='<span class="em">'+w[1]+'</span>'+w[0]+'<span class="spk">🔊</span>';b.addEventListener('click',()=>speak(w[0]));ldWords.appendChild(b);});twemojify(ldWords);mtSelect(it.ch);go('letterDetail');}
-ldSound.addEventListener('click',()=>{if(curLetter)sayJamo(curLetter.ch);});
-document.getElementById('ldBack').addEventListener('click',()=>go('letters'));
+initLearningScreens();
 
 /* 미니 따라쓰기 (상세 화면) */
 const mtStage=document.getElementById('mtStage'),mtGuide=document.getElementById('mtGuide'),mtCanvas=document.getElementById('mtCanvas'),mtCtx=mtCanvas.getContext('2d'),mtSvg=document.getElementById('mtSvg');
@@ -303,18 +291,7 @@ renderBuilder(false);
 
 /* 받침은 글자 만들기에 통합됨 */
 
-/* 단어 공부 + 분해 + 합쳐보기 */
-const wordCats=document.getElementById('wordCats'),wordGrid=document.getElementById('wordGrid');
-const modal=document.getElementById('wordModal'),mEmoji=document.getElementById('mEmoji'),mWord=document.getElementById('mWord'),mSyls=document.getElementById('mSyls');
-let curWord='';
-function openWord(word,emoji){mEmoji.textContent=emoji;markWordSeen(word);if(typeof todayWord!=='undefined'&&todayWord&&word===todayWord[0])completeMission('word');mWord.textContent=word;curWord=word;const groups=decompose(word);mSyls.innerHTML='';[...word].forEach((syl,si)=>{const g=groups[si]||[syl];const block=document.createElement('div');block.className='syl-block';const sb=document.createElement('button');sb.className='jchip jsyl';sb.textContent=syl;sb.addEventListener('click',()=>speak(syl));block.appendChild(sb);const eq=document.createElement('span');eq.className='jop';eq.textContent='=';block.appendChild(eq);g.forEach((j,ji)=>{if(ji>0){const p=document.createElement('span');p.className='jop';p.textContent='+';block.appendChild(p);}const role=ji===0?'c':(ji===1?'v':'f');const b=document.createElement('button');b.className='jchip jrole-'+role;b.textContent=j;b.addEventListener('click',()=>sayJamo(j));block.appendChild(b);});mSyls.appendChild(block);});twemojify(modal);modal.classList.add('show');speak(word);}
-/* 합쳐보기 제거: 글자별 자음·모음·받침 보기로 대체됨 */
-function renderWords(cat){wordGrid.innerHTML='';WORDS[cat].forEach(w=>{const b=document.createElement('button');b.className='card';b.innerHTML='<span class="spk">🔍</span><div class="big">'+w[1]+'</div><div class="wd">'+w[0]+'</div>';b.addEventListener('click',()=>openWord(w[0],w[1]));wordGrid.appendChild(b);});twemojify(wordGrid);}
-Object.keys(WORDS).forEach((cat,i)=>{const b=document.createElement('button');if(i===0)b.className='on';b.textContent=cat;b.addEventListener('click',()=>{document.querySelectorAll('#wordCats button').forEach(x=>x.classList.remove('on'));b.classList.add('on');renderWords(cat);});wordCats.appendChild(b);});
-renderWords(Object.keys(WORDS)[0]);
-document.getElementById('mPlay').addEventListener('click',()=>speak(curWord));
-document.getElementById('modalX').addEventListener('click',()=>modal.classList.remove('show'));
-modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('show');});
+
 
 /* 문장 쓰기: ② 문장 선택 + ③ 따라쓰기 */
 let selSub=SUBJ[0],selObj=OBJ[0],selVerb=VERB[0],writeText='고양이가 우유를 먹어요';

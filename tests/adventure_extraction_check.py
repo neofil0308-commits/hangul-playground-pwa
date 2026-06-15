@@ -42,8 +42,9 @@ def test_adventure_home_logic_lives_in_external_adventure_file():
 
 def test_index_calls_adventure_initializer_after_helpers_exist():
     assert "initAdventureHome();" in HTML
+    assert "initLearningScreens();" in HTML
     assert HTML.index("function twemojify") < HTML.index("initAdventureHome();")
-    assert HTML.index("initAdventureHome();") < HTML.index("function renderLetters")
+    assert HTML.index("initAdventureHome();") < HTML.index("initLearningScreens();")
 
 
 def test_adventure_file_keeps_visible_story_and_copy_behaviors():
@@ -65,4 +66,4 @@ def test_adventure_file_keeps_visible_story_and_copy_behaviors():
 
 def test_service_worker_precaches_external_adventure_file_with_new_cache_version():
     assert "./app-adventure.js" in SW
-    assert "hangul-playground-v28" in SW
+    assert "hangul-playground-v29" in SW
