@@ -182,6 +182,7 @@
 <script src="app-data.js"></script>
 <script src="app-state.js"></script>
 <script src="app-listen.js"></script>
+<script src="app-router.js"></script>
 <script>
 let RATE=parseFloat(lsGet('hp_rate','0.8'))||0.8;
 let koVoice=null,koVoices=[];
@@ -252,12 +253,6 @@ function earnSticker(){sfxReward();stickerCount++;lsSet('hp_stickers',stickerCou
 function renderStickerBoard(){const g=document.getElementById('stickerGrid');g.innerHTML='';STICKERS.forEach((em,i)=>{const d=document.createElement('div');d.className='card sticker-slot'+(i<stickerCount?' got':'');d.innerHTML='<div class="big">'+(i<stickerCount?em:'❔')+'</div>';g.appendChild(d);});document.getElementById('stickerHint').textContent='모은 도장: '+stickerCount+'개 🏅';const sc2=document.getElementById('setStickerCount');if(sc2)sc2.textContent='모은 도장: '+stickerCount+'개';twemojify(document.getElementById('sticker'));twemojify(stickerBtn);}
 stickerBtn.addEventListener('click',()=>go('sticker'));
 
-/* 네비게이션 */
-const homeBtn=document.getElementById('homeBtn');
-function go(id){if(id==='set'&&!parentUnlocked){showGate();return;}document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');if(id==='set')renderReport();if(id==='listen'&&!listenBuilt){listenBuilt=true;startListenRound();}homeBtn.style.display=id==='home'?'none':'block';if(id==='trace')setTimeout(function(){sizeTrace();fitGuide();},30);if(id==='letterDetail')setTimeout(function(){mtSize();mtRenderStrokes();},30);if(id==='sentWrite')setTimeout(function(){sizeCells();},30);if(id==='match'&&!matchBuilt)newMatch();if(id==='quiz'){if(!quizBuilt){quizBuilt=true;newQuiz();}setTimeout(redrawLines,30);}window.scrollTo({top:0,behavior:'smooth'});}
-homeBtn.addEventListener('click',()=>go('home'));
-const menu=document.getElementById('menu');
-MENU.forEach(m=>{const b=document.createElement('button');b.className=m.cls;b.innerHTML='<span class="ic">'+m.ic+'</span>'+m.label;b.addEventListener('click',()=>go(m.id));menu.appendChild(b);});
 const mapGrid=document.getElementById('mapGrid');
 function buildAdventureMap(){
   if(!mapGrid)return;

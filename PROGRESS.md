@@ -1,11 +1,11 @@
 # 한글 놀이터 작업일지
 
-> 마지막 업데이트: 2026-06-15 10:27
+> 마지막 업데이트: 2026-06-15 10:33
 
 ## 현재 상태
 
 - 정적 PWA 형태의 한글 학습 앱입니다.
-- 앱 핵심은 `index.html`의 HTML/JavaScript, `styles.css`의 스타일, `app-data.js`의 정적 데이터, `app-state.js`의 미션 상태 로직, `app-listen.js`의 듣고 찾기 로직으로 분리되었습니다.
+- 앱 핵심은 `index.html`의 HTML/JavaScript, `styles.css`의 스타일, `app-data.js`의 정적 데이터, `app-state.js`의 미션 상태 로직, `app-listen.js`의 듣고 찾기 로직, `app-router.js`의 화면 이동/메뉴 초기화로 분리되었습니다.
 - 오디오 MP3 리소스와 PWA manifest/service worker가 포함되어 있습니다.
 - 현재 중심 경험은 `하니의 한글 모험`입니다.
 - iPad 기준 홈 화면, 한글 마을 지도, 오늘의 모험, 한글 마을 이야기, 이야기 줄기, 스토리 바이블, 하니 반응까지 1차 고도화가 완료되었습니다.
@@ -57,11 +57,21 @@
 - [x] `index.html`에서 한글/단어/스토리 데이터 상수 분리
 - [x] localStorage helper, 오늘의 선택, 미션/출석 상태 로직을 `app-state.js`로 분리
 - [x] 듣고 찾기 게임 로직을 `app-listen.js`로 분리
-- [ ] 남은 게임 로직과 화면 초기화 로직을 단계적으로 분리
+- [x] 화면 이동/기능 메뉴 초기화 로직을 `app-router.js`로 분리
+- [ ] 지도/스토리 렌더링 또는 남은 게임 로직을 단계적으로 분리
 - [ ] iPad 실기기에서 홈 화면 설치, standalone 실행, 오디오 재생, service worker 캐시 확인
 - [ ] 하니 스토리를 여러 날 이어지는 에피소드/저장 진행도로 확장
 
 ## 작업 이력
+
+### 2026-06-15 10:33 (Hermes / Telegram)
+
+- 구조 분리 5단계로 화면 이동/기능 메뉴 초기화 로직을 `app-router.js`로 분리.
+- 분리 대상: `go(id)`, 홈 버튼 이동, 기능 메뉴 버튼 생성/이동 바인딩.
+- `index.html`은 `app-data.js` → `app-state.js` → `app-listen.js` → `app-router.js` → 메인 inline script 순서로 로드.
+- 라우팅 side effect는 유지: 설정 리포트 렌더링, 듣고 찾기 최초 라운드 시작, 따라쓰기/획순/문장쓰기 크기 보정, 짝맞추기/퀴즈 초기화, 스크롤 리셋.
+- service worker 캐시를 `hangul-playground-v27`로 올리고 `./app-router.js`를 precache 목록에 추가.
+- 회귀 테스트 `tests/router_extraction_check.py` 추가.
 
 ### 2026-06-15 10:27 (Hermes / Telegram)
 
