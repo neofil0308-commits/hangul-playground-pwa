@@ -143,7 +143,7 @@ function initAdventureHome(){
   renderStoryArc();
   buildAdventureMap();
   document.getElementById('routeLetter').addEventListener('click',openTodayLetter);
-  document.getElementById('routeWord').addEventListener('click',function(){openWord(todayWord[0],todayWord[1]);});
+  document.getElementById('routeWord').addEventListener('click',function(){openWordBuild(todayWord[0],todayWord[1]);});
   document.getElementById('routePlay').addEventListener('click',function(){go('listen');});
   document.getElementById('copyStoryText').addEventListener('click',handleStoryCopy);
 }

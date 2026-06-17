@@ -130,6 +130,22 @@
 
   <section id="word" class="screen"><div class="section-title">단어 공부</div><div class="hint">그림을 누르면 글자가 풀려요 🔍🔊</div><div class="cat-pills" id="wordCats"></div><div class="grid" id="wordGrid"></div></section>
 
+  <section id="wordBuild" class="screen">
+    <button class="ld-back" id="wbBack">⬅ 단어 동산</button>
+    <div class="wb-wrap">
+      <div class="wb-pic" id="wbPic">🥒</div>
+      <div class="wb-target" id="wbTarget"></div>
+      <div class="wb-tools">
+        <button class="wb-tool" id="wbHear">🔊 단어</button>
+        <button class="wb-tool" id="wbExplain">🔊 풀어 듣기</button>
+        <button class="wb-tool" id="wbWrite" style="background:var(--trace);box-shadow:0 4px 0 var(--trace-d)">✏️ 써보기</button>
+        <button class="wb-tool" id="wbReset">↺ 다시</button>
+      </div>
+      <div class="wb-feedback" id="wbFeedback"></div>
+      <div class="wb-tray" id="wbTray"></div>
+    </div>
+  </section>
+
   <section id="sent" class="screen"><div class="section-title">문장 쓰기</div><div class="hint">예문을 고르거나, 직접 만들어요 ✏️</div>
     <div class="pick-h">📚 예문 고르기</div>
     <div class="sent-presets" id="sentPresets"></div>
@@ -344,7 +360,7 @@ gateModal.addEventListener('click',function(e){if(e.target===gateModal)gateModal
 document.getElementById('gateInput').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('gateOk').click();});
 function renderReport(){var r=document.getElementById('report');if(!r)return;var acc=listenTry>0?Math.round(listenCorrect/listenTry*100):0;r.innerHTML='<div class="rcell"><b>'+seenLetters.length+'</b><span>배운 글자</span></div><div class="rcell"><b>'+seenWords.length+'</b><span>배운 단어</span></div><div class="rcell"><b>'+acc+'%</b><span>듣고찾기 정답률</span></div><div class="rcell"><b>'+stickerCount+'</b><span>모은 도장</span></div>';var rs=document.getElementById('reportStreak');if(rs)rs.textContent='연속 출석: '+streak+'일 🔥';}
 document.getElementById('mrowLetter').addEventListener('click',openTodayLetter);
-document.getElementById('mrowWord').addEventListener('click',function(){openWord(todayWord[0],todayWord[1]);});
+document.getElementById('mrowWord').addEventListener('click',function(){openWordBuild(todayWord[0],todayWord[1]);});
 document.getElementById('mrowPlay').addEventListener('click',function(){go('listen');});
 loadMission();renderMission();
 

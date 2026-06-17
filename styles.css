@@ -569,3 +569,21 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
 .recap-review b{font-size:1.3rem;color:var(--vow-d);}
 .recap-next{margin-top:14px;font-family:'Jua',sans-serif;font-size:1.2rem;color:#fff;background:var(--quiz);border:none;border-radius:26px;padding:13px 26px;box-shadow:0 6px 0 var(--quiz-d);cursor:pointer;}
 .recap-next:active{transform:translateY(5px);box-shadow:0 1px 0 var(--quiz-d);}
+/* ===== 단어 동산: 전체화면 단어 조립 ===== */
+#wordBuild .wb-wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:16px;padding:8px 12px 30px;}
+.wb-pic{font-size:5rem;line-height:1;}
+.wb-target{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;}
+.wb-syl{display:flex;align-items:flex-end;gap:6px;background:#fff;border-radius:20px;padding:10px 14px 12px;box-shadow:0 6px 0 #e6cdb0;position:relative;}
+.wb-syl-head{position:absolute;top:-30px;left:50%;transform:translateX(-50%);font-size:2rem;color:#cdbca6;}
+.wb-syl-head.done{color:var(--word-d);text-shadow:0 2px 0 #cdeacf;}
+.wb-slot{width:48px;height:58px;border-radius:14px;background:#f3ecdd;border:3px dashed #d8c4a4;display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--ink);}
+.wb-slot.filled{background:#eaf6ec;border-style:solid;border-color:var(--word);color:var(--word-d);}
+.wb-tools{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.wb-tool{font-family:'Jua',sans-serif;font-size:1.05rem;color:#fff;background:var(--listen);border:none;border-radius:22px;padding:9px 18px;box-shadow:0 4px 0 var(--listen-d);cursor:pointer;}
+.wb-tool:active{transform:translateY(3px);box-shadow:0 1px 0 var(--listen-d);}
+.wb-feedback{font-family:'Gaegu',cursive;font-weight:700;font-size:1.15rem;color:#8a715a;min-height:1.4em;}
+.wb-tray{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
+.wb-card{width:60px;height:70px;font-size:2.1rem;border:none;cursor:pointer;border-radius:16px;}
+.wb-card.used{opacity:.35;}
+.wb-card.bad{animation:shake .4s;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}

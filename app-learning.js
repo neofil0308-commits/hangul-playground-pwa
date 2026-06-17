@@ -11,7 +11,7 @@ function initLetterTabs(){[['con','자음 친구들'],['vow','모음 친구들']
 /* 상세 화면 */
 const ldGlyph=document.getElementById('ldGlyph'),ldName=document.getElementById('ldName'),ldWords=document.getElementById('ldWords'),letterDetail=document.getElementById('letterDetail'),ldSound=document.getElementById('ldSound');
 let curLetter=null;
-function openLetterDetail(it){curLetter=it;markLetterSeen(it.ch);if(typeof todayLetter!=='undefined'&&todayLetter&&it.ch===todayLetter.ch)completeMission('letter');const isVow=lettersTab==='vow';letterDetail.classList.toggle('vow',isVow);ldGlyph.textContent=it.ch;ldName.textContent=isVow?('소리: '+it.sound):it.name;ldWords.innerHTML='';(LETTER_WORDS[it.ch]||[]).forEach(w=>{const b=document.createElement('button');b.className='ld-word';b.innerHTML='<span class="em">'+w[1]+'</span>'+w[0]+'<span class="spk">🔊</span>';b.addEventListener('click',()=>speak(w[0]));ldWords.appendChild(b);});twemojify(ldWords);mtSelect(it.ch);go('letterDetail');}
+function openLetterDetail(it){curLetter=it;markLetterSeen(it.ch);if(typeof todayLetter!=='undefined'&&todayLetter&&it.ch===todayLetter.ch)completeMission('letter');const isVow=lettersTab==='vow';letterDetail.classList.toggle('vow',isVow);ldGlyph.textContent=it.ch;ldName.textContent=isVow?('소리: '+it.sound):it.name;ldWords.innerHTML='';(LETTER_WORDS[it.ch]||[]).forEach(w=>{const b=document.createElement('button');b.className='ld-word';b.innerHTML='<span class="em">'+w[1]+'</span>'+w[0]+'<span class="spk">✏️</span>';b.addEventListener('click',()=>openWordBuild(w[0],w[1]));ldWords.appendChild(b);});twemojify(ldWords);mtSelect(it.ch);go('letterDetail');}
 ldSound.addEventListener('click',()=>{if(curLetter)sayJamo(curLetter.ch);});
 document.getElementById('ldBack').addEventListener('click',()=>go('letters'));
 
@@ -40,7 +40,38 @@ function explainWord(word){
 }
 function openWord(word,emoji){mEmoji.textContent=emoji;markWordSeen(word);if(typeof todayWord!=='undefined'&&todayWord&&word===todayWord[0])completeMission('word');mWord.textContent=word;curWord=word;const groups=decompose(word);mSyls.innerHTML='';[...word].forEach((syl,si)=>{const g=groups[si]||[syl];const block=document.createElement('div');block.className='syl-block';const sb=document.createElement('button');sb.className='jchip jsyl';sb.textContent=syl;sb.addEventListener('click',()=>speak(syl));block.appendChild(sb);const eq=document.createElement('span');eq.className='jop';eq.textContent='=';block.appendChild(eq);g.forEach((j,ji)=>{if(ji>0){const p=document.createElement('span');p.className='jop';p.textContent='+';block.appendChild(p);}const role=ji===0?'c':(ji===1?'v':'f');const b=document.createElement('button');b.className='jchip jrole-'+role;b.textContent=j;b.addEventListener('click',()=>sayJamo(j));block.appendChild(b);});mSyls.appendChild(block);});twemojify(modal);modal.classList.add('show');setTimeout(function(){explainWord(word);},250);}
 /* 합쳐보기 제거: 글자별 자음·모음·받침 보기로 대체됨 */
-function renderWords(cat){wordGrid.innerHTML='';WORDS[cat].forEach(w=>{const b=document.createElement('button');b.className='card';b.innerHTML='<span class="spk">🔍</span><div class="big">'+w[1]+'</div><div class="wd">'+w[0]+'</div>';b.addEventListener('click',()=>openWord(w[0],w[1]));wordGrid.appendChild(b);});twemojify(wordGrid);}
+/* 단어 동산: 전체 화면에서 자음·모음 카드로 단어 조립 (팝업 대신 넓게) */
+var wbWord='',wbEmoji='',wbExpected=[],wbPos=0;
+function openWordBuild(word,emoji){
+  wbWord=word;wbEmoji=emoji;curWord=word;markWordSeen(word);
+  var groups=decompose(word);wbExpected=[];
+  document.getElementById('wbPic').textContent=emoji;
+  var tgt=document.getElementById('wbTarget');tgt.innerHTML='';
+  groups.forEach(function(g,si){var blk=document.createElement('div');blk.className='wb-syl';var head=document.createElement('div');head.className='wb-syl-head';head.textContent=word[si]||'';blk.appendChild(head);g.forEach(function(j){wbExpected.push(j);var s=document.createElement('div');s.className='wb-slot';blk.appendChild(s);});tgt.appendChild(blk);});
+  wbPos=0;
+  var need=wbExpected.slice();var distract=[];var pool=CHO.concat(JUNG);var tries=0;
+  while(distract.length<2&&tries<40){tries++;var r=pool[Math.floor(Math.random()*pool.length)];if(need.indexOf(r)<0&&distract.indexOf(r)<0)distract.push(r);}
+  var trayEl=document.getElementById('wbTray');trayEl.innerHTML='';
+  shuffle(need.concat(distract)).forEach(function(j){var b=document.createElement('button');b.className='wb-card jchip jrole-'+(CHO.indexOf(j)>=0?'c':'v');b.textContent=j;b.addEventListener('click',function(){wbTap(b,j);});trayEl.appendChild(b);});
+  document.getElementById('wbFeedback').textContent='카드를 순서대로 눌러 단어를 만들어요';
+  go('wordBuild');
+  setTimeout(function(){explainWord(word);},450);
+}
+function wbTap(btn,j){
+  if(wbPos>=wbExpected.length)return;
+  if(j===wbExpected[wbPos]){
+    sfxCorrect();var slot=document.querySelectorAll('#wbTarget .wb-slot')[wbPos];if(slot){slot.textContent=j;slot.classList.add('filled');}
+    btn.disabled=true;btn.classList.add('used');sayJamo(j);wbPos++;
+    if(wbPos>=wbExpected.length){
+      document.querySelectorAll('#wbTarget .wb-syl-head').forEach(function(h){h.classList.add('done');});
+      document.getElementById('wbFeedback').textContent='완성! '+wbWord+' 🎉';
+      confetti();earnSticker();
+      if(typeof todayWord!=='undefined'&&todayWord&&wbWord===todayWord[0])completeMission('word');
+      setTimeout(function(){explainWord(wbWord);},500);
+    }
+  }else{sfxWrong();btn.classList.add('bad');setTimeout(function(){btn.classList.remove('bad');},400);}
+}
+function renderWords(cat){wordGrid.innerHTML='';WORDS[cat].forEach(w=>{const b=document.createElement('button');b.className='card';b.innerHTML='<span class="spk">🔍</span><div class="big">'+w[1]+'</div><div class="wd">'+w[0]+'</div>';b.addEventListener('click',()=>openWordBuild(w[0],w[1]));wordGrid.appendChild(b);});twemojify(wordGrid);}
 function initWordStudy(){Object.keys(WORDS).forEach((cat,i)=>{const b=document.createElement('button');if(i===0)b.className='on';b.textContent=cat;b.addEventListener('click',()=>{document.querySelectorAll('#wordCats button').forEach(x=>x.classList.remove('on'));b.classList.add('on');renderWords(cat);});wordCats.appendChild(b);});
   renderWords(Object.keys(WORDS)[0]);
   document.getElementById('mPlay').addEventListener('click',()=>speak(curWord));
@@ -48,6 +79,11 @@ function initWordStudy(){Object.keys(WORDS).forEach((cat,i)=>{const b=document.c
   var mWr=document.getElementById('mWrite');if(mWr)mWr.addEventListener('click',()=>{if(typeof loadCustomTrace==='function')loadCustomTrace([...curWord]);modal.classList.remove('show');if(typeof go==='function')go('trace');});
   document.getElementById('modalX').addEventListener('click',()=>modal.classList.remove('show'));
   modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('show');});
+  var wbB=document.getElementById('wbBack');if(wbB)wbB.addEventListener('click',()=>go('word'));
+  var wbH=document.getElementById('wbHear');if(wbH)wbH.addEventListener('click',()=>speak(wbWord));
+  var wbE=document.getElementById('wbExplain');if(wbE)wbE.addEventListener('click',()=>explainWord(wbWord));
+  var wbR=document.getElementById('wbReset');if(wbR)wbR.addEventListener('click',()=>{if(wbWord)openWordBuild(wbWord,wbEmoji);});
+  var wbW=document.getElementById('wbWrite');if(wbW)wbW.addEventListener('click',()=>{if(typeof loadCustomTrace==='function'&&wbWord)loadCustomTrace([...wbWord]);if(typeof go==='function')go('trace');});
 }
 
 function initLearningScreens(){
