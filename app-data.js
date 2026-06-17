@@ -69,6 +69,33 @@ const STROKES={
 'ㅡ':[[[18,50],[82,50]]],'ㅣ':[[[50,14],[50,86]]],
 };
 
+/* 완성 음절(예: 어,항,오)은 STROKES에 없으므로 자모로 분해해 블록 안 올바른 위치에 획순을 배치·합성한다 */
+function _xfStroke(st,box){
+  var x0=box[0],y0=box[1],x1=box[2],y1=box[3];
+  var tx=function(p){return Math.round((x0+(p/100)*(x1-x0))*10)/10;};
+  var ty=function(p){return Math.round((y0+(p/100)*(y1-y0))*10)/10;};
+  if(st.circle){var c=st.circle,sx=(x1-x0)/100,sy=(y1-y0)/100;return {circle:[tx(c[0]),ty(c[1]),Math.round(c[2]*Math.min(sx,sy)*10)/10]};}
+  return st.map(function(p){return [tx(p[0]),ty(p[1])];});
+}
+function composedStrokes(ch){
+  if(typeof ch!=='string'||ch.length!==1)return null;
+  var code=ch.codePointAt(0);
+  if(code<0xAC00||code>0xD7A3)return null;
+  var s=code-0xAC00;
+  var cho=CHO[Math.floor(s/588)], jung=JUNG[Math.floor((s%588)/28)], jong=JONG[s%28];
+  var horiz='ㅗㅛㅜㅠㅡ'.indexOf(jung)>=0;
+  var boxes=horiz
+    ? (jong?{cho:[18,3,82,40],jung:[8,40,92,67],jong:[15,67,90,97]}
+           :{cho:[15,6,85,52],jung:[6,54,94,92]})
+    : (jong?{cho:[5,5,52,60],jung:[54,3,95,62],jong:[10,63,90,97]}
+           :{cho:[6,8,55,92],jung:[56,5,95,95]});
+  var out=[];
+  function add(jamo,box){var arr=STROKES[jamo];if(!arr)return;arr.forEach(function(st){out.push(_xfStroke(st,box));});}
+  add(cho,boxes.cho); add(jung,boxes.jung); if(jong)add(jong,boxes.jong);
+  return out.length?out:null;
+}
+function strokesFor(ch){return STROKES[ch]||composedStrokes(ch);}
+
 const PRAISE=['하니가 스티커를 준비했어요!','한글 마을에 빛이 켜졌어요!','모험 성공! 정말 멋져요!','글자 친구가 돌아왔어요!','와! 모험 보상이에요!'];
 
 const HANI_REACTIONS={
