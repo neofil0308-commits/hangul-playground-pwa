@@ -1,160 +1,70 @@
-# 하니의 한글 모험
+# 하니의 한글 모험 (Hani's Hangul Adventure)
 
-아이들이 자음·모음·단어·문장·소리 놀이를 통해 한글을 익히는 정적 PWA입니다. 현재 앱의 중심 경험은 **병아리 캐릭터 `하니`가 이끄는 오늘의 한글 모험**입니다.
+> 만 4세, 한글을 거의 모르는 아이가 **그림·소리 중심의 모험**을 따라가며 자음·모음 → 글자 → 단어 → 문장 순으로 한글을 떼는 정적(static) PWA.
 
-## 현재 구조
+📂 구조·내용은 [`ARCHITECTURE.md`](ARCHITECTURE.md), 작업 이력은 [`PROGRESS.md`](PROGRESS.md) 참고.
 
-- `index.html` — 앱의 HTML/JavaScript와 화면 구조
-- `app-data.js` — 한글/단어/지도/스토리/보상 등 정적 데이터 상수
-- `app-state.js` — localStorage helper, 오늘의 선택, 미션/출석 상태 로직
-- `app-listen.js` — 듣고 찾기 게임 로직과 소리 동굴 버튼 초기화
-- `app-router.js` — 화면 이동, 홈 버튼, 기능 메뉴 초기화
-- `app-adventure.js` — 한글 마을 지도, 이야기/하니 반응, 이야기 복사 로직
-- `app-learning.js` — 글자 친구/글자 상세/단어 공부 화면 로직
-- `app-writing.js` — 미니 따라쓰기, 글자 만들기, 문장 쓰기, 획순 따라쓰기 로직
-- `app-games.js` — 짝 맞추기와 소리 퀴즈/선 잇기 게임 로직
-- `app-episode.js` — 별빛 우체국 에피소드 진행 배너, 별빛 앨범, 빠른 성취 맛보기 렌더링
-- `styles.css` — 앱 전체 스타일, iPad/PWA 레이아웃, 스토리 UI 스타일
-- `manifest.json` — iPad/PWA 설치 설정
-- `sw.js` — 오프라인 캐시용 service worker
-- `audio/` — 한글 음성 MP3 리소스
-- `icon-192.png`, `icon-512.png`, `apple-touch-icon.png` — PWA 아이콘
-- `tests/*_check.py` — 정적 회귀 테스트
-- `PROGRESS.md` — 작업 이력과 다음 재개 지점
-- `generate_voices.py` — 음성 리소스 생성 보조 스크립트
+---
 
-## 로컬 실행
+## 1. 개발 목적 (북극성)
 
-Git Bash 또는 터미널에서 프로젝트 폴더로 이동한 뒤 실행합니다.
+**"이 앱의 모험을 끝까지 클리어하면, 아이가 한글을 어느 정도 스스로 읽게 된다."**
 
-```bash
-python -m http.server 5187 --bind 127.0.0.1
-```
+- **스토리 진행 순서 = 실제 한글 학습 순서.** 마지막 막을 깨면 아이가 편지를 스스로 읽음(= 한글 뗌).
+- 별도의 "공부"가 아니라 **별빛 우체국을 구하는 모험**을 하다 보면 자연스럽게 글자를 익히게 한다.
 
-브라우저에서 엽니다.
+## 2. 대상 사용자
 
-```text
-http://127.0.0.1:5187/index.html
-```
+- **만 4세**, 자음·모음을 거의 모르는 백지 상태.
+- **아직 글을 못 읽음** → 글로 된 설명 금지. **큰 그림 + 하니(🐥) 목소리**가 핵심. 글자(자막)는 부모가 같이 읽어주는 보조.
+- 사용 환경: **아이패드 가로 모드 또는 모니터(가로 와이드)**. 레이아웃은 가로 와이드를 우선 최적화.
 
-같은 Wi-Fi의 iPad에서 확인하려면 PC의 LAN IP를 사용합니다.
+## 3. 설계 원칙 (개발 시 항상 지킬 것)
 
-```text
-http://<PC_LAN_IP>:5187/index.html
-```
+1. **소리·그림 우선, 글 최소화.** 핵심 정보는 음성·그림으로. 신경망 음성(edge-tts), 기계음·끊김·중복 재생 금지.
+2. **주제 일관성.** 한 퀘스트는 '오늘의 글자' 하나 중심. 게임·단어·예시가 모두 그 글자와 연결(무작위 풀 금지).
+3. **가르치듯 설명.** 그냥 읽지 말고 "이응에 ㅗ를 더하면 오"처럼 결합 원리를. 단어 동산은 "ㅍ + ㅗ = 포" 구조도.
+4. **모양 기억 + 소리 연결.** 4세는 글자를 이미지로 기억하는 단계가 정상. 단, 모양을 보여줄 때 **항상 소리를 함께** 붙여 다중감각으로.
+5. **차등 피드백.** 작은 성취(글자 하나)=작게("맞아요!"), 큰 성취(단어·라운드 완성)=크게(중앙 오버레이). 즉시보상 + 큰 마무리보상.
+6. **관대한 익힘 판정.** 만나고+짝맞추고+소리퀴즈 정도면 마스터. 좌절 금지.
+7. **정답을 그냥 노출하지 않기.** 듣기 활동은 소리로 답을 찾게 한다(정답 글자를 화면에 띄워두지 않음).
+8. **글씨와 가이드 구분.** 획순 가이드=분홍, 아이 펜=검정.
 
-## 현재 기능
+## 4. 학습 여정 — 별빛 우체국 8막 (`CURRICULUM`)
 
-### 하니의 한글 모험
+| 막 | 주제 | 장소 | 내용 | 상태 |
+|----|------|------|------|------|
+| 1막 | 모음의 빛 | 글자 숲 | 기본 모음 ㅏㅓㅗㅜㅡㅣㅑㅕㅛㅠ | ✅ 구현 |
+| 2막 | 자음 친구들 | 글자 숲 | 기본 자음 ㅁㄴㅇㄱㄷㅂㅅㄹㅈㅊㅋㅌㅍㅎ | ✅ 구현 |
+| 3막 | 글자 공방 | 글자 공방 | 자음+모음 합치기(가·나·다) | 🟡 데이터만 |
+| 4막 | 받침의 문 | 글자 공방 | 받침 ㄱㄴㄷㄹㅁㅂㅇ | 🟡 글자형 진행 |
+| 5막 | 쌍둥이 소리 | 소리 동굴 | 된소리 ㄲㄸㅃㅆㅉ | ✅ 구현(획순 포함) |
+| 6막 | 숨은 모음 | 글자 숲 | 복모음 ㅐㅔㅒㅖㅚㅟㅢㅘㅝㅙㅞ | 🟡 글자형 진행 |
+| 7막 | 단어 마을 | 단어 동산 | 글자가 모여 단어 읽기 | ✅ 단어 동산 |
+| 8막 | 이야기 책 | 별빛 우체국 | 문장 읽기(졸업) | 🟡 데이터만 |
 
-- 홈 화면 브랜드: `하니의 한글 모험`
-- 오늘의 모험 3단계:
-  - `글자 숲` — 오늘의 글자 친구를 만나요
-  - `단어 동산` — 글자 친구가 좋아하는 단어를 찾아요
-  - `소리 동굴` — 소리를 듣고 글자 친구를 찾아요
-- 한글 마을 지도:
-  - `글자 숲`, `글자 공방`, `단어 동산`, `쓰기 연못`, `카드 광장`, `소리 동굴`, `듣기 전망대`, `스티커 집`
-- 진행 상태에 따라 지도/경로/챕터가 `현재`, `완료`, `다음` 상태로 바뀝니다.
+- 글자형 막은 **글자 하나하나가 한 에피소드**(`EPISODE_PATH`, 현재 ~50화).
+- 빠른 동기부여용 **맛보기(`STORY_MILESTONES`)**: ㅏ+ㅣ를 익히면 곧장 "아이"를 읽었다고 축하.
 
-### 한글 떼기 커리큘럼 (별빛 우체국 8막 여정)
+## 5. 하루(에피소드) 흐름
 
-스토리 진행 자체가 실제 한글 학습 순서입니다. 마지막 막을 깨면 아이가 편지를 스스로 읽음(= 한글 뗌)을 목표로 합니다. (대상: 만 4세·자모 백지 기준)
+인트로 그림책(최초 1회) → 홈(상단 여정 status + 오늘의 3모험) → **글자 숲**(소리·낱말·받아쓰기) → **단어 동산**(자모 드래그 조립) → **소리 동굴**(소리 듣고 찾기) → **마무리 정리**(오늘 글자+복습).
 
-- 8막 여정: ① 모음의 빛(기본 모음) → ② 자음 친구들(기본 자음) → ③ 글자 공방(자모 결합) → ④ 받침의 문 → ⑤ 쌍둥이 소리(쌍자음) → ⑥ 숨은 모음(복잡 모음) → ⑦ 단어 마을 → ⑧ 이야기 책(문장 읽기·졸업)
-- 한 화(에피소드) = 글자 1개. `오늘의 글자`는 날짜 랜덤이 아니라 커리큘럼 진행 포인터(`progress.idx`)에서 뽑습니다.
-- 익힘 판정(관대): 글자 만나기 + 카드 짝맞추기 + 소리 퀴즈 정답 셋을 채우면 그 글자가 마스터되어 별빛 앨범에 별이 켜집니다.
-- 빠른 성취형: 특정 글자를 익히면 곧장 진짜 말 맛보기(아이·오이·엄마 등)를 음성과 함께 띄워 동기를 줍니다.
-- 한 글자를 다 깨면 `다음 글자 만나러 가기`로 진행되고, 진행도는 localStorage(`hp_progress`)에 저장되어 다시 켜면 이어집니다.
+## 6. 현재 상태 & 다음 방향
 
-### 스토리 경험
+- **됨**: 1·2·5·7막 핵심 활동(글자 숲·단어 동산·소리 동굴) + 인트로·여정·복습. 가로 와이드 2단 UI·차등 피드백·신경망 음성·획순(음절/쌍자음 합성)까지 정리.
+- **정리 필요(중요)**: 초기 '한글 놀이터' 잔재 화면(`letters/syl/word/match/quiz/trace/sent/sentWrite`)이 모험 플로우와 공존 → 혼란의 원인. 통합·재설계·제거 결정 필요(→ `ARCHITECTURE.md` §3).
+- **앞으로**: 3막(글자 공방=합치기), 8막(문장)을 모험 플로우에 정식 편입. 각 막은 위 8막 표와 §3 설계 원칙을 따른다.
 
-- `한글 마을 이야기` 패널
-- 프롤로그: 별빛 우체국, 하얗게 변한 편지, 빛 조각, 마을 주문
-- 오늘의 이야기 줄기:
-  - 시작 → 사건 → 위기 → 선택 → 해결 → 약속 → 다음 모험
-- 스토리 바이블:
-  - 하니의 마음
-  - 마을의 비밀
-  - 다음 예고
-  - 오늘의 보물
-- 하니의 반응:
-  - 모험 완료 직후 하니의 축하 대사, 보물 반응, 짧은 로그 표시
-- `이야기 복사` 버튼:
-  - 현재 스토리, 빛 조각, 챕터 진행, 이야기 줄기, 스토리 바이블을 텍스트로 복사
-
-### 학습 기능
-
-- 글자 친구들
-- 글자 만들기
-- 단어 공부
-- 문장 쓰기
-- 따라쓰기
-- 짝 맞추기
-- 소리 퀴즈
-- 듣고 찾기
-- 스티커 보상
-- 설정
-- PWA 설치/오프라인 캐시
-
-## iPad/PWA 기준
-
-이 앱은 **iPad 기준 · 어디서든 이어서 보기**를 우선합니다.
-
-- `viewport-fit=cover`
-- iOS/iPadOS safe-area 대응
-- 홈 화면 standalone 모드 CSS
-- `apple-mobile-web-app-title`: `하니의 한글 모험`
-- manifest:
-  - `start_url`: `./index.html?source=pwa`
-  - `orientation`: `landscape-primary`
-  - `categories`: `education`, `kids`, `games`
-
-## 검증 방법
-
-정적 회귀 테스트:
+## 7. 실행 / 검증
 
 ```bash
-python -m pytest -q tests/*_check.py
+# 로컬 서버 (같은 WiFi 아이패드 접속 시 --bind 0.0.0.0)
+python -m http.server 5301 --bind 0.0.0.0
+#  → http://<PC_LAN_IP>:5301/index.html  (가로 모드)
+
+# 정적 회귀 테스트 (76개)
+python -m pytest -q tests/ -o python_files="*_check.py"
 ```
 
-JS 문법 체크:
-
-```bash
-python - <<'PY'
-from pathlib import Path
-import re, subprocess, tempfile, os
-html=Path('index.html').read_text(encoding='utf-8')
-scripts='\n'.join(re.findall(r'<script>([\s\S]*?)</script>', html))
-fd=tempfile.NamedTemporaryFile('w', suffix='.js', delete=False, encoding='utf-8')
-fd.write(scripts); fd.close()
-try:
-    subprocess.run(['node','--check','app-data.js'], check=True)
-    subprocess.run(['node','--check','app-state.js'], check=True)
-    subprocess.run(['node','--check','app-listen.js'], check=True)
-    subprocess.run(['node','--check','app-router.js'], check=True)
-    subprocess.run(['node','--check','app-adventure.js'], check=True)
-    subprocess.run(['node','--check','app-learning.js'], check=True)
-    subprocess.run(['node','--check','app-writing.js'], check=True)
-    subprocess.run(['node','--check','app-games.js'], check=True)
-    subprocess.run(['node','--check','app-episode.js'], check=True)
-    subprocess.run(['node','--check',fd.name], check=True)
-finally:
-    os.unlink(fd.name)
-print(f'js syntax ok: app-data.js + app-state.js + app-listen.js + app-router.js + app-adventure.js + app-learning.js + app-writing.js + app-games.js + app-episode.js + {len(scripts)} inline bytes')
-PY
-```
-
-브라우저 smoke test:
-
-1. 로컬 서버 실행
-2. `http://127.0.0.1:5187/index.html` 접속
-3. 홈 화면, 지도, 오늘의 모험, 이야기 복사, 주요 학습 화면 이동 확인
-4. 개발자 콘솔 오류 확인
-
-## 작업 원칙
-
-- 큰 변경 전후로 git 커밋을 남깁니다.
-- 기능 추가보다 먼저 기존 앱이 깨지지 않는지 테스트와 브라우저 smoke test를 확인합니다.
-- 현재는 CSS를 `styles.css`, 정적 데이터를 `app-data.js`, 미션 상태 로직을 `app-state.js`, 듣고 찾기 로직을 `app-listen.js`, 화면 이동/메뉴 초기화를 `app-router.js`, 지도/스토리 렌더링을 `app-adventure.js`, 글자/단어 학습 로직을 `app-learning.js`, 쓰기/획순 로직을 `app-writing.js`, 게임 로직을 `app-games.js`로 분리했습니다.
-- 다음 구조 분리는 설정/부모 리포트/오디오 설정처럼 남은 보조 화면을 정리하거나, 구조 분리보다 에피소드형 스토리 확장으로 넘어갑니다.
-- service worker/cache 변경 시 `sw.js`의 캐시 이름을 갱신하고 브라우저에서 stale cache 여부를 확인합니다.
+> 편집 후 옛 화면이 보이면: 브라우저에서 서비스워커/캐시 비우고 두 번 새로고침(자세히 `ARCHITECTURE.md` §7). 실기기 접속 불가면 윈도우 방화벽(5301 인바운드) 확인.
