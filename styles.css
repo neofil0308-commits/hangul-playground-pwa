@@ -409,3 +409,147 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
 .setbox .toggle.off{background:#cbb8a0;box-shadow:0 4px 0 #a99478;}
 .setbox .vrow{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:300px;margin:10px auto 0;font-family:'Jua',sans-serif;color:var(--ink);font-size:1rem;}
 .setbox .vrow input[type=range]{flex:1;accent-color:var(--match);height:26px;}
+
+/* ===== 별빛 우체국 에피소드 진행 + 별빛 앨범 ===== */
+.episode-banner{display:flex;flex-direction:column;gap:2px;background:linear-gradient(135deg,#fff3da,#ffe7c4);border-radius:20px;padding:10px 16px;margin:6px 0 12px;box-shadow:0 5px 0 #f0d3a6;}
+.episode-banner .ep-act{font-size:.95rem;color:var(--quiz-d);}
+.episode-banner .ep-now{font-size:1.15rem;color:var(--ink);}
+.episode-banner .ep-now b{font-size:1.5rem;color:var(--con-d);margin:0 2px;}
+.episode-banner .ep-prog{font-size:.85rem;color:#a08a6e;}
+.next-letter{display:block;width:100%;margin:10px 0 4px;font-family:'Jua',sans-serif;font-size:1.2rem;color:#fff;background:var(--quiz);border:none;border-radius:26px;padding:14px;box-shadow:0 6px 0 var(--quiz-d);cursor:pointer;}
+.next-letter:active{transform:translateY(5px);box-shadow:0 1px 0 var(--quiz-d);}
+.star-album{margin-top:12px;background:linear-gradient(160deg,#3a3570,#272350);border-radius:22px;padding:12px 14px;box-shadow:0 6px 0 #1d1940;}
+.star-album .album-head{color:#ffe9a8;font-size:1rem;margin-bottom:8px;}
+.star-album .album-head b{font-size:1.3rem;color:#fff;}
+.album-sky{display:flex;flex-wrap:wrap;gap:8px;min-height:34px;align-items:center;}
+.album-empty{color:#c9c2f0;font-size:.9rem;}
+.album-star{position:relative;display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;}
+.album-star i{font-size:2.1rem;line-height:1;filter:drop-shadow(0 0 5px rgba(255,224,130,.7));}
+.album-star em{position:absolute;font-style:normal;font-size:1rem;color:#5a4636;}
+.milestone-pop{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%) scale(.7);z-index:60;background:#fff;border-radius:30px;padding:26px 34px;text-align:center;box-shadow:0 14px 40px rgba(90,60,30,.35);opacity:0;pointer-events:none;transition:transform .35s cubic-bezier(.2,1.4,.5,1),opacity .35s;border:4px solid var(--quiz);}
+.milestone-pop.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
+.milestone-pop .ms-word{font-size:3.2rem;color:var(--con-d);margin-bottom:6px;}
+.milestone-pop .ms-note{font-size:1.05rem;color:var(--ink);max-width:260px;}
+/* ===== 그림책 모드 (만4세·그림+소리 중심) ===== */
+/* 그림책 페이지: 큰 글자 + 큰 그림 + 하니 음성 버튼 */
+#episodeBanner{margin:6px 0 12px;}
+.book-page{display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;cursor:pointer;font-family:'Jua',sans-serif;background:linear-gradient(180deg,#fffdf6,#fff3da);border:4px solid #ffe1ab;border-radius:26px;padding:16px 14px 14px;box-shadow:0 7px 0 #f0d3a6,0 11px 18px rgba(150,110,50,.16);}
+.book-page:active{transform:translateY(5px);box-shadow:0 2px 0 #f0d3a6;}
+.book-page .book-ch{font-size:4.6rem;line-height:1;color:var(--con-d);text-shadow:0 3px 0 #ffe1ab;}
+.book-page .book-pic{font-size:3.3rem;line-height:1;}
+.book-page .book-hear-label{margin-top:4px;font-size:1.15rem;color:#fff;background:var(--listen);border-radius:24px;padding:8px 20px;box-shadow:0 4px 0 var(--listen-d);}
+.book-page-soon .book-ch{color:var(--syl-d);}
+/* 진행 그림길: 익힌 글자(그림+별) — 지금(하니) — 앞으로(❔) 징검다리 */
+.star-album{margin-top:12px;background:linear-gradient(160deg,#eaf6ff,#dcefff);border-radius:22px;padding:12px 10px;box-shadow:0 6px 0 #c3e0f5;}
+.journey-head{display:flex;justify-content:space-between;align-items:center;margin:0 6px 8px;color:var(--listen-d);font-size:.95rem;}
+.journey-head .journey-count b,.journey-head .journey-count{font-size:1.05rem;}
+.journey-path{display:flex;align-items:center;gap:2px;overflow-x:auto;padding:6px 4px 10px;-webkit-overflow-scrolling:touch;}
+.stop{position:relative;flex:0 0 auto;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff;box-shadow:0 3px 0 #cfe6fb;}
+.stop .stop-pic{font-size:1.9rem;line-height:1;}
+.stop-soon{background:#eef4fb;box-shadow:0 3px 0 #dde8f4;}
+.stop-soon .stop-q{font-size:1.5rem;opacity:.5;}
+.stop-done{background:#fffaf0;box-shadow:0 3px 0 #ffe0a0;}
+.stop-done .stop-star{position:absolute;right:-3px;bottom:-3px;font-size:1rem;}
+.stop-now{width:62px;height:62px;background:#fff7df;box-shadow:0 0 0 4px var(--quiz),0 4px 0 var(--quiz-d);transform:translateY(-3px);}
+.stop-now .stop-pic{font-size:2.2rem;}
+.stop-now .stop-hani{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:1.6rem;filter:drop-shadow(0 2px 2px rgba(0,0,0,.15));}
+.stop-link{flex:0 0 auto;width:12px;height:5px;border-radius:3px;background:#bfe0fb;}
+/* 부모님 보기: 줄글 스토리는 기본 접힘 */
+.parent-zone{margin-top:10px;border-top:2px dashed #e9d6b8;padding-top:8px;}
+.parent-zone>summary{cursor:pointer;list-style:none;font-size:.95rem;color:#a9926f;padding:6px 4px;}
+.parent-zone>summary::-webkit-details-marker{display:none;}
+.parent-zone[open]>summary{color:#8a7250;margin-bottom:6px;}
+/* ===== 인트로 그림책 (모험 시작 이야기) ===== */
+#intro.active{display:flex;align-items:center;justify-content:center;min-height:78vh;}
+.intro-book{width:100%;max-width:560px;text-align:center;background:linear-gradient(180deg,#fffdf6,#fff1d6);border:5px solid #ffe1ab;border-radius:34px;padding:26px 22px 20px;box-shadow:0 10px 0 #f0d3a6,0 16px 30px rgba(150,110,50,.18);}
+.intro-art{display:flex;align-items:center;justify-content:center;gap:10px;min-height:130px;margin-bottom:10px;cursor:pointer;}
+.intro-art .ia{font-size:3.6rem;line-height:1;display:inline-block;animation:introFloat 3s ease-in-out infinite;}
+.intro-art .ia1{animation-delay:.4s;font-size:4.4rem;}
+.intro-art .ia2{animation-delay:.8s;}
+@keyframes introFloat{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-12px) rotate(3deg)}}
+.intro-cap{font-size:1.35rem;color:var(--con-d);margin:4px 0 10px;line-height:1.4;}
+.intro-hear{font-family:'Jua',sans-serif;font-size:1.1rem;color:#fff;background:var(--listen);border:none;border-radius:24px;padding:9px 22px;box-shadow:0 4px 0 var(--listen-d);cursor:pointer;}
+.intro-hear:active{transform:translateY(3px);box-shadow:0 1px 0 var(--listen-d);}
+.intro-dots{display:flex;justify-content:center;gap:7px;margin:14px 0 12px;}
+.intro-dots .idot{width:10px;height:10px;border-radius:50%;background:#ecd9b6;}
+.intro-dots .idot.on{background:var(--quiz);transform:scale(1.25);}
+.intro-nav{display:flex;gap:12px;justify-content:center;align-items:center;}
+.intro-prev,.intro-next{font-family:'Jua',sans-serif;border:none;cursor:pointer;border-radius:26px;}
+.intro-prev{font-size:1.4rem;color:var(--ink);background:#fff;width:60px;height:56px;box-shadow:0 5px 0 #e6cdb0;}
+.intro-next{font-size:1.35rem;color:#fff;background:var(--con);padding:0 30px;height:56px;box-shadow:0 5px 0 var(--con-d);}
+.intro-prev:active,.intro-next:active{transform:translateY(4px);}
+.intro-next:active{box-shadow:0 1px 0 var(--con-d);}
+.intro-skip{margin-top:14px;background:none;border:none;color:#b7a384;font-family:'Jua',sans-serif;font-size:.95rem;cursor:pointer;text-decoration:underline;}
+/* 홈의 '이야기 다시 보기' */
+.home-intro-bar{text-align:center;margin:-4px 0 12px;}
+.replay-intro{font-family:'Jua',sans-serif;font-size:1rem;color:var(--con-d);background:#fff;border:none;border-radius:22px;padding:8px 18px;box-shadow:0 4px 0 #f4d3bf;cursor:pointer;}
+.replay-intro:active{transform:translateY(3px);box-shadow:0 1px 0 #f4d3bf;}
+/* ===== 인트로 손그림 일러스트 장면 (SVG) ===== */
+.intro-art.has-scene{min-height:0;display:block;margin-bottom:14px;}
+.intro-art .scene{width:100%;height:auto;display:block;border-radius:22px;box-shadow:0 6px 16px rgba(60,40,90,.22);}
+.scene .tw{animation:twinkle 2.4s ease-in-out infinite;}
+.scene .t2{animation-delay:.7s;}
+.scene .t3{animation-delay:1.3s;}
+@keyframes twinkle{0%,100%{opacity:1}50%{opacity:.3}}
+.scene .env{animation:envFloat 4s ease-in-out infinite;}
+.scene .e2{animation-delay:1.1s;}
+@keyframes envFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.scene .hani{animation:haniBob 2.6s ease-in-out infinite;transform-box:fill-box;transform-origin:center bottom;}
+@keyframes haniBob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-3px) rotate(3deg)}}
+/* 인트로 2페이지: 글자가 편지에서 떠올라 사라지는 애니메이션(방향 명확히) */
+.scene .vanish{animation:vanish 2.6s ease-in infinite backwards;}
+.scene .vd2{animation-delay:.65s;}
+.scene .vd3{animation-delay:1.3s;}
+.scene .vd4{animation-delay:1.95s;}
+@keyframes vanish{0%{opacity:0;transform:translate(0,10px)}15%{opacity:.9}65%{opacity:.35}100%{opacity:0;transform:translate(14px,-30px)}}
+/* 인트로 2페이지: 편지지의 글자가 한 글자씩 지워지듯 사라짐(있다가 사라지는 느낌) */
+/* 한 번만 천천히 사라지고 텅 빈 채로 멈춤(반복 X) — "있다가 사라진다" */
+.scene .fade{animation:fadeaway 4.5s ease-out both;}
+@keyframes fadeaway{0%,30%{opacity:1;transform:translate(0,0)}100%{opacity:0;transform:translate(4px,-8px)}}
+/* 인트로 2페이지: 글자가 사라질 즈음 하니 머리 위 느낌표가 번뜩 팝업(반짝 포함) */
+.scene .pop{animation:popin .55s ease-out both;animation-delay:3.5s;transform-box:fill-box;transform-origin:center;}
+@keyframes popin{0%{opacity:0;transform:scale(.2)}55%{opacity:1;transform:scale(1.3)}78%{transform:scale(.9)}100%{opacity:1;transform:scale(1)}}
+/* 인트로 1페이지: 편지가 우체통에서 날아올라 멀리 배달됨(보내주는 곳) */
+.scene .send{animation:send 3.6s ease-in infinite backwards;}
+.scene .sd2{animation-delay:1.2s;}
+.scene .sd3{animation-delay:2.4s;}
+@keyframes send{0%{opacity:0;transform:translate(0,0)}12%{opacity:1}80%{opacity:1}100%{opacity:0;transform:translate(100px,-72px)}}
+/* 인트로 3페이지: 글자 친구들이 수풀 뒤에서 빼꼼빼꼼 숨바꼭질 */
+.scene .peek{animation:peek 2.8s ease-in-out infinite;}
+.scene .pk2{animation-delay:.95s;}
+.scene .pk3{animation-delay:1.9s;}
+@keyframes peek{0%,100%{transform:translateY(20px)}42%,60%{transform:translateY(0)}}
+/* 인트로 4페이지: 하니가 한쪽 날개를 흔들며 인사(반짝과 함께) */
+.scene .wave{animation:wave .85s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 88%;}
+@keyframes wave{0%,100%{transform:rotate(30deg)}50%{transform:rotate(58deg)}}
+/* 인트로 3페이지: 하니가 좌우로 두리번거리며 찾기 */
+.scene .search{animation:search 3.2s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%;}
+@keyframes search{0%,100%{transform:rotate(-8deg)}25%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}75%{transform:rotate(8deg)}}
+/* 인트로 5페이지: 빛나는 글자 글로우 맥동 (빛 조각은 .tw로 반짝) */
+.scene .glowpulse{animation:glowpulse 2s ease-in-out infinite;transform-box:fill-box;transform-origin:center;}
+@keyframes glowpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+/* 인트로 6페이지: 지도 점선 길이 별을 향해 흘러감(출발) */
+.scene .pathflow{animation:pathflow 1.4s linear infinite;}
+@keyframes pathflow{to{stroke-dashoffset:-22}}
+/* 인트로 3페이지(개선): 숲 나무 뒤/꽃밭 속/동굴 안에서 각각 다르게 빼꼼 */
+.scene .peekR{animation:peekR 2.9s ease-in-out infinite;}
+.scene .peekUp{animation:peekUp 2.9s ease-in-out infinite;animation-delay:.95s;}
+.scene .peekL{animation:peekL 2.9s ease-in-out infinite;animation-delay:1.9s;}
+@keyframes peekR{0%,100%{transform:translateX(-4px)}44%,62%{transform:translateX(26px)}}
+@keyframes peekUp{0%,100%{transform:translateY(22px)}44%,62%{transform:translateY(0)}}
+@keyframes peekL{0%,100%{transform:translateX(4px)}44%,62%{transform:translateX(-22px)}}
+/* 인트로 4페이지(개선): 인사 대신 두 주먹 불끈! 굳은 결심 */
+.scene .hani.determined{animation:pump 1.5s ease-in-out infinite;}
+@keyframes pump{0%,55%,100%{transform:scale(1) translateY(0)}12%{transform:scale(1.06) translateY(-4px)}28%{transform:scale(1) translateY(0)}}
+/* 인트로 5페이지(개선): 글자 친구들이 편지로 모여듦(편지가 다시 살아남) */
+.scene .gather{animation:gather 3.4s ease-in infinite;}
+.scene .gg2{animation-delay:.85s;}
+.scene .gg3{animation-delay:1.7s;}
+.scene .gg4{animation-delay:2.55s;}
+@keyframes gather{0%{transform:translate(0,0);opacity:0}16%{opacity:1}82%{opacity:1}100%{transform:translate(var(--dx),var(--dy));opacity:0}}
+/* 인트로 6페이지(개선): 하니가 달려나가는 역동적 출발(먼지 + 빠른 홉) */
+.scene .hani.dash{animation:dash .62s ease-in-out infinite;}
+@keyframes dash{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-7px) rotate(5deg)}}
+.scene .dust{animation:dust 1s ease-out infinite;}
+.scene .du2{animation-delay:.5s;}
+@keyframes dust{0%{opacity:0;transform:translateX(0) scale(.4)}25%{opacity:.55}100%{opacity:0;transform:translateX(-16px) scale(1.2)}}

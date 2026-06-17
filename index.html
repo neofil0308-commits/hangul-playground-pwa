@@ -21,18 +21,37 @@
 <div class="toast" id="toast"><div class="te" id="toastE">⭐</div><div class="tt" id="toastT">참 잘했어요!</div></div>
 
 <div class="wrap">
+  <section id="intro" class="screen">
+    <div class="intro-book">
+      <div class="intro-art" id="introArt" aria-hidden="true"></div>
+      <p class="intro-cap" id="introCap"></p>
+      <button class="intro-hear" id="introHear">🔊 다시 듣기</button>
+      <div class="intro-dots" id="introDots"></div>
+      <div class="intro-nav">
+        <button class="intro-prev" id="introPrev">◀</button>
+        <button class="intro-next" id="introNext">다음 ▶</button>
+      </div>
+      <button class="intro-skip" id="introSkip">건너뛰기</button>
+    </div>
+  </section>
+
   <section id="home" class="screen active">
     <header aria-label="하니의 한글 모험"><div class="mascot">🐥</div><div class="logo">하니의 한<b>글</b> 모험</div><div class="sub">한글 마을에 흩어진 글자 친구들을 찾아요</div></header>
+    <div class="home-intro-bar"><button class="replay-intro" id="replayIntro">📖 이야기 다시 보기</button></div>
     <div class="home-workbench" id="homeWorkbench" aria-label="iPad 기준 한글 모험 홈">
     <div class="mission" id="mission">
       <div class="story-hero" id="storyHero"><div class="story-face">🐥</div><div class="story-copy"><b>하니</b><span id="storyText">오늘의 글자 친구를 만나러 한글 마을로 떠나요!</span></div></div>
+      <div class="episode-banner" id="episodeBanner" aria-live="polite"></div>
       <h3>오늘의 모험 🎯</h3>
       <div class="mbar"><i id="mbarFill"></i></div>
       <button class="mrow" id="mrowLetter"><span class="mk" id="mkL">ㄱ</span><span class="mtx">글자 숲 <b id="mtL">ㄱ</b><small>숨어 있는 글자 친구를 만나요</small></span><span class="mck" id="mcL">○</span></button>
       <button class="mrow" id="mrowWord"><span class="mk" id="mkW">🦒</span><span class="mtx">단어 동산 <b id="mtW">기린</b><small>글자 친구가 좋아하는 단어를 찾아요</small></span><span class="mck" id="mcW">○</span></button>
       <button class="mrow" id="mrowPlay"><span class="mk">🔊</span><span class="mtx">소리 동굴 <b>듣고 찾기</b><small>소리를 듣고 문을 열어요</small></span><span class="mck" id="mcP">○</span></button>
       <div class="alldone" id="missionDone" style="display:none">한글 마을에 빛이 하나 켜졌어요! 모험 보상: 하니가 스티커를 준비했어요 🎉</div>
+      <button class="next-letter" id="nextLetterBtn" style="display:none">다음 글자 만나러 가기 ⭐</button>
+      <section class="star-album" id="starAlbum" aria-label="별빛 앨범"></section>
       <section class="story-world" id="storyWorld" aria-label="한글 마을 이야기">
+        <details class="parent-zone"><summary>👨‍👩‍👧 부모님 보기 · 이야기와 진행 설명</summary>
         <h4>한글 마을 이야기</h4>
         <p class="story-prologue" id="storyPrologue">어느 아침, 한글 마을의 별빛 우체국에 도착한 편지가 모두 하얗게 변했어요. 하니는 잃어버린 숨은 이름표와 빛 조각을 찾아 마을의 주문을 다시 깨우려 해요.</p>
         <details class="story-arc" id="storyArc" open>
@@ -63,6 +82,7 @@
           <button class="chapter-step" id="chapterWord">2장 단어 동산의 꽃</button>
           <button class="chapter-step" id="chapterPlay">3장 소리 동굴의 문</button>
         </div>
+        </details>
       </section>
     </div>
     <section class="adventure-map" id="adventureMap" aria-label="한글 마을 지도">
@@ -78,6 +98,8 @@
     </section>
     </div>
   </section>
+
+  <div class="milestone-pop" id="milestonePop" style="display:none" aria-live="polite"></div>
 
   <section id="letters" class="screen"><div class="section-title">글자 친구들</div><div class="hint">탭을 고르고 카드를 누르면 자세히 볼 수 있어요 👀</div>
     <div class="letter-tabs" id="letterTabs"></div>
@@ -187,6 +209,7 @@
 <script src="app-learning.js"></script>
 <script src="app-writing.js"></script>
 <script src="app-games.js"></script>
+<script src="app-episode.js"></script>
 <script>
 let RATE=parseFloat(lsGet('hp_rate','0.8'))||0.8;
 let koVoice=null,koVoices=[];
@@ -265,6 +288,8 @@ initWritingScreens();
 
 initGameScreens();
 
+initEpisodeScreens();
+
 const voicePick=document.getElementById('voicePick');
 VOICES.forEach(vc=>{const b=document.createElement('button');if(vc[1]===VOICE)b.className='on';b.textContent=vc[0];b.addEventListener('click',()=>{VOICE=vc[1];lsSet('hp_voice',VOICE);document.querySelectorAll('#voicePick button').forEach(x=>x.classList.remove('on'));b.classList.add('on');probeMp3();setTimeout(()=>speak('안녕'),250);});voicePick.appendChild(b);});
 const speedPick=document.getElementById('speedPick');
@@ -298,8 +323,11 @@ function renderMission(){
   updateQuestRoute();
   updateStoryWorld();
   renderHaniReaction();
+  renderEpisodeBanner();
+  renderStarAlbum();
+  var nb=document.getElementById('nextLetterBtn');if(nb)nb.style.display=(n===3&&progress.idx<EPISODE_PATH.length-1)?'block':'none';
   twemojify(document.getElementById('mission'));
-  if(n===3&&!mission.rewarded){mission.rewarded=true;saveMission();updateStreak();setTimeout(function(){confetti();earnSticker();},350);}
+  if(n===3&&!mission.rewarded){mission.rewarded=true;saveMission();updateStreak();onEpisodeComplete();setTimeout(function(){confetti();earnSticker();},350);}
 }
 function openTodayLetter(){var isV=VOWS.indexOf(todayLetter)>=0;lettersTab=isV?'vow':'con';var tabs=document.querySelectorAll('#letterTabs button');tabs.forEach(function(x){x.classList.remove('con-on','vow-on');});if(tabs[isV?1:0])tabs[isV?1:0].classList.add(lettersTab+'-on');renderLetters();openLetterDetail(todayLetter);}
 /* 부모 잠금 + 리포트 */

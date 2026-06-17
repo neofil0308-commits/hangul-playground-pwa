@@ -1,11 +1,14 @@
 # 한글 놀이터 작업일지
 
-> 마지막 업데이트: 2026-06-15 19:01
+> 마지막 업데이트: 2026-06-17 00:10
 
 ## 현재 상태
 
 - 정적 PWA 형태의 한글 학습 앱입니다.
-- 앱 핵심은 `index.html`의 HTML/JavaScript, `styles.css`의 스타일, `app-data.js`의 정적 데이터, `app-state.js`의 미션 상태 로직, `app-listen.js`의 듣고 찾기 로직, `app-router.js`의 화면 이동/메뉴 초기화, `app-adventure.js`의 지도/스토리 렌더링, `app-learning.js`의 글자/단어 학습 로직, `app-writing.js`의 쓰기/획순 로직, `app-games.js`의 게임 로직으로 분리되었습니다.
+- 앱 핵심은 `index.html`의 HTML/JavaScript, `styles.css`의 스타일, `app-data.js`의 정적 데이터, `app-state.js`의 미션 상태 로직, `app-listen.js`의 듣고 찾기 로직, `app-router.js`의 화면 이동/메뉴 초기화, `app-adventure.js`의 지도/스토리 렌더링, `app-learning.js`의 글자/단어 학습 로직, `app-writing.js`의 쓰기/획순 로직, `app-games.js`의 게임 로직, `app-episode.js`의 에피소드 진행/별빛 앨범 렌더링으로 분리되었습니다.
+- 핵심 경험이 `한글 떼기 커리큘럼(별빛 우체국 8막 여정)`으로 확장되었습니다. 스토리 진행 = 실제 한글 학습 순서이며, 만 4세·자모 백지 기준으로 한 화 = 글자 1개, 관대한 익힘 판정, 빠른 성취 맛보기로 설계되었습니다.
+- 첫 실행 시 `인트로 그림책`(6장)이 나옵니다. 손그림 SVG 일러스트(종이 그레인 질감, 일관된 하니 캐릭터)에 장면별 의미 있는 CSS 애니메이션이 들어가고, 하니가 edge-tts 신경망 음성(`audio/narr/intro1~6.mp3`)으로 읽어줍니다. 글 못 읽는 4세를 위해 그림+소리 중심, 줄글 스토리는 `부모님 보기`로 접힙니다.
+- service worker는 개발 중 캐시 꼬임을 막기 위해 `network-first`로 동작합니다(온라인이면 항상 최신, 오프라인이면 캐시 폴백).
 - 오디오 MP3 리소스와 PWA manifest/service worker가 포함되어 있습니다.
 - 현재 중심 경험은 `하니의 한글 모험`입니다.
 - iPad 기준 홈 화면, 한글 마을 지도, 오늘의 모험, 한글 마을 이야기, 이야기 줄기, 스토리 바이블, 하니 반응까지 1차 고도화가 완료되었습니다.
@@ -62,11 +65,35 @@
 - [x] 글자/단어 학습 화면 로직을 `app-learning.js`로 분리
 - [x] 쓰기/획순 로직을 `app-writing.js`로 분리
 - [x] 남은 게임 로직을 `app-games.js`로 분리
-- [ ] 보조 화면/설정/부모 리포트 또는 에피소드형 스토리 확장 중 다음 우선순위 결정
+- [x] 보조 화면/설정/부모 리포트 또는 에피소드형 스토리 확장 중 다음 우선순위 결정 → 에피소드형 스토리 확장(한글 떼기 커리큘럼) 선택
+- [x] 하니 스토리를 여러 날 이어지는 에피소드/저장 진행도로 확장 (1막 모음·2막 자음 글자형 에피소드 + 별빛 앨범 + 빠른 성취 맛보기)
+- [ ] 후속 막의 특화 에피소드 구현: 3막 글자 공방(자모 결합), 7막 단어 마을(단어 읽기), 8막 이야기 책(문장 읽기) — 현재는 글자형 막(1·2·4·5·6)만 엔진이 진행, 비글자형 막은 데이터만 정의됨
 - [ ] iPad 실기기에서 홈 화면 설치, standalone 실행, 오디오 재생, service worker 캐시 확인
-- [ ] 하니 스토리를 여러 날 이어지는 에피소드/저장 진행도로 확장
 
 ## 작업 이력
+
+### 2026-06-16 ~ 2026-06-17 (Telegram) — 그림책 모드 + 인트로 그림책
+
+- 텍스트 위주 화면이 글 못 읽는 만 4세에게 안 맞는다는 피드백 → 핵심 경험을 `그림+소리 중심`으로 전환.
+- 홈에 `그림책 페이지`(큰 글자+그림+하니 음성)와 `진행 그림길`(징검다리) 추가, 줄글 스토리는 `부모님 보기`(접힘)로 이동.
+- `인트로 그림책` 신설: 첫 실행 시 6장(별빛 우체국→편지 하얘짐→글자 친구 숨음→하니 등장→글자 모아 편지 살리기→지도 출발)을 하니가 음성으로 읽어주며 넘김. 본 뒤엔 `hp_intro_seen` 저장, 홈의 `이야기 다시 보기`로 재생.
+- 인트로 6장을 손그림 SVG 일러스트로 제작(레퍼런스: 텍스처드 그림책). 종이 그레인(feTurbulence), 한국 우체국(우체국 간판+제비), 일관된 하니 캐릭터. 장면별 의미 있는 CSS 애니메이션: 편지 배달(send), 글자 지워짐+느낌표 번뜩(fade/pop), 숲·동산·동굴 빼꼼(peekR/Up/L)+하니 두리번(search), 두 주먹 불끈(determined pump), 글자 친구 편지로 모여듦(gather), 역동적 출발(dash+dust+pathflow).
+- 인트로 내레이션을 기기 TTS(기계음)에서 edge-tts 신경망 음성(`ko-KR-SunHiNeural`)으로 교체. `audio/narr/intro1~6.mp3` 사전 생성, MP3 없으면 기기 TTS 폴백.
+- service worker를 cache-first → `network-first`로 변경(개발 중 옛 캐시가 새 파일과 섞여 깨지는 문제 해결). 캐시 `hangul-playground-v34`.
+- 회귀 테스트 `tests/episode_progress_check.py`에 그림책/인트로/내레이션 검증 추가. 전체 76개 통과, 6개 페이지 애니메이션 실제 경로 작동 확인.
+
+### 2026-06-16 18:10 (Telegram)
+
+- 에피소드형 스토리 확장 1차 완료: 핵심 경험을 `한글 떼기 커리큘럼(별빛 우체국 8막 여정)`으로 전환.
+- 사용자와 방향 확정: 스토리 클리어 = 실제 한글 떼기. 대상 만 4세·자모 백지 → 한 화 = 글자 1개, 관대한 익힘 판정, 빠른 성취형(맛보기) 선택.
+- `app-data.js`에 커리큘럼 데이터 추가: `CURRICULUM`(8막), `STORY_MILESTONES`(빠른 성취 맛보기), `EPISODE_PATH`(진행 경로 50스텝), 순수 헬퍼 `isMasteredRec`/`pendingMilestone`, 조회용 `ALL_LETTER_OBJS`.
+- `app-state.js`에 진행도 상태 추가: `progress`(idx/mastery/album/milestones)와 `saveProgress`, `curEpisode`, `curLetterObj`, `masteredLetters`, `markLetterProgress`, `addAlbumStar`, `advanceEpisode`, `checkMilestone`, `markMilestoneShown`.
+- `pickToday`를 날짜 랜덤에서 커리큘럼 진행 포인터 기반으로 변경. `loadMission`을 날짜가 아닌 에피소드(`mission.ep!==progress.idx`)에 묶고, `completeMission`이 `markLetterProgress(part)`로 글자별 익힘을 누적하도록 함.
+- 렌더링 모듈 `app-episode.js` 신설: 에피소드 배너, 별빛 앨범, 빠른 성취 맛보기 팝업, 다음 글자 진행(`goNextLetter`), `initEpisodeScreens`.
+- `index.html`에 DOM 추가(`episodeBanner`, `nextLetterBtn`, `starAlbum`, `milestonePop`)와 훅 연결(`renderEpisodeBanner`/`renderStarAlbum`, 완료 시 `onEpisodeComplete()`), `app-episode.js` 로드/`initEpisodeScreens()` 호출. `styles.css`에 관련 스타일 추가.
+- service worker 캐시를 `hangul-playground-v32`로 올리고 `./app-episode.js`를 precache에 추가(기존 테스트의 캐시 버전 핀도 v32로 보정).
+- 회귀 테스트 `tests/episode_progress_check.py` 추가(RED→GREEN): 정적 토큰/DOM/캐시 검증 + node로 진행 경로 순서·익힘 판정·맛보기 로직 실행 검증.
+- 검증: 전체 정적 테스트 74개 통과, JS 문법 체크(외부 9개 + inline) 통과. 브라우저 smoke: 배너 `1막 모음의 빛 · 제1화 ㅏ`, ㅏ 완료→별빛 앨범 별 적립→다음 글자 진행, ㅏ+ㅣ 마스터 시 `아이` 맛보기, 새로고침 후 진행도 유지 확인. 콘솔 오류는 favicon 404(무해)만.
 
 ### 2026-06-15 19:01 (Hermes / Telegram)
 

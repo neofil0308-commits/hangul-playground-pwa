@@ -13,6 +13,7 @@
 - `app-learning.js` — 글자 친구/글자 상세/단어 공부 화면 로직
 - `app-writing.js` — 미니 따라쓰기, 글자 만들기, 문장 쓰기, 획순 따라쓰기 로직
 - `app-games.js` — 짝 맞추기와 소리 퀴즈/선 잇기 게임 로직
+- `app-episode.js` — 별빛 우체국 에피소드 진행 배너, 별빛 앨범, 빠른 성취 맛보기 렌더링
 - `styles.css` — 앱 전체 스타일, iPad/PWA 레이아웃, 스토리 UI 스타일
 - `manifest.json` — iPad/PWA 설치 설정
 - `sw.js` — 오프라인 캐시용 service worker
@@ -54,6 +55,16 @@ http://<PC_LAN_IP>:5187/index.html
 - 한글 마을 지도:
   - `글자 숲`, `글자 공방`, `단어 동산`, `쓰기 연못`, `카드 광장`, `소리 동굴`, `듣기 전망대`, `스티커 집`
 - 진행 상태에 따라 지도/경로/챕터가 `현재`, `완료`, `다음` 상태로 바뀝니다.
+
+### 한글 떼기 커리큘럼 (별빛 우체국 8막 여정)
+
+스토리 진행 자체가 실제 한글 학습 순서입니다. 마지막 막을 깨면 아이가 편지를 스스로 읽음(= 한글 뗌)을 목표로 합니다. (대상: 만 4세·자모 백지 기준)
+
+- 8막 여정: ① 모음의 빛(기본 모음) → ② 자음 친구들(기본 자음) → ③ 글자 공방(자모 결합) → ④ 받침의 문 → ⑤ 쌍둥이 소리(쌍자음) → ⑥ 숨은 모음(복잡 모음) → ⑦ 단어 마을 → ⑧ 이야기 책(문장 읽기·졸업)
+- 한 화(에피소드) = 글자 1개. `오늘의 글자`는 날짜 랜덤이 아니라 커리큘럼 진행 포인터(`progress.idx`)에서 뽑습니다.
+- 익힘 판정(관대): 글자 만나기 + 카드 짝맞추기 + 소리 퀴즈 정답 셋을 채우면 그 글자가 마스터되어 별빛 앨범에 별이 켜집니다.
+- 빠른 성취형: 특정 글자를 익히면 곧장 진짜 말 맛보기(아이·오이·엄마 등)를 음성과 함께 띄워 동기를 줍니다.
+- 한 글자를 다 깨면 `다음 글자 만나러 가기`로 진행되고, 진행도는 localStorage(`hp_progress`)에 저장되어 다시 켜면 이어집니다.
 
 ### 스토리 경험
 
@@ -125,10 +136,11 @@ try:
     subprocess.run(['node','--check','app-learning.js'], check=True)
     subprocess.run(['node','--check','app-writing.js'], check=True)
     subprocess.run(['node','--check','app-games.js'], check=True)
+    subprocess.run(['node','--check','app-episode.js'], check=True)
     subprocess.run(['node','--check',fd.name], check=True)
 finally:
     os.unlink(fd.name)
-print(f'js syntax ok: app-data.js + app-state.js + app-listen.js + app-router.js + app-adventure.js + app-learning.js + app-writing.js + app-games.js + {len(scripts)} inline bytes')
+print(f'js syntax ok: app-data.js + app-state.js + app-listen.js + app-router.js + app-adventure.js + app-learning.js + app-writing.js + app-games.js + app-episode.js + {len(scripts)} inline bytes')
 PY
 ```
 

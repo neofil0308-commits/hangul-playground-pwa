@@ -23,11 +23,34 @@ var ALL_LETTERS=CONS.concat(VOWS);
 var ALL_WORDS=[];Object.values(WORDS).forEach(function(a){a.forEach(function(w){ALL_WORDS.push(w);});});
 function hashStr(s){var h=5381;for(var i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h;}
 
+// ===== 커리큘럼 진행도 + 별빛 앨범 =====
+// idx: 현재 에피소드(글자) 위치, mastery: 글자별 익힘 기록, album: 켠 별 글자, milestones: 띄운 맛보기.
+var progress=lsJSON('hp_progress',{idx:0,mastery:{},album:[],milestones:[]});
+function saveProgress(){lsSetJSON('hp_progress',progress);}
+function curEpisode(){return EPISODE_PATH[Math.min(progress.idx,EPISODE_PATH.length-1)];}
+function curLetterObj(){var ep=curEpisode();if(!ep||ep.type!=='letter')return null;return ALL_LETTER_OBJS[ep.ch]||null;}
+function masteredLetters(){return Object.keys(progress.mastery).filter(function(ch){return isMasteredRec(progress.mastery[ch]);});}
+function markLetterProgress(part){var ep=curEpisode();if(!ep||ep.type!=='letter')return;
+  var rec=progress.mastery[ep.ch]||(progress.mastery[ep.ch]={met:false,matched:false,quizzed:false});
+  if(part==='letter')rec.met=true;else if(part==='word')rec.matched=true;else if(part==='play')rec.quizzed=true;
+  saveProgress();}
+function letterDone(){var ep=curEpisode();if(!ep||ep.type!=='letter')return false;return isMasteredRec(progress.mastery[ep.ch]);}
+function addAlbumStar(){var ep=curEpisode();if(!ep||ep.type!=='letter')return;if(progress.album.indexOf(ep.ch)<0){progress.album.push(ep.ch);saveProgress();}}
+function advanceEpisode(){if(progress.idx<EPISODE_PATH.length-1){progress.idx++;saveProgress();}}
+function checkMilestone(){return pendingMilestone(masteredLetters(),progress.milestones);}
+function markMilestoneShown(word){if(progress.milestones.indexOf(word)<0){progress.milestones.push(word);saveProgress();}}
+
 var todayLetter=null,todayWord=null;
-function pickToday(){var h=hashStr(MD);todayLetter=ALL_LETTERS[h%ALL_LETTERS.length];todayWord=ALL_WORDS[Math.floor(h/11)%ALL_WORDS.length];}
+// 오늘의 글자/단어는 날짜 랜덤이 아니라 커리큘럼 진행 포인터에서 뽑는다.
+function pickToday(){
+  var lo=curLetterObj();
+  if(lo){todayLetter=lo;todayWord=[lo.word||'',lo.emoji||''];}
+  else{var h=hashStr(MD);todayLetter=ALL_LETTERS[h%ALL_LETTERS.length];todayWord=[todayLetter.word||'',todayLetter.emoji||''];}
+}
 
 var mission=lsJSON('hp_mission',{});
-function loadMission(){pickToday();if(mission.date!==MD){mission={date:MD,letter:false,word:false,play:false,rewarded:false};lsSetJSON('hp_mission',mission);}}
+// 미션은 날짜가 아니라 현재 에피소드(글자)에 묶인다. 글자가 바뀌면 새 미션, 같은 글자는 여러 날 이어감.
+function loadMission(){pickToday();if(mission.ep!==progress.idx){mission={ep:progress.idx,date:MD,letter:false,word:false,play:false,rewarded:false};lsSetJSON('hp_mission',mission);}}
 function saveMission(){lsSetJSON('hp_mission',mission);}
 function updateStreak(){if(lastDone===MD)return;streak=(lastDone===yKey())?streak+1:1;lastDone=MD;lsSet('hp_streak',streak);lsSet('hp_lastdone',lastDone);}
-function completeMission(part){if(!mission||mission[part])return;mission[part]=true;mission.lastReaction=part;saveMission();showHaniReaction(part);renderMission();}
+function completeMission(part){if(!mission||mission[part])return;mission[part]=true;mission.lastReaction=part;markLetterProgress(part);saveMission();showHaniReaction(part);renderMission();}

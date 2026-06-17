@@ -48,4 +48,4 @@ def test_router_keeps_route_side_effects_for_existing_screens():
 
 def test_service_worker_precaches_external_router_file_with_new_cache_version():
     assert "./app-router.js" in SW
-    assert "hangul-playground-v31" in SW
+    assert "hangul-playground-v34" in SW
