@@ -21,11 +21,19 @@ const modal=document.getElementById('wordModal'),mEmoji=document.getElementById(
 let curWord='';
 // 자모 한 개의 읽는 이름/소리 (이응, 오 …)
 function jamoSay(j){var c=CONS.find(function(x){return x.ch===j;});if(c)return c.name;var v=VOWS.find(function(x){return x.ch===j;});if(v)return v.sound;return j;}
-// 단어를 풀어서 소리로 설명: 자모 → 음절 → … → 단어 (예: 이응·오·오·이응·이·이·오이)
+// 단어를 가르치듯 풀어서 설명: "이응에 오를 더하면 오, 이응에 이를 더하면 이, 오이"
+// CVC는 "…를 더하면 가, [받침]받침을 더하면 강". 연결어/음절은 신경망 MP3로 자연스럽게 이어짐.
 function explainWord(word){
   try{
-    var groups=decompose(word);var seq=[];
-    [...word].forEach(function(syl,i){var g=groups[i]||[syl];g.forEach(function(j){seq.push(jamoSay(j));});seq.push(syl);});
+    var seq=[];
+    [...word].forEach(function(syl){
+      var code=syl.charCodeAt(0)-0xAC00;
+      if(code<0||code>11171){seq.push(syl);return;}
+      var i=Math.floor(code/588),m=Math.floor((code%588)/28),f=code%28;
+      seq.push(jamoSay(CHO[i]));seq.push('에');seq.push(jamoSay(JUNG[m]));seq.push('를 더하면');
+      if(f>0){seq.push(String.fromCharCode(0xAC00+i*588+m*28));seq.push(jamoSay(JONG[f]));seq.push('받침을 더하면');}
+      seq.push(syl);
+    });
     seq.push(word);
     if(typeof speakSeq==='function')speakSeq(seq);else if(typeof speak==='function')speak(word);
   }catch(e){if(typeof speak==='function')speak(word);}

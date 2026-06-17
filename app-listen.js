@@ -12,29 +12,32 @@ function listenPool(){
   if(typeof LETTER_WORDS!=='undefined')Object.keys(LETTER_WORDS).forEach(function(k){LETTER_WORDS[k].forEach(function(w){if(!seen[w[0]]){seen[w[0]]=1;out.push(w);}});});
   return out;
 }
+function wordsStartingWith(ch){return ((typeof LETTER_WORDS!=='undefined')&&LETTER_WORDS[ch])||[];}
+// 단계 상승: 처음엔 글자(ㅓ) 찾기 → 2개 맞히면 'ㅓ로 시작하는 단어'(어묵·어항…) 찾기
 function newListenQuestion(){
   listenLock=false;
   var ch=todayCh();
+  var stage=(listenScore<2)?'letter':'word';
+  listenMode=stage;
   var box=document.getElementById('listenOpts');if(box)box.innerHTML='';
-  var fb=document.getElementById('lfeedback');if(fb)fb.textContent='';
-  if(listenMode==='letter'){
-    var pool=listenPool().filter(function(o){return o.glyph!==ch;});
-    var opts=shuffle([{glyph:ch,say:todaySay()}].concat(shuffle(pool).slice(0,Math.max(1,listenN-1))));
+  var fb=document.getElementById('lfeedback');
+  if(stage==='letter'){
+    var others=shuffle((typeof ALL_LETTERS!=='undefined'?ALL_LETTERS:[]).filter(function(x){return x.ch!==ch;})).slice(0,Math.max(1,listenN-1)).map(function(x){return{glyph:x.ch,say:x.name||x.sound};});
+    var opts=shuffle([{glyph:ch,say:todaySay()}].concat(others));
     listenTarget={glyph:ch,say:todaySay(),isLetter:true};
     opts.forEach(function(o){var b=document.createElement('button');b.className='lopt';b.innerHTML='<div class="lglyph">'+o.glyph+'</div>';b.addEventListener('click',function(){checkListen(b,o);});if(box)box.appendChild(b);});
-    if(box)twemojify(box);setTimeout(function(){speak(todaySay());},250);return;
+    if(box)twemojify(box);if(fb)fb.textContent='소리와 같은 글자를 찾아요';setTimeout(function(){speak(todaySay());},250);return;
   }
-  // word 모드: 오늘의 글자가 '들어간' 단어 찾기
+  // word 단계: ch로 시작하는 단어 찾기 (오답 보기는 ch가 없는 단어)
+  var starts=wordsStartingWith(ch);var startKeys=starts.map(function(w){return w[0];});
   var all=listenPool();
-  var withCh=shuffle(all.filter(function(w){return wordHasLetter(w[0],ch);}));
-  var without=shuffle(all.filter(function(w){return !wordHasLetter(w[0],ch);}));
-  if(!withCh.length||!without.length){listenMode='letter';return newListenQuestion();}
-  var target=withCh[0];
-  var opts2=shuffle([target].concat(without.slice(0,Math.max(1,listenN-1))));
+  var distract=shuffle(all.filter(function(w){return startKeys.indexOf(w[0])<0&&!wordHasLetter(w[0],ch);}));
+  var target=starts.length?shuffle(starts.slice())[0]:null;
+  if(!target||distract.length<1){listenScore=Math.min(listenScore,1);listenMode='letter';return newListenQuestion();}
+  var opts2=shuffle([target].concat(distract.slice(0,Math.max(1,listenN-1))));
   listenTarget={word:target[0],emoji:target[1],say:target[0]};
   opts2.forEach(function(w){var b=document.createElement('button');b.className='lopt';b.dataset.word=w[0];b.innerHTML='<div class="lglyph">'+w[1]+'</div><div class="lwd">'+w[0]+'</div>';b.addEventListener('click',function(){checkListen(b,{word:w[0],emoji:w[1]});});if(box)box.appendChild(b);});
-  if(box)twemojify(box);
-  setTimeout(function(){speak(ch);},250);
+  if(box)twemojify(box);if(fb)fb.textContent=ch+'로 시작하는 단어를 찾아요';setTimeout(function(){speak(ch);},250);
 }
 function startListenRound(){listenScore=0;var s=document.getElementById('lscore');if(s)s.textContent='0 / '+LISTEN_LEN;newListenQuestion();}
 function checkListen(btn,o){
