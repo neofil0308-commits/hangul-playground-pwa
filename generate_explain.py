@@ -40,9 +40,18 @@ def explain_text(word):
             parts.append(f"{say(cho)}에 {say(jung)}를 더하면 {ch}")
     return ", ".join(parts) + ", " + word
 
-# 데이터: LETTER_WORDS + WORDS (app-data.js 기준). 단어 추가 시 여기에 추가하고 재실행.
-LETTER_WORDS = "기린 고양이 김밥 나비 나무 눈사람 다람쥐 도넛 닭 로봇 라면 레몬 모자 말 멜론 바나나 비행기 별 사과 수박 사자 오리 우산 아기 자동차 지렁이 자전거 치즈 책 칫솔 코끼리 콩 케이크 토끼 토마토 튤립 포도 피아노 펭귄 호랑이 해 하마 아빠 아이스크림 야구 야자수 양 어항 엄마 어린이 여우 여름 연필 오이 오렌지 요요 요리 욕조 우유 우주 유니콘 유령 유모차 음악 음식 응애 이빨 이불 이모".split()
-WORDS = "강아지 토끼 곰 여우 딸기 빵 사탕 기차 배 신발 시계".split()
+# 단어는 app-data.js의 LETTER_WORDS + WORDS에서 자동 추출 (단어 추가 = 데이터만 고치고 재실행)
+import re
+def words_from_appdata():
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "app-data.js")
+    txt = open(path, encoding="utf-8").read()
+    out = set()
+    for marker in ["LETTER_WORDS", "WORDS"]:
+        m = re.search(r"const " + marker + r"\s*=\s*\{(.*?)\n\};", txt, re.S)
+        if m:
+            for w in re.findall(r"\['([가-힣]+)'", m.group(1)):
+                out.add(w)
+    return sorted(out)
 
 def key_of(t):
     return '-'.join(format(ord(c), 'x') for c in t)
@@ -59,7 +68,7 @@ async def synth(text, voice, pitch, out_path):
     return False
 
 async def main():
-    words = sorted(set(LETTER_WORDS + WORDS))
+    words = words_from_appdata()
     print("words:", len(words), "x voices:", list(SPEAKERS))
     for vkey, cfg in SPEAKERS.items():
         d = os.path.join(ROOT, vkey); os.makedirs(d, exist_ok=True)
@@ -74,7 +83,8 @@ async def main():
         print(f"[{vkey}] made {made}, skipped {skipped}")
     print("done")
 
-if sys.platform.startswith("win"):
-    try: asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-    except Exception: pass
-asyncio.run(main())
+if __name__ == "__main__":
+    if sys.platform.startswith("win"):
+        try: asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+        except Exception: pass
+    asyncio.run(main())

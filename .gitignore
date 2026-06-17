@@ -3,3 +3,4 @@ __pycache__/
 .tmp_*
 .DS_Store
 Thumbs.db
+audio/.normalized_v1

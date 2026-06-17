@@ -42,15 +42,31 @@ INIT = [0,2,3,5,6,7,9,11,12,14,15,16,17,18]
 MED  = [0,2,4,6,8,12,13,17,18,20]
 FIN  = [0,1,4,7,8,16,17,19,21]
 
+import re
+def words_from_appdata():
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "app-data.js")
+    try:
+        txt = open(path, encoding="utf-8").read()
+    except Exception:
+        return []
+    out = set()
+    for marker in ["LETTER_WORDS", "WORDS"]:
+        m = re.search(r"const " + marker + r"\s*=\s*\{(.*?)\n\};", txt, re.S)
+        if m:
+            for w in re.findall(r"\['([가-힣]+)'", m.group(1)):
+                out.add(w)
+    return sorted(out)
+
 def build_text_set():
     s = set()
-    for grp in (CONS_NAMES, VOW_SOUNDS, EX_WORDS, WORDS, SENT, BATCHIM, EXTRA):
+    appwords = words_from_appdata()
+    for grp in (CONS_NAMES, VOW_SOUNDS, EX_WORDS, WORDS, SENT, BATCHIM, EXTRA, appwords):
         s.update(grp)
     for i in INIT:
         for m in MED:
             for f in FIN:
                 s.add(chr(0xAC00 + i*588 + m*28 + f))
-    for w in EX_WORDS + WORDS:
+    for w in EX_WORDS + WORDS + appwords:
         for ch in w:
             s.add(ch)
     return sorted(s)
