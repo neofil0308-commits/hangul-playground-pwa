@@ -61,4 +61,4 @@ def test_games_file_keeps_match_quiz_reward_and_audio_tokens():
 
 def test_service_worker_precaches_external_games_file_with_new_cache_version():
     assert "./app-games.js" in SW
-    assert "hangul-playground-v34" in SW
+    assert "hangul-playground-v35" in SW

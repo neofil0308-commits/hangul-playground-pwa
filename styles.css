@@ -553,3 +553,19 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
 .scene .dust{animation:dust 1s ease-out infinite;}
 .scene .du2{animation-delay:.5s;}
 @keyframes dust{0%{opacity:0;transform:translateX(0) scale(.4)}25%{opacity:.55}100%{opacity:0;transform:translateX(-16px) scale(1.2)}}
+/* 듣고찾기: 오답 시 정답 단어 강조(반복학습) */
+.lopt.reveal{outline:4px solid var(--quiz);outline-offset:2px;animation:pulse 0.7s ease-in-out 2;}
+.lopt .lwd{margin-top:2px;font-size:.95rem;color:var(--ink);}
+/* 글자 마무리 정리(recap) 팝업 */
+.recap-pop{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;background:rgba(60,40,90,.4);padding:20px;}
+.recap-card{background:#fffdf6;border-radius:30px;padding:24px 22px;max-width:340px;width:100%;text-align:center;box-shadow:0 16px 44px rgba(90,60,30,.35);border:4px solid var(--quiz);}
+.recap-title{font-size:1.3rem;color:var(--ink);}
+.recap-title b{font-size:1.7rem;color:var(--con-d);}
+.recap-big{font-size:4.2rem;color:var(--con-d);line-height:1.1;margin:4px 0;text-shadow:0 3px 0 #ffe1ab;}
+.recap-words{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:8px 0 6px;}
+.recap-words .recap-w{display:flex;flex-direction:column;align-items:center;font-size:.95rem;color:#7a6248;}
+.recap-words .recap-w i{font-size:2rem;font-style:normal;}
+.recap-review{margin:10px 0 4px;font-size:1rem;color:#8a7250;background:#f3ecdd;border-radius:16px;padding:8px 12px;}
+.recap-review b{font-size:1.3rem;color:var(--vow-d);}
+.recap-next{margin-top:14px;font-family:'Jua',sans-serif;font-size:1.2rem;color:#fff;background:var(--quiz);border:none;border-radius:26px;padding:13px 26px;box-shadow:0 6px 0 var(--quiz-d);cursor:pointer;}
+.recap-next:active{transform:translateY(5px);box-shadow:0 1px 0 var(--quiz-d);}

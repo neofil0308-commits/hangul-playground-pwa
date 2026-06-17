@@ -40,6 +40,12 @@ function advanceEpisode(){if(progress.idx<EPISODE_PATH.length-1){progress.idx++;
 function checkMilestone(){return pendingMilestone(masteredLetters(),progress.milestones);}
 function markMilestoneShown(word){if(progress.milestones.indexOf(word)<0){progress.milestones.push(word);saveProgress();}}
 
+// ===== 주제 풀: 게임이 랜덤 대신 '오늘의 글자(+이미 익힌 글자)'를 앞세워 쓰도록 =====
+// 오늘의 글자를 맨 앞에, 그 뒤로 이미 익힌 글자들. 게임은 여기서부터 채우고 모자라면 전체로 보충.
+function themeLetterChs(){var a=[];if(typeof todayLetter!=='undefined'&&todayLetter)a.push(todayLetter.ch);
+  (typeof masteredLetters==='function'?masteredLetters():[]).forEach(function(ch){if(a.indexOf(ch)<0)a.push(ch);});return a;}
+function themeWordList(){var ws=[],seen={};themeLetterChs().forEach(function(ch){(LETTER_WORDS[ch]||[]).forEach(function(w){if(!seen[w[0]]){seen[w[0]]=1;ws.push(w);}});});return ws;}
+
 var todayLetter=null,todayWord=null;
 // 오늘의 글자/단어는 날짜 랜덤이 아니라 커리큘럼 진행 포인터에서 뽑는다.
 function pickToday(){

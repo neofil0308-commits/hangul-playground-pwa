@@ -75,11 +75,31 @@ function showMilestone(m){
   setTimeout(function(){el.classList.remove('show');setTimeout(function(){el.style.display='none';},400);},2800);
 }
 // 한 글자(에피소드)를 다 깬 순간: 별 추가 + 그림길 갱신 + 맛보기 검사.
+// 글자 마무리 정리(recap) + 지난 글자 복습 — 글자를 다 익힌 뒤 한번 정리해 설명.
+function showRecap(){
+  var ep=curEpisode();if(!ep||ep.type!=='letter')return;
+  var ch=ep.ch;var lo=(typeof ALL_LETTER_OBJS!=='undefined')?ALL_LETTER_OBJS[ch]:null;
+  var words=((typeof LETTER_WORDS!=='undefined')&&LETTER_WORDS[ch])||[];
+  var learned=(typeof masteredLetters==='function'?masteredLetters():[]).filter(function(c){return c!==ch;});
+  var review=learned.length?learned[Math.floor(Math.random()*learned.length)]:'';
+  var el=document.getElementById('recapPop');if(!el)return;
+  var html='<div class="recap-card"><div class="recap-title">오늘은 <b>'+ch+'</b> 완성! ⭐</div>'
+    +'<div class="recap-big">'+ch+'</div>'
+    +'<div class="recap-words">'+words.map(function(w){return '<span class="recap-w"><i>'+w[1]+'</i><em>'+w[0]+'</em></span>';}).join('')+'</div>';
+  if(review)html+='<div class="recap-review">지난 글자도 기억나요? <b>'+review+'</b></div>';
+  html+='<button class="recap-next" id="recapNext">다음 글자로 ➡️</button></div>';
+  el.innerHTML=html;el.style.display='flex';if(typeof twemojify==='function')twemojify(el);
+  try{var seq=[lo?(lo.sound||lo.name||ch):ch];words.forEach(function(w){seq.push(w[0]);});seq.push('잘했어요');
+    if(review){var ro=ALL_LETTER_OBJS[review];seq.push((ro&&(ro.sound||ro.name))||review);}
+    if(typeof speakSeq==='function')setTimeout(function(){speakSeq(seq);},350);}catch(e){}
+  var nb=document.getElementById('recapNext');if(nb)nb.addEventListener('click',function(){el.style.display='none';goNextLetter();});
+}
 function onEpisodeComplete(){
   addAlbumStar();
   renderStarAlbum();
   var m=checkMilestone();
   if(m){markMilestoneShown(m.word);setTimeout(function(){showMilestone(m);},1000);}
+  setTimeout(showRecap, m?3400:1300);
 }
 // 다음 글자로 진행: 포인터 +1, 미션 새로 깔고 홈으로, 하니가 새 글자 읽어줌.
 function goNextLetter(){
