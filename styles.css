@@ -582,19 +582,42 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
 .recap-review b{font-size:1.3rem;color:var(--vow-d);}
 .recap-next{margin-top:14px;font-family:'Jua',sans-serif;font-size:1.2rem;color:#fff;background:var(--quiz);border:none;border-radius:26px;padding:13px 26px;box-shadow:0 6px 0 var(--quiz-d);cursor:pointer;}
 .recap-next:active{transform:translateY(5px);box-shadow:0 1px 0 var(--quiz-d);}
-/* ===== 단어 동산: 전체화면 단어 조립 ===== */
-#wordBuild .wb-wrap{max-width:940px;margin:0 auto;display:flex;flex-direction:row;align-items:flex-start;justify-content:center;gap:24px;padding:8px 12px 30px;}
-.wb-col{display:flex;flex-direction:column;align-items:center;gap:16px;min-width:0;}
-.wb-left{flex:1.2 1 0;}
-.wb-right{flex:.8 1 0;background:#fff7ee;border-radius:24px;padding:14px 12px 16px;box-shadow:inset 0 0 0 3px #ffe6cf;align-self:stretch;}
-.wb-tray-label{font-family:'Jua',sans-serif;color:#b0794a;font-size:1rem;text-align:center;line-height:1.35;}
-.wb-tray-label small{color:#c9a583;font-size:.78rem;}
-.wb-target{min-height:84px;border-radius:20px;padding:6px;transition:background .12s,box-shadow .12s;}
+/* ===== 단어 동산: 가로 와이드 2존(왼쪽 세로 스택 / 오른쪽 큰 카드) ===== */
+#wordBuild .wb-wrap{max-width:1060px;margin:0 auto;display:flex;flex-direction:row;align-items:stretch;justify-content:center;gap:22px;padding:6px 14px 20px;min-height:76vh;}
+.wb-col{display:flex;flex-direction:column;min-width:0;}
+/* 왼쪽: 이미지 → 단어 → 조립판 → 도구, 세로로 꽉 */
+.wb-left{flex:1 1 0;align-items:center;justify-content:space-evenly;gap:8px;background:linear-gradient(180deg,#f5fbef,#e7f5dd);border-radius:28px;padding:18px 16px 22px;box-shadow:inset 0 0 0 3px #d6ecc4;}
+.wb-pic{font-size:6.4rem;line-height:1;}
+.wb-word{font-family:'Jua',sans-serif;font-size:2.6rem;color:var(--word-d);letter-spacing:3px;}
+.wb-tools{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+/* 오른쪽: 큰 카드 격자로 꽉 */
+.wb-right{flex:1.05 1 0;background:#fff7ee;border-radius:28px;padding:16px 14px 18px;box-shadow:inset 0 0 0 3px #ffe6cf;display:flex;flex-direction:column;gap:12px;}
+.wb-tray-label{font-family:'Jua',sans-serif;color:#b0794a;font-size:1.05rem;text-align:center;line-height:1.35;}
+.wb-tray-label small{color:#c9a583;font-size:.82rem;}
+#wordBuild .wb-tray{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:14px;align-content:center;flex:1;}
+#wordBuild .wb-tray .wb-card{width:auto;height:104px;font-size:3rem;border-radius:22px;padding-top:14px;}
+#wordBuild .wb-tray .wb-card::before{top:9px;font-size:.7rem;}
+/* 조립판/빈칸 크게 */
+#wordBuild .wb-target{display:flex;gap:22px;flex-wrap:wrap;justify-content:center;min-height:96px;border-radius:20px;padding:6px;transition:background .12s,box-shadow .12s;}
+#wordBuild .wb-slot{position:relative;width:60px;height:74px;border-radius:16px;font-size:2.7rem;}
+#wordBuild .wb-syl-head{top:-34px;font-size:2.3rem;}
 .wb-target-over{background:rgba(95,180,120,.16);box-shadow:0 0 0 3px var(--word,#5fb478);}
 .wb-card{touch-action:none;}
 .wb-dragging{opacity:.3;}
 .wb-ghost{opacity:.95;}
-@media (max-width:760px){#wordBuild .wb-wrap{flex-direction:column;align-items:center;}.wb-right{width:100%;align-self:auto;}}
+/* #7 글자 맞춤(작게 "맞아요!") */
+#wordBuild .wb-slot.pop{animation:wbpop .3s ease;}
+@keyframes wbpop{0%{transform:scale(.6);}60%{transform:scale(1.18);}100%{transform:scale(1);}}
+.wb-mini{position:absolute;top:-30px;left:50%;font-family:'Jua',sans-serif;font-size:.9rem;color:#fff;background:var(--word,#5fb478);padding:2px 9px;border-radius:11px;white-space:nowrap;pointer-events:none;box-shadow:0 2px 0 rgba(0,0,0,.12);animation:wbmini .85s ease forwards;}
+@keyframes wbmini{0%{opacity:0;transform:translate(-50%,6px) scale(.8);}25%{opacity:1;transform:translate(-50%,-2px) scale(1);}100%{opacity:0;transform:translate(-50%,-18px) scale(1);}}
+/* #7 단어 완성(크게 "정답이에요!") */
+.wb-big-correct{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:1500;pointer-events:none;opacity:0;transition:opacity .25s;}
+.wb-big-correct.show{opacity:1;}
+.wb-big-inner{background:linear-gradient(180deg,#fffdf5,#fff2cf);border:5px solid var(--word,#5fb478);border-radius:34px;padding:26px 50px;box-shadow:0 18px 44px rgba(80,150,90,.35);text-align:center;transform:scale(.7) rotate(-3deg);transition:transform .4s cubic-bezier(.2,1.35,.4,1);}
+.wb-big-correct.show .wb-big-inner{transform:scale(1) rotate(0);}
+.wb-big-word{font-family:'Jua',sans-serif;font-size:4.6rem;color:var(--word-d);letter-spacing:5px;}
+.wb-big-label{font-family:'Jua',sans-serif;font-size:1.9rem;color:#e0822a;margin-top:6px;}
+@media (max-width:760px){#wordBuild .wb-wrap{flex-direction:column;align-items:center;min-height:0;}.wb-right{width:100%;}}
 .wb-pic{font-size:5rem;line-height:1;}
 .wb-target{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;}
 .wb-syl{display:flex;align-items:flex-end;gap:6px;background:#fff;border-radius:20px;padding:10px 14px 12px;box-shadow:0 6px 0 #e6cdb0;position:relative;}

@@ -72,11 +72,13 @@ function openWordBuild(word,emoji){
   wbWord=word;wbEmoji=emoji;curWord=word;markWordSeen(word);
   var groups=decompose(word);wbExpected=[];
   document.getElementById('wbPic').textContent=emoji;
+  var wn=document.getElementById('wbWord');if(wn)wn.textContent=word;
   var tgt=document.getElementById('wbTarget');tgt.innerHTML='';
   groups.forEach(function(g,si){var blk=document.createElement('div');blk.className='wb-syl';var head=document.createElement('div');head.className='wb-syl-head';head.textContent=word[si]||'';blk.appendChild(head);g.forEach(function(j){wbExpected.push(j);var s=document.createElement('div');s.className='wb-slot';blk.appendChild(s);});tgt.appendChild(blk);});
   wbPos=0;
   var need=wbExpected.slice();var distract=[];var pool=CHO.concat(JUNG);var tries=0;
-  while(distract.length<2&&tries<40){tries++;var r=pool[Math.floor(Math.random()*pool.length)];if(need.indexOf(r)<0&&distract.indexOf(r)<0)distract.push(r);}
+  var distractN=Math.min(7,Math.max(4,9-need.length)); // 총 8~10장
+  while(distract.length<distractN&&tries<120){tries++;var r=pool[Math.floor(Math.random()*pool.length)];if(need.indexOf(r)<0&&distract.indexOf(r)<0)distract.push(r);}
   var trayEl=document.getElementById('wbTray');trayEl.innerHTML='';
   shuffle(need.concat(distract)).forEach(function(j){var b=document.createElement('button');b.className='wb-card jchip jrole-'+(CHO.indexOf(j)>=0?'c':'v');b.textContent=j;b.addEventListener('pointerdown',function(e){wbDragStart(e,b,j);});trayEl.appendChild(b);});
   document.getElementById('wbFeedback').textContent='카드를 왼쪽으로 끌어다 놓거나 눌러서 순서대로 만들어요';
@@ -86,16 +88,30 @@ function openWordBuild(word,emoji){
 function wbTap(btn,j){
   if(wbPos>=wbExpected.length)return;
   if(j===wbExpected[wbPos]){
-    sfxCorrect();var slot=document.querySelectorAll('#wbTarget .wb-slot')[wbPos];if(slot){slot.textContent=j;slot.classList.add('filled');}
+    sfxCorrect();var slot=document.querySelectorAll('#wbTarget .wb-slot')[wbPos];
+    if(slot){slot.textContent=j;slot.classList.add('filled');slot.classList.remove('pop');void slot.offsetWidth;slot.classList.add('pop');wbMiniPraise(slot);}
     btn.disabled=true;btn.classList.add('used');sayJamo(j);wbPos++;
     if(wbPos>=wbExpected.length){
       document.querySelectorAll('#wbTarget .wb-syl-head').forEach(function(h){h.classList.add('done');});
-      document.getElementById('wbFeedback').textContent='완성! '+wbWord+' 🎉';
-      confetti();earnSticker();
+      document.getElementById('wbFeedback').textContent='정답이에요! '+wbWord+' 🎉';
+      confetti();earnSticker();wbBigCorrect(wbWord);
       if(typeof todayWord!=='undefined'&&todayWord&&wbWord===todayWord[0])completeMission('word');
-      setTimeout(function(){explainWord(wbWord);},500);
+      setTimeout(function(){explainWord(wbWord);},650);
     }
   }else{sfxWrong();btn.classList.add('bad');setTimeout(function(){btn.classList.remove('bad');},400);}
+}
+// 글자 하나 맞춤 → 작은 "맞아요!" / 단어 완성 → 큰 "정답이에요!"
+function wbMiniPraise(slot){
+  var s=document.createElement('span');s.className='wb-mini';s.textContent='맞아요!';
+  slot.appendChild(s);setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s);},850);
+}
+function wbBigCorrect(word){
+  var sec=document.getElementById('wordBuild');if(!sec)return;
+  var o=document.createElement('div');o.className='wb-big-correct';
+  o.innerHTML='<div class="wb-big-inner"><div class="wb-big-word">'+word+'</div><div class="wb-big-label">정답이에요! 🎉</div></div>';
+  sec.appendChild(o);if(typeof twemojify==='function')twemojify(o);
+  setTimeout(function(){o.classList.add('show');},10);
+  setTimeout(function(){o.classList.remove('show');setTimeout(function(){if(o.parentNode)o.parentNode.removeChild(o);},420);},1800);
 }
 // 단어동산: 오른쪽 카드를 왼쪽 조립판으로 끌어다 놓기(터치 포인터 드래그). 거의 안 움직이면 탭으로 처리.
 function wbOverTarget(ev,tgt){var r=tgt.getBoundingClientRect();return ev.clientX>=r.left-14&&ev.clientX<=r.right+14&&ev.clientY>=r.top-14&&ev.clientY<=r.bottom+14;}
