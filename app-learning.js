@@ -21,9 +21,24 @@ const modal=document.getElementById('wordModal'),mEmoji=document.getElementById(
 let curWord='';
 // 자모 한 개의 읽는 이름/소리 (이응, 오 …)
 function jamoSay(j){var c=CONS.find(function(x){return x.ch===j;});if(c)return c.name;var v=VOWS.find(function(x){return x.ch===j;});if(v)return v.sound;return j;}
-// 단어를 가르치듯 풀어서 설명: "이응에 오를 더하면 오, 이응에 이를 더하면 이, 오이"
-// CVC는 "…를 더하면 가, [받침]받침을 더하면 강". 연결어/음절은 신경망 MP3로 자연스럽게 이어짐.
+// 풀어듣기(가르치는 설명): 단어별 통 신경망 MP3가 있으면 매끄럽게 재생, 없으면 조각 이어붙이기로 폴백.
+var explainAudio=null;
 function explainWord(word){
+  try{
+    var v=(typeof VOICE!=='undefined'&&VOICE)?VOICE:'f';
+    var key=[...word].map(function(c){return c.codePointAt(0).toString(16);}).join('-');
+    if(typeof stopAllVoice==='function')stopAllVoice();
+    var a=new Audio();var fell=false;
+    function fb(){if(fell)return;fell=true;explainWordStitch(word);}
+    a.onerror=fb;
+    try{a.volume=Math.max(0,Math.min(1,(typeof volVoice!=='undefined'?volVoice:1)));}catch(e){}
+    a.src='audio/explain/'+v+'/'+key+'.mp3';
+    explainAudio=a;
+    var pr=a.play();if(pr&&pr.catch)pr.catch(fb);
+  }catch(e){explainWordStitch(word);}
+}
+// 통 MP3가 없을 때: 자모·음절 조각을 가르치듯 이어 붙임("이응에 오를 더하면 오, … 오이")
+function explainWordStitch(word){
   try{
     var seq=[];
     [...word].forEach(function(syl){

@@ -248,7 +248,14 @@ document.addEventListener('touchend',primeSpeech,true);
 var USE_MP3=false;
 function probeMp3(){try{fetch('audio/'+VOICE+'/'+keyOf('\uac00')+'.mp3',{method:'HEAD'}).then(function(r){USE_MP3=!!(r&&r.ok);}).catch(function(){});}catch(e){}}
 probeMp3();
+function stopAllVoice(){
+  try{if('speechSynthesis' in window)speechSynthesis.cancel();}catch(e){}
+  try{if(audioEl){audioEl.pause();audioEl=null;}}catch(e){}
+  try{if(typeof explainAudio!=='undefined'&&explainAudio){explainAudio.pause();explainAudio=null;}}catch(e){}
+  try{if(typeof introAudio!=='undefined'&&introAudio){introAudio.pause();introAudio=null;}}catch(e){}
+}
 function speakOne(t,cb){
+  stopAllVoice();
   if(!USE_MP3){deviceSpeak(t,cb);return;}
   try{if('speechSynthesis' in window)speechSynthesis.cancel();}catch(e){}
   if(audioEl){try{audioEl.pause();}catch(e){}audioEl=null;}

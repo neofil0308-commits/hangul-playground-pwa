@@ -37,7 +37,7 @@ function newListenQuestion(){
   var opts2=shuffle([target].concat(distract.slice(0,Math.max(1,listenN-1))));
   listenTarget={word:target[0],emoji:target[1],say:target[0]};
   opts2.forEach(function(w){var b=document.createElement('button');b.className='lopt';b.dataset.word=w[0];b.innerHTML='<div class="lglyph">'+w[1]+'</div><div class="lwd">'+w[0]+'</div>';b.addEventListener('click',function(){checkListen(b,{word:w[0],emoji:w[1]});});if(box)box.appendChild(b);});
-  if(box)twemojify(box);if(fb)fb.textContent=ch+'로 시작하는 단어를 찾아요';setTimeout(function(){speak(ch);},250);
+  if(box)twemojify(box);if(fb)fb.textContent=ch+'로 시작하는 단어를 찾아요';setTimeout(function(){speak(listenTarget.word);},250);
 }
 function startListenRound(){listenScore=0;var s=document.getElementById('lscore');if(s)s.textContent='0 / '+LISTEN_LEN;newListenQuestion();}
 function checkListen(btn,o){
@@ -66,4 +66,4 @@ var listenModeBox=document.getElementById('listenMode');
 if(listenModeBox){[['단어','word'],['글자','letter']].forEach(function(m,i){var b=document.createElement('button');if(i===0)b.className='on';b.textContent=m[0];b.addEventListener('click',function(){listenMode=m[1];document.querySelectorAll('#listenMode button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');startListenRound();});listenModeBox.appendChild(b);});}
 var listenDiffBox=document.getElementById('listenDiff');
 if(listenDiffBox){[['쉬움',3],['보통',4]].forEach(function(d,i){var b=document.createElement('button');if(i===0)b.className='on';b.textContent=d[0];b.addEventListener('click',function(){listenN=d[1];document.querySelectorAll('#listenDiff button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');newListenQuestion();});listenDiffBox.appendChild(b);});}
-document.getElementById('listenPlay').addEventListener('click',function(){speak(listenMode==='letter'?todaySay():todayCh());});
+document.getElementById('listenPlay').addEventListener('click',function(){speak(listenMode==='letter'?todaySay():((listenTarget&&listenTarget.word)?listenTarget.word:todayCh()));});
