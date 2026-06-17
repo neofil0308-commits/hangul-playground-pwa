@@ -11,8 +11,19 @@ function initLetterTabs(){[['con','자음 친구들'],['vow','모음 친구들']
 /* 상세 화면 */
 const ldGlyph=document.getElementById('ldGlyph'),ldName=document.getElementById('ldName'),ldWords=document.getElementById('ldWords'),letterDetail=document.getElementById('letterDetail'),ldSound=document.getElementById('ldSound');
 let curLetter=null;
-function openLetterDetail(it){curLetter=it;markLetterSeen(it.ch);if(typeof todayLetter!=='undefined'&&todayLetter&&it.ch===todayLetter.ch)completeMission('letter');const isVow=lettersTab==='vow';letterDetail.classList.toggle('vow',isVow);ldGlyph.textContent=it.ch;ldName.textContent=isVow?('소리: '+it.sound):it.name;ldWords.innerHTML='';(LETTER_WORDS[it.ch]||[]).forEach(w=>{const b=document.createElement('button');b.className='ld-word';b.innerHTML='<span class="em">'+w[1]+'</span>'+w[0]+'<span class="spk">✏️</span>';b.addEventListener('click',()=>openWordBuild(w[0],w[1]));ldWords.appendChild(b);});twemojify(ldWords);mtSelect(it.ch);go('letterDetail');}
+// 글자 숲: 낱말을 눌러 듣고(위) 받아쓰기(아래) — 단어동산으로 넘어가지 않고 이 화면에서.
+var lfWord='';
+function studyWord(word,emoji){
+  lfWord=word;
+  var wn=document.getElementById('lfWordNow');if(wn)wn.textContent=word;
+  var chips=document.getElementById('lfChips');
+  if(chips){chips.innerHTML='';[...word].forEach(function(syl,i){var b=document.createElement('button');b.className='lf-chip'+(i===0?' on':'');b.textContent=syl;b.addEventListener('click',function(){document.querySelectorAll('#lfChips .lf-chip').forEach(function(x){x.classList.remove('on');});b.classList.add('on');mtSelect(syl);});chips.appendChild(b);});}
+  if(word.length)mtSelect(word[0]);
+  speak(word);
+}
+function openLetterDetail(it){curLetter=it;markLetterSeen(it.ch);if(typeof todayLetter!=='undefined'&&todayLetter&&it.ch===todayLetter.ch)completeMission('letter');const isVow=lettersTab==='vow';letterDetail.classList.toggle('vow',isVow);ldGlyph.textContent=it.ch;ldName.textContent=isVow?('소리: '+it.sound):it.name;ldWords.innerHTML='';(LETTER_WORDS[it.ch]||[]).forEach(w=>{const b=document.createElement('button');b.className='ld-word';b.innerHTML='<span class="em">'+w[1]+'</span>'+w[0]+'<span class="spk">🔊✏️</span>';b.addEventListener('click',()=>studyWord(w[0],w[1]));ldWords.appendChild(b);});twemojify(ldWords);mtSelect(it.ch);lfWord=it.ch;var lwn=document.getElementById('lfWordNow');if(lwn)lwn.textContent=it.ch;var lch=document.getElementById('lfChips');if(lch)lch.innerHTML='';go('letterDetail');}
 ldSound.addEventListener('click',()=>{if(curLetter)sayJamo(curLetter.ch);});
+(function(){var h=document.getElementById('lfHear');if(h)h.addEventListener('click',()=>{if(lfWord)speak(lfWord);else if(curLetter)sayJamo(curLetter.ch);});})();
 document.getElementById('ldBack').addEventListener('click',()=>go('letters'));
 
 /* 단어 공부 + 분해 + 합쳐보기 */
@@ -70,7 +81,7 @@ function openWordBuild(word,emoji){
   shuffle(need.concat(distract)).forEach(function(j){var b=document.createElement('button');b.className='wb-card jchip jrole-'+(CHO.indexOf(j)>=0?'c':'v');b.textContent=j;b.addEventListener('click',function(){wbTap(b,j);});trayEl.appendChild(b);});
   document.getElementById('wbFeedback').textContent='카드를 순서대로 눌러 단어를 만들어요';
   go('wordBuild');
-  setTimeout(function(){explainWord(word);},450);
+  setTimeout(function(){speak(word);},450); // 열 때는 단어만 짧게(설명은 '풀어듣기' 버튼)
 }
 function wbTap(btn,j){
   if(wbPos>=wbExpected.length)return;

@@ -598,3 +598,14 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
 .wb-tray .wb-card.jrole-c:active{box-shadow:0 1px 0 #f0b29c;}
 .wb-tray .wb-card.jrole-v:active{box-shadow:0 1px 0 #a3dbd4;}
 .wb-tray .wb-card.used{opacity:.28;pointer-events:none;}
+/* 글자 숲(letterDetail) 재구성: 위 낱말 / 아래 받아쓰기 */
+.lf-head{display:flex;align-items:center;justify-content:center;gap:14px;margin:4px 0 14px;flex-wrap:wrap;}
+.lf-wrap{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:16px;padding-bottom:24px;}
+.lf-panel{background:var(--card);border-radius:24px;padding:14px 16px 16px;box-shadow:0 6px 0 #e6cdb0;}
+.lf-panel h4{margin:0 0 10px;font-size:1.1rem;color:var(--ink);text-align:center;}
+.lf-word-now{color:var(--word-d);font-size:1.3rem;}
+.lf-write-panel .mt-stage{margin:0 auto;}
+.lf-chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;}
+.lf-chip{font-family:'Jua',sans-serif;font-size:1.5rem;min-width:50px;height:50px;border:none;cursor:pointer;border-radius:14px;background:#fbe6da;color:var(--bat-d);box-shadow:0 3px 0 #f0c4ac;}
+.lf-chip.on{background:var(--trace);color:#fff;box-shadow:0 3px 0 var(--trace-d);}
+.lf-chip:active{transform:translateY(2px);}
