@@ -600,7 +600,7 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
 /* 조립판/빈칸 크게 */
 #wordBuild .wb-target{display:flex;gap:22px;flex-wrap:wrap;justify-content:center;min-height:96px;border-radius:20px;padding:6px;transition:background .12s,box-shadow .12s;}
 #wordBuild .wb-slot{position:relative;width:60px;height:74px;border-radius:16px;font-size:2.7rem;}
-#wordBuild .wb-syl-head{top:-34px;font-size:2.3rem;}
+#wordBuild .wb-syl-head{top:-36px;font-size:1.5rem;white-space:nowrap;letter-spacing:1px;background:rgba(255,255,255,.7);border-radius:12px;padding:1px 8px;}
 .wb-target-over{background:rgba(95,180,120,.16);box-shadow:0 0 0 3px var(--word,#5fb478);}
 .wb-card{touch-action:none;}
 .wb-dragging{opacity:.3;}

@@ -74,7 +74,7 @@ function openWordBuild(word,emoji){
   document.getElementById('wbPic').textContent=emoji;
   var wn=document.getElementById('wbWord');if(wn)wn.textContent=word;
   var tgt=document.getElementById('wbTarget');tgt.innerHTML='';
-  groups.forEach(function(g,si){var blk=document.createElement('div');blk.className='wb-syl';var head=document.createElement('div');head.className='wb-syl-head';head.textContent=word[si]||'';blk.appendChild(head);g.forEach(function(j){wbExpected.push(j);var s=document.createElement('div');s.className='wb-slot';blk.appendChild(s);});tgt.appendChild(blk);});
+  groups.forEach(function(g,si){var blk=document.createElement('div');blk.className='wb-syl';var head=document.createElement('div');head.className='wb-syl-head';head.textContent=g.join(' + ');head.setAttribute('data-syl',word[si]||'');blk.appendChild(head);g.forEach(function(j){wbExpected.push(j);var s=document.createElement('div');s.className='wb-slot';blk.appendChild(s);});tgt.appendChild(blk);});
   wbPos=0;
   var need=wbExpected.slice();var distract=[];var pool=CHO.concat(JUNG);var tries=0;
   var distractN=Math.min(7,Math.max(4,9-need.length)); // 총 8~10장
@@ -92,7 +92,7 @@ function wbTap(btn,j){
     if(slot){slot.textContent=j;slot.classList.add('filled');slot.classList.remove('pop');void slot.offsetWidth;slot.classList.add('pop');wbMiniPraise(slot);}
     btn.disabled=true;btn.classList.add('used');sayJamo(j);wbPos++;
     if(wbPos>=wbExpected.length){
-      document.querySelectorAll('#wbTarget .wb-syl-head').forEach(function(h){h.classList.add('done');});
+      document.querySelectorAll('#wbTarget .wb-syl-head').forEach(function(h){h.classList.add('done');var syl=h.getAttribute('data-syl');if(syl&&h.textContent.indexOf('=')<0)h.textContent=h.textContent+' = '+syl;});
       document.getElementById('wbFeedback').textContent='정답이에요! '+wbWord+' 🎉';
       confetti();earnSticker();wbBigCorrect(wbWord);
       if(typeof todayWord!=='undefined'&&todayWord&&wbWord===todayWord[0])completeMission('word');
