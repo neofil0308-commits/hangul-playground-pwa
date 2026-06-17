@@ -390,16 +390,37 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
 .cat-pills.lmode button{color:var(--listen-d);box-shadow:0 4px 0 #bfeaf0;}
 .cat-pills.lmode button.on{background:var(--listen);color:#fff;box-shadow:0 4px 0 var(--listen-d);}
 .listen-top{display:flex;flex-direction:column;align-items:center;}
-/* 가로화면 2단: 왼쪽=듣기 버튼/점수, 오른쪽=선택지 */
-.listen-wrap{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:28px;max-width:1000px;margin:0 auto;}
-.listen-wrap .listen-top{flex:0 0 280px;align-self:center;background:#eef7ff;border-radius:24px;padding:16px 14px;box-shadow:inset 0 0 0 3px #d6ebfb;}
-.listen-right{flex:1 1 0;min-width:0;}
-.listen-wrap .listen-opts{margin:0;max-width:none;}
-@media (max-width:760px){.listen-wrap{flex-direction:column;gap:8px;}.listen-wrap .listen-top{flex:none;width:100%;}}
-.lopt{background:#fffdf8;border:none;cursor:pointer;border-radius:22px;padding:18px 10px;font-family:'Jua',sans-serif;color:var(--ink);box-shadow:0 6px 0 #cdeef2,0 9px 14px rgba(40,120,120,.14);transition:transform .08s;}
+/* ===== 듣고 찾기: 가로 와이드 2존(왼쪽 소리 동굴 패널 / 오른쪽 큰 보기 카드) ===== */
+.listen-wrap{display:flex;flex-direction:row;align-items:stretch;justify-content:center;gap:22px;max-width:1060px;margin:0 auto;min-height:72vh;}
+.listen-wrap .listen-top{flex:0 0 320px;justify-content:space-evenly;gap:8px;background:linear-gradient(180deg,#e7f3ff,#cfe6fb);border-radius:28px;padding:18px 16px 20px;box-shadow:inset 0 0 0 3px #c2def5;}
+.lc-hani{font-size:3rem;line-height:1;}
+.lc-letter{font-family:'Jua',sans-serif;font-size:5.2rem;line-height:1;color:var(--listen-d);text-shadow:0 3px 0 #fff;}
+.lc-q{font-family:'Jua',sans-serif;font-size:1.25rem;color:#3a6ea5;text-align:center;line-height:1.3;}
+.listen-wrap .bigplay{font-size:1.6rem;padding:18px 34px;}
+.lc-progress{display:flex;gap:6px;}
+.lc-bell{font-size:1.5rem;filter:grayscale(1);opacity:.35;transition:.2s;}
+.lc-bell.on{filter:none;opacity:1;transform:scale(1.12);}
+.lc-modes{display:flex;flex-direction:column;gap:6px;align-items:center;margin-top:2px;}
+.lc-score{font-family:'Jua',sans-serif;font-size:1.1rem;color:var(--listen-d);}
+.listen-right{flex:1.05 1 0;min-width:0;display:flex;flex-direction:column;}
+.listen-wrap .listen-opts{display:grid;margin:0;max-width:none;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;align-content:center;flex:1;}
+@media (max-width:760px){.listen-wrap{flex-direction:column;gap:10px;min-height:0;}.listen-wrap .listen-top{flex:none;width:100%;}}
+.lopt{position:relative;background:#fffdf8;border:none;cursor:pointer;border-radius:22px;padding:22px 12px;font-family:'Jua',sans-serif;color:var(--ink);box-shadow:0 6px 0 #cdeef2,0 9px 14px rgba(40,120,120,.14);transition:transform .08s;}
 .lopt:active{transform:translateY(3px);}
-.lopt .lglyph{font-size:3rem;line-height:1;color:var(--listen-d);}
-.lopt .lwd{font-size:1.1rem;margin-top:6px;}
+.lopt .lglyph{font-size:4rem;line-height:1;color:var(--listen-d);}
+.lopt .lwd{font-size:1.4rem;margin-top:8px;}
+.lopt.good{background:#d6f5dd;box-shadow:0 6px 0 #9ad9aa;}
+.lopt.pop{animation:wbpop .32s ease;}
+.lopt.bad{animation:shake .4s;}
+/* 하나 맞춤(작게) */
+.lc-mini{position:absolute;top:-14px;left:50%;font-family:'Jua',sans-serif;font-size:1rem;color:#fff;background:var(--listen,#36b6c4);padding:3px 11px;border-radius:13px;white-space:nowrap;pointer-events:none;box-shadow:0 2px 0 rgba(0,0,0,.12);animation:wbmini .9s ease forwards;z-index:5;}
+/* 라운드 완료(크게) */
+.lc-big{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:1500;pointer-events:none;opacity:0;transition:opacity .25s;}
+.lc-big.show{opacity:1;}
+.lc-big-inner{background:linear-gradient(180deg,#f0f9ff,#d7ecff);border:5px solid var(--listen,#36b6c4);border-radius:34px;padding:26px 46px;box-shadow:0 18px 44px rgba(40,120,160,.4);text-align:center;transform:scale(.7) rotate(-3deg);transition:transform .4s cubic-bezier(.2,1.35,.4,1);}
+.lc-big.show .lc-big-inner{transform:scale(1) rotate(0);}
+.lc-big-emoji{font-size:3.6rem;}
+.lc-big-label{font-family:'Jua',sans-serif;font-size:2rem;color:var(--listen-d);margin-top:6px;}
 .lopt.good{background:#d6f5dd;box-shadow:0 6px 0 #9ad9aa;}
 .lopt.bad{animation:shake .4s;}
 .report{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;}

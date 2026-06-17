@@ -188,10 +188,16 @@
   <section id="listen" class="screen"><div class="section-title">듣고 찾기</div><div class="hint">🔊 소리를 잘 듣고, 알맞은 것을 골라요!</div>
     <div class="listen-wrap">
     <div class="listen-top">
-      <div class="cat-pills lmode" id="listenMode"></div>
-      <div class="cat-pills diff" id="listenDiff"></div>
+      <div class="lc-hani">🐥</div>
+      <div class="lc-letter" id="listenLetter">ㅗ</div>
+      <div class="lc-q" id="listenQ">소리를 잘 들어요</div>
       <button class="bigplay" id="listenPlay">🔊 다시 듣기</button>
-      <div id="lscore">0 / 5</div>
+      <div class="lc-progress" id="listenProgress"></div>
+      <div class="lc-modes">
+        <div class="cat-pills lmode" id="listenMode"></div>
+        <div class="cat-pills diff" id="listenDiff"></div>
+      </div>
+      <div id="lscore" class="lc-score">0 / 5</div>
     </div>
     <div class="listen-right">
       <div class="listen-opts" id="listenOpts"></div>
