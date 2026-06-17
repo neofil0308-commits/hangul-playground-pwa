@@ -578,7 +578,18 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
 .recap-next{margin-top:14px;font-family:'Jua',sans-serif;font-size:1.2rem;color:#fff;background:var(--quiz);border:none;border-radius:26px;padding:13px 26px;box-shadow:0 6px 0 var(--quiz-d);cursor:pointer;}
 .recap-next:active{transform:translateY(5px);box-shadow:0 1px 0 var(--quiz-d);}
 /* ===== 단어 동산: 전체화면 단어 조립 ===== */
-#wordBuild .wb-wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:16px;padding:8px 12px 30px;}
+#wordBuild .wb-wrap{max-width:940px;margin:0 auto;display:flex;flex-direction:row;align-items:flex-start;justify-content:center;gap:24px;padding:8px 12px 30px;}
+.wb-col{display:flex;flex-direction:column;align-items:center;gap:16px;min-width:0;}
+.wb-left{flex:1.2 1 0;}
+.wb-right{flex:.8 1 0;background:#fff7ee;border-radius:24px;padding:14px 12px 16px;box-shadow:inset 0 0 0 3px #ffe6cf;align-self:stretch;}
+.wb-tray-label{font-family:'Jua',sans-serif;color:#b0794a;font-size:1rem;text-align:center;line-height:1.35;}
+.wb-tray-label small{color:#c9a583;font-size:.78rem;}
+.wb-target{min-height:84px;border-radius:20px;padding:6px;transition:background .12s,box-shadow .12s;}
+.wb-target-over{background:rgba(95,180,120,.16);box-shadow:0 0 0 3px var(--word,#5fb478);}
+.wb-card{touch-action:none;}
+.wb-dragging{opacity:.3;}
+.wb-ghost{opacity:.95;}
+@media (max-width:760px){#wordBuild .wb-wrap{flex-direction:column;align-items:center;}.wb-right{width:100%;align-self:auto;}}
 .wb-pic{font-size:5rem;line-height:1;}
 .wb-target{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;}
 .wb-syl{display:flex;align-items:flex-end;gap:6px;background:#fff;border-radius:20px;padding:10px 14px 12px;box-shadow:0 6px 0 #e6cdb0;position:relative;}

@@ -78,8 +78,8 @@ function openWordBuild(word,emoji){
   var need=wbExpected.slice();var distract=[];var pool=CHO.concat(JUNG);var tries=0;
   while(distract.length<2&&tries<40){tries++;var r=pool[Math.floor(Math.random()*pool.length)];if(need.indexOf(r)<0&&distract.indexOf(r)<0)distract.push(r);}
   var trayEl=document.getElementById('wbTray');trayEl.innerHTML='';
-  shuffle(need.concat(distract)).forEach(function(j){var b=document.createElement('button');b.className='wb-card jchip jrole-'+(CHO.indexOf(j)>=0?'c':'v');b.textContent=j;b.addEventListener('click',function(){wbTap(b,j);});trayEl.appendChild(b);});
-  document.getElementById('wbFeedback').textContent='카드를 순서대로 눌러 단어를 만들어요';
+  shuffle(need.concat(distract)).forEach(function(j){var b=document.createElement('button');b.className='wb-card jchip jrole-'+(CHO.indexOf(j)>=0?'c':'v');b.textContent=j;b.addEventListener('pointerdown',function(e){wbDragStart(e,b,j);});trayEl.appendChild(b);});
+  document.getElementById('wbFeedback').textContent='카드를 왼쪽으로 끌어다 놓거나 눌러서 순서대로 만들어요';
   go('wordBuild');
   setTimeout(function(){speak(word);},450); // 열 때는 단어만 짧게(설명은 '풀어듣기' 버튼)
 }
@@ -96,6 +96,31 @@ function wbTap(btn,j){
       setTimeout(function(){explainWord(wbWord);},500);
     }
   }else{sfxWrong();btn.classList.add('bad');setTimeout(function(){btn.classList.remove('bad');},400);}
+}
+// 단어동산: 오른쪽 카드를 왼쪽 조립판으로 끌어다 놓기(터치 포인터 드래그). 거의 안 움직이면 탭으로 처리.
+function wbOverTarget(ev,tgt){var r=tgt.getBoundingClientRect();return ev.clientX>=r.left-14&&ev.clientX<=r.right+14&&ev.clientY>=r.top-14&&ev.clientY<=r.bottom+14;}
+function wbDragStart(e,btn,j){
+  if(btn.disabled||btn.classList.contains('used'))return;
+  try{e.preventDefault();}catch(_){}
+  var sx=e.clientX,sy=e.clientY,moved=false,ghost=null;
+  var tgt=document.getElementById('wbTarget');
+  function mv(ev){
+    if(!moved&&(Math.abs(ev.clientX-sx)+Math.abs(ev.clientY-sy))>8){
+      moved=true;ghost=btn.cloneNode(true);ghost.className=btn.className+' wb-ghost';
+      ghost.style.position='fixed';ghost.style.pointerEvents='none';ghost.style.margin='0';ghost.style.zIndex='9999';ghost.style.transform='translate(-50%,-50%) scale(1.08)';
+      document.body.appendChild(ghost);btn.classList.add('wb-dragging');
+    }
+    if(ghost){ghost.style.left=ev.clientX+'px';ghost.style.top=ev.clientY+'px';tgt.classList.toggle('wb-target-over',wbOverTarget(ev,tgt));}
+  }
+  function up(ev){
+    document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);
+    tgt.classList.remove('wb-target-over');if(ghost)ghost.remove();btn.classList.remove('wb-dragging');
+    if(!moved){wbTap(btn,j);return;}            // 거의 안 움직임 → 탭
+    if(wbOverTarget(ev,tgt))wbTap(btn,j);         // 조립판에 떨어뜨림 → 순서 검증(wbTap 재사용)
+  }
+  document.addEventListener('pointermove',mv);
+  document.addEventListener('pointerup',up);
+  document.addEventListener('pointercancel',up);
 }
 function renderWords(cat){wordGrid.innerHTML='';WORDS[cat].forEach(w=>{const b=document.createElement('button');b.className='card';b.innerHTML='<span class="spk">🔍</span><div class="big">'+w[1]+'</div><div class="wd">'+w[0]+'</div>';b.addEventListener('click',()=>openWordBuild(w[0],w[1]));wordGrid.appendChild(b);});twemojify(wordGrid);}
 function initWordStudy(){Object.keys(WORDS).forEach((cat,i)=>{const b=document.createElement('button');if(i===0)b.className='on';b.textContent=cat;b.addEventListener('click',()=>{document.querySelectorAll('#wordCats button').forEach(x=>x.classList.remove('on'));b.classList.add('on');renderWords(cat);});wordCats.appendChild(b);});
