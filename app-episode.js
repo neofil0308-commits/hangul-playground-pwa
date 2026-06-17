@@ -57,13 +57,27 @@ function renderStarAlbum(){
     if(i<progress.idx){cls+=' stop-done';inner='<span class="stop-pic">'+pic+'</span><i class="stop-star">⭐</i>';}
     else if(i===progress.idx){cls+=' stop-now';inner='<span class="stop-pic">'+pic+'</span><i class="stop-hani">🐥</i>';}
     else{cls+=' stop-soon';inner='<span class="stop-pic stop-q">❔</span>';}
-    html+='<span class="'+cls+'">'+inner+'</span>';
+    var label=(i<=progress.idx&&ep&&ep.ch)?ep.ch:'';
+    html+='<span class="'+cls+(i<progress.idx?' stop-go':'')+'" data-i="'+i+'"'+(label?(' title="'+label+'로 가기"'):'')+'>'+inner+(label?'<i class="stop-lab">'+label+'</i>':'')+'</span>';
     if(i<EPISODE_PATH.length-1)html+='<span class="stop-link"></span>';
   });
   html+='</div>';
   el.innerHTML=html;
   if(typeof twemojify==='function')twemojify(el);
+  el.querySelectorAll('.stop-go').forEach(function(s){s.addEventListener('click',function(){goToEpisode(+s.getAttribute('data-i'));});});
   try{var now=el.querySelector('.stop-now');if(now&&now.scrollIntoView)now.scrollIntoView({inline:'center',block:'nearest'});}catch(e){}
+}
+// 아이가 지난 글자를 다시 익히고 싶을 때: 그 단계로 이동(이전 단계만 허용).
+function goToEpisode(i){
+  if(i<0||i>=EPISODE_PATH.length||i===progress.idx)return;
+  progress.idx=i; if(typeof saveProgress==='function')saveProgress();
+  if(typeof loadMission==='function')loadMission();
+  if(typeof renderMission==='function')renderMission();
+  if(typeof renderEpisodeBanner==='function')renderEpisodeBanner();
+  renderStarAlbum();
+  var btn=document.getElementById('nextLetterBtn');if(btn)btn.style.display='none';
+  if(typeof go==='function')go('home');
+  setTimeout(function(){if(typeof narrateEpisode==='function')narrateEpisode();},200);
 }
 // 빠른 성취 맛보기 팝업: 진짜 말을 읽었다는 축하 + 음성.
 function showMilestone(m){

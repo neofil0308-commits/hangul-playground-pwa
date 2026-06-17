@@ -38,6 +38,7 @@
   <section id="home" class="screen active">
     <header aria-label="하니의 한글 모험"><div class="mascot">🐥</div><div class="logo">하니의 한<b>글</b> 모험</div><div class="sub">한글 마을에 흩어진 글자 친구들을 찾아요</div></header>
     <div class="home-intro-bar"><button class="replay-intro" id="replayIntro">📖 이야기 다시 보기</button></div>
+    <section class="star-album star-album-top" id="starAlbum" aria-label="여정 진행 상황 — 지난 글자를 누르면 다시 갈 수 있어요"></section>
     <div class="home-workbench" id="homeWorkbench" aria-label="iPad 기준 한글 모험 홈">
     <div class="mission" id="mission">
       <div class="story-hero" id="storyHero"><div class="story-face">🐥</div><div class="story-copy"><b>하니</b><span id="storyText">오늘의 글자 친구를 만나러 한글 마을로 떠나요!</span></div></div>
@@ -49,7 +50,6 @@
       <button class="mrow" id="mrowPlay"><span class="mk">🔊</span><span class="mtx">소리 동굴 <b>듣고 찾기</b><small>소리를 듣고 문을 열어요</small></span><span class="mck" id="mcP">○</span></button>
       <div class="alldone" id="missionDone" style="display:none">한글 마을에 빛이 하나 켜졌어요! 모험 보상: 하니가 스티커를 준비했어요 🎉</div>
       <button class="next-letter" id="nextLetterBtn" style="display:none">다음 글자 만나러 가기 ⭐</button>
-      <section class="star-album" id="starAlbum" aria-label="별빛 앨범"></section>
       <section class="story-world" id="storyWorld" aria-label="한글 마을 이야기">
         <details class="parent-zone"><summary>👨‍👩‍👧 부모님 보기 · 이야기와 진행 설명</summary>
         <h4>한글 마을 이야기</h4>
@@ -109,13 +109,17 @@
 
   <section id="letterDetail" class="screen">
     <button class="ld-back" id="ldBack">⬅ 글자 친구들</button>
-    <div class="lf-head"><div class="ld-glyph" id="ldGlyph">ㄱ</div><div class="ld-name" id="ldName">기역</div><button class="ld-sound" id="ldSound">🔊 소리 듣기</button></div>
     <div class="lf-wrap">
-      <div class="lf-panel lf-words-panel"><h4>이 글자 낱말 — 눌러서 듣고 써봐요 🔊✏️</h4><div class="ld-words" id="ldWords"></div></div>
+      <div class="lf-col lf-left">
+        <div class="lf-head"><div class="ld-glyph" id="ldGlyph">ㄱ</div><div class="ld-name" id="ldName">기역</div><button class="ld-sound" id="ldSound">🔊 소리 듣기</button></div>
+        <div class="lf-panel lf-words-panel"><h4>이 글자 낱말 — 눌러서 듣고 써봐요 🔊✏️</h4><div class="ld-words" id="ldWords"></div></div>
+      </div>
+      <div class="lf-col lf-right">
       <div class="lf-panel lf-write-panel"><h4>✏️ 받아쓰기 <b class="lf-word-now" id="lfWordNow">글자</b></h4>
         <div class="lf-chips" id="lfChips"></div>
         <div class="mt-stage" id="mtStage"><div class="mt-grid"></div><div class="mt-guide" id="mtGuide">ㄱ</div><svg id="mtSvg" viewBox="0 0 100 100"></svg><canvas id="mtCanvas"></canvas></div>
         <div class="trace-tools mt-tools"><button class="tbtn stroke" id="mtStroke">🔢 획순</button><button class="tbtn clear" id="mtClear">🧽 지우기</button><button class="tbtn" id="lfHear">🔊 듣기</button></div>
+      </div>
       </div>
     </div></section>
 
