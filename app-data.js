@@ -94,6 +94,19 @@ function composedStrokes(ch){
   add(cho,boxes.cho); add(jung,boxes.jung); if(jong)add(jong,boxes.jong);
   return out.length?out:null;
 }
+// 쌍자음(ㄲㄸㅃㅆㅉ): 기본 자음을 좌우로 나란히 두 번 — 바른 글자/받침/초성 모두 획순이 나오게
+[['ㄲ','ㄱ'],['ㄸ','ㄷ'],['ㅃ','ㅂ'],['ㅆ','ㅅ'],['ㅉ','ㅈ']].forEach(function(p){
+  var base=STROKES[p[1]]; if(!base||STROKES[p[0]])return;
+  STROKES[p[0]]=base.map(function(st){return _xfStroke(st,[3,8,48,92]);})
+                    .concat(base.map(function(st){return _xfStroke(st,[52,8,97,92]);}));
+});
+// 겹받침(ㄳㄵㄶㄺ…): 두 자음을 받침 칸 안에서 좌우로
+var _CLUSTER={'ㄳ':['ㄱ','ㅅ'],'ㄵ':['ㄴ','ㅈ'],'ㄶ':['ㄴ','ㅎ'],'ㄺ':['ㄹ','ㄱ'],'ㄻ':['ㄹ','ㅁ'],'ㄼ':['ㄹ','ㅂ'],'ㄽ':['ㄹ','ㅅ'],'ㄾ':['ㄹ','ㅌ'],'ㄿ':['ㄹ','ㅍ'],'ㅀ':['ㄹ','ㅎ'],'ㅄ':['ㅂ','ㅅ']};
+Object.keys(_CLUSTER).forEach(function(k){
+  var a=STROKES[_CLUSTER[k][0]],b=STROKES[_CLUSTER[k][1]]; if(!a||!b||STROKES[k])return;
+  STROKES[k]=a.map(function(st){return _xfStroke(st,[3,8,48,92]);})
+             .concat(b.map(function(st){return _xfStroke(st,[52,8,97,92]);}));
+});
 function strokesFor(ch){return STROKES[ch]||composedStrokes(ch);}
 
 const PRAISE=['하니가 스티커를 준비했어요!','한글 마을에 빛이 켜졌어요!','모험 성공! 정말 멋져요!','글자 친구가 돌아왔어요!','와! 모험 보상이에요!'];
