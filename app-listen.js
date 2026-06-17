@@ -21,7 +21,7 @@ function newListenQuestion(){
   listenMode=stage;
   var box=document.getElementById('listenOpts');if(box)box.innerHTML='';
   var fb=document.getElementById('lfeedback');if(fb)fb.textContent='';
-  var ll=document.getElementById('listenLetter');if(ll)ll.textContent=ch;
+  var ll=document.getElementById('listenLetter');if(ll)ll.textContent=(stage==='letter')?'?':ch; // 글자 찾기 단계엔 정답을 숨김(소리로만)
   renderListenProgress();
   if(stage==='letter'){
     var others=shuffle((typeof ALL_LETTERS!=='undefined'?ALL_LETTERS:[]).filter(function(x){return x.ch!==ch;})).slice(0,Math.max(1,listenN-1)).map(function(x){return{glyph:x.ch,say:x.name||x.sound};});
