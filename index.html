@@ -427,6 +427,12 @@ function renderReport(){var r=document.getElementById('report');if(!r)return;var
 document.getElementById('mrowLetter').addEventListener('click',openTodayLetter);
 document.getElementById('mrowWord').addEventListener('click',function(){openWordBuild(todayWord[0],todayWord[1]);});
 document.getElementById('mrowPlay').addEventListener('click',function(){go('listen');});
+/* 막 바로가기 (테스트·부모용): ?act=N → 그 막 첫 화로, ?ep=N → 해당 인덱스로 점프 */
+(function(){try{var q=new URLSearchParams(location.search);var aj=q.get('act'),ej=q.get('ep');var ti=-1;
+if(ej!==null&&ej!==''){ti=parseInt(ej,10);}
+else if(aj!==null&&aj!==''){var an=parseInt(aj,10);for(var i=0;i<EPISODE_PATH.length;i++){if(EPISODE_PATH[i].act===an){ti=i;break;}}}
+if(ti>=0&&!isNaN(ti)){progress.idx=Math.max(0,Math.min(ti,EPISODE_PATH.length-1));saveProgress();}
+}catch(e){}})();
 loadMission();renderMission();
 
 /* ===== 효과음 + 배경음악 (Web Audio) ===== */
