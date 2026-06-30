@@ -28,14 +28,23 @@ function hashStr(s){var h=5381;for(var i=0;i<s.length;i++)h=((h*33)^s.charCodeAt
 var progress=lsJSON('hp_progress',{idx:0,mastery:{},album:[],milestones:[]});
 function saveProgress(){lsSetJSON('hp_progress',progress);}
 function curEpisode(){return EPISODE_PATH[Math.min(progress.idx,EPISODE_PATH.length-1)];}
-function curLetterObj(){var ep=curEpisode();if(!ep||ep.type!=='letter')return null;return ALL_LETTER_OBJS[ep.ch]||null;}
+// 글자형 막 → 자모 객체(소리/예시). 합치기형(combine) 막 → 목표 음절을 분해한 합성 객체(목표+필요한 자모 카드).
+function combineTarget(ep){
+  if(!ep||ep.type!=='combine'||!ep.ch)return null;
+  var jamo=(typeof decompose==='function')?(decompose(ep.ch)[0]||[]):[];
+  return {ch:ep.ch,sound:ep.ch,combine:true,jamo:jamo,word:ep.word||'',emoji:ep.emoji||''};
+}
+function curLetterObj(){var ep=curEpisode();if(!ep)return null;
+  if(ep.type==='letter')return ALL_LETTER_OBJS[ep.ch]||null;
+  if(ep.type==='combine')return combineTarget(ep);
+  return null;}
 function masteredLetters(){return Object.keys(progress.mastery).filter(function(ch){return isMasteredRec(progress.mastery[ch]);});}
-function markLetterProgress(part){var ep=curEpisode();if(!ep||ep.type!=='letter')return;
+function markLetterProgress(part){var ep=curEpisode();if(!ep||(ep.type!=='letter'&&ep.type!=='combine'))return;
   var rec=progress.mastery[ep.ch]||(progress.mastery[ep.ch]={met:false,matched:false,quizzed:false});
   if(part==='letter')rec.met=true;else if(part==='word')rec.matched=true;else if(part==='play')rec.quizzed=true;
   saveProgress();}
 function letterDone(){var ep=curEpisode();if(!ep||ep.type!=='letter')return false;return isMasteredRec(progress.mastery[ep.ch]);}
-function addAlbumStar(){var ep=curEpisode();if(!ep||ep.type!=='letter')return;if(progress.album.indexOf(ep.ch)<0){progress.album.push(ep.ch);saveProgress();}}
+function addAlbumStar(){var ep=curEpisode();if(!ep||(ep.type!=='letter'&&ep.type!=='combine')||!ep.ch)return;if(progress.album.indexOf(ep.ch)<0){progress.album.push(ep.ch);saveProgress();}}
 function advanceEpisode(){if(progress.idx<EPISODE_PATH.length-1){progress.idx++;saveProgress();}}
 function checkMilestone(){return pendingMilestone(masteredLetters(),progress.milestones);}
 function markMilestoneShown(word){if(progress.milestones.indexOf(word)<0){progress.milestones.push(word);saveProgress();}}
@@ -60,3 +69,9 @@ function loadMission(){pickToday();if(mission.ep!==progress.idx){mission={ep:pro
 function saveMission(){lsSetJSON('hp_mission',mission);}
 function updateStreak(){if(lastDone===MD)return;streak=(lastDone===yKey())?streak+1:1;lastDone=MD;lsSet('hp_streak',streak);lsSet('hp_lastdone',lastDone);}
 function completeMission(part){if(!mission||mission[part])return;mission[part]=true;mission.lastReaction=part;markLetterProgress(part);saveMission();showHaniReaction(part);renderMission();}
+// 글자 공방(3막): 음절 하나를 합쳐 완성하면 그 막의 단일 미션이 한 번에 끝난다(글자형 3단계 대신 1단계).
+function completeCombine(){var ep=curEpisode();if(!ep||ep.type!=='combine'||!mission||mission.letter)return;
+  if(ep.ch){progress.mastery[ep.ch]={met:true,matched:true,quizzed:true};saveProgress();}
+  mission.letter=true;mission.word=true;mission.play=true;mission.lastReaction='all';saveMission();
+  if(typeof showHaniReaction==='function')showHaniReaction('all');
+  if(typeof renderMission==='function')renderMission();}

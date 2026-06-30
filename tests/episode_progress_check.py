@@ -131,7 +131,74 @@ def test_index_has_episode_and_album_dom_and_hooks():
 
 def test_service_worker_precaches_episode_module_with_bumped_cache():
     assert "./app-episode.js" in SW
-    assert "hangul-playground-v37" in SW
+    assert "hangul-playground-v38" in SW
+
+
+def test_stage_b_combine_act_is_playable():
+    data = DATA.read_text(encoding="utf-8")
+    state = STATE.read_text(encoding="utf-8")
+    ep = EPISODE.read_text(encoding="utf-8")
+    learning = (ROOT / "app-learning.js").read_text(encoding="utf-8")
+    # 3막 combine 콘텐츠: 목표 음절 + 예시 단어/그림
+    assert "syllables:['가','나','다','마','고','모']" in data
+    assert "sylWords:" in data
+    # EPISODE_PATH가 combine 막을 음절별 노드로 펼침(ch 트릭으로 글자 기계장치 재사용)
+    assert "a.type==='combine'" in data
+    assert "type:'combine',ch:ch" in data
+    # 상태 분기점: curLetterObj/markLetterProgress/addAlbumStar가 combine 허용, 단일 완료 함수
+    assert "function combineTarget" in state
+    assert "ep.type==='combine'" in state
+    assert "function completeCombine" in state
+    # 배너/내레이션 combine 분기
+    assert "ep.type==='combine'" in ep
+    assert "자음과 모음을 합쳐" in ep
+    # 글자 공방 드래그 화면(wordBuild 기계장치 재사용)
+    for token in ["function openCombine", "function cbTap", "function cbDragStart", "function combineTeach", "function initCombine"]:
+        assert token in learning, token
+    # 화면 DOM + 미션 라우팅이 combine을 인식
+    assert 'id="combine"' in HTML
+    assert 'id="cbTarget"' in HTML
+    assert 'id="cbTray"' in HTML
+    assert "openCombine()" in HTML
+    assert "initCombine();" in learning
+
+
+def test_combine_episode_does_not_fall_back_to_random_letter():
+    # combine 막에서 curLetterObj는 null이 아닌 목표 음절 객체를 돌려줘야 한다(랜덤 글자 폴백 방지).
+    # app-data.js의 EPISODE_PATH/CHO/JUNG/JONG를 쓰고, 상태 분기(combineTarget/curLetterObj)를 재현해 검증.
+    src = DATA.read_text(encoding="utf-8")
+    probe = (
+        src
+        + ";function decompose(word){var out=[];for(var k=0;k<word.length;k++){var chr=word[k];"
+        "var code=chr.charCodeAt(0)-0xAC00;if(code<0||code>11171){out.push([chr]);continue;}"
+        "var i=Math.floor(code/588),m=Math.floor((code%588)/28),f=code%28;var j=[CHO[i],JUNG[m]];"
+        "if(f>0)j.push(JONG[f]);out.push(j);}return out;}"
+        + ";var ci=-1;for(var z=0;z<EPISODE_PATH.length;z++){if(EPISODE_PATH[z].type==='combine'){ci=z;break;}}"
+        + "var progress={idx:ci,mastery:{},album:[],milestones:[]};"
+        + "function curEpisode(){return EPISODE_PATH[Math.min(progress.idx,EPISODE_PATH.length-1)];}"
+        + "function combineTarget(ep){if(!ep||ep.type!=='combine'||!ep.ch)return null;var jamo=(typeof decompose==='function')?(decompose(ep.ch)[0]||[]):[];return {ch:ep.ch,sound:ep.ch,combine:true,jamo:jamo,word:ep.word||'',emoji:ep.emoji||''};}"
+        + "function curLetterObj(){var ep=curEpisode();if(!ep)return null;if(ep.type==='letter')return ALL_LETTER_OBJS[ep.ch]||null;if(ep.type==='combine')return combineTarget(ep);return null;}"
+        + ";this.__out=JSON.stringify({ci:ci,ch:curEpisode().ch,jamo:(curLetterObj()||{}).jamo,word:(curLetterObj()||{}).word});"
+    )
+    script = (
+        "const vm=require('vm');"
+        "let chunks='';process.stdin.on('data',d=>chunks+=d);"
+        "process.stdin.on('end',()=>{const ctx={};vm.createContext(ctx);"
+        "vm.runInContext(chunks,ctx);process.stdout.write(ctx.__out);});"
+    )
+    res = subprocess.run(
+        ["node", "-e", script],
+        input=probe,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
+    assert res.returncode == 0, res.stderr
+    out = json.loads(res.stdout)
+    assert out["ci"] >= 0  # combine 노드가 경로에 존재
+    assert out["ch"] == "가"  # 첫 combine 음절
+    assert out["jamo"] == ["ㄱ", "ㅏ"]  # 분해된 자모(랜덤 폴백 아님)
+    assert out["word"] == "가방"
 
 
 def test_episode_engine_logic_runs_in_node():

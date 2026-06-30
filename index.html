@@ -155,6 +155,27 @@
     </div>
   </section>
 
+  <section id="combine" class="screen">
+    <button class="ld-back" id="cbBack">⬅ 한글 마을</button>
+    <div class="wb-wrap">
+      <div class="wb-col wb-left">
+        <div class="cb-goal" id="cbGoal" aria-label="만들 글자">가</div>
+        <div class="wb-pic" id="cbPic">🎒</div>
+        <div class="wb-word" id="cbWord">가방</div>
+        <div class="wb-target cb-target" id="cbTarget"></div>
+        <div class="wb-feedback" id="cbFeedback"></div>
+        <div class="wb-tools">
+          <button class="wb-tool" id="cbHear">🔊 다시 듣기</button>
+          <button class="wb-tool" id="cbReset">↺ 다시</button>
+        </div>
+      </div>
+      <div class="wb-col wb-right">
+        <div class="wb-tray-label">자음과 모음을 끌어다 놓아요 👈 <small>(눌러도 돼요)</small></div>
+        <div class="wb-tray" id="cbTray"></div>
+      </div>
+    </div>
+  </section>
+
   <section id="sent" class="screen"><div class="section-title">문장 쓰기</div><div class="hint">예문을 고르거나, 직접 만들어요 ✏️</div>
     <div class="pick-h">📚 예문 고르기</div>
     <div class="sent-presets" id="sentPresets"></div>
@@ -324,15 +345,33 @@ renderStickerBoard();
 function setRow(rowId,ckId,done){var r=document.getElementById(rowId);if(!r)return;r.classList.toggle('done',!!done);var c=document.getElementById(ckId);if(c)c.textContent=done?'✓':'○';}
 function renderMission(){
   if(!todayLetter)pickToday();
-  var eL=document.getElementById('mtL');if(eL)eL.textContent=todayLetter.ch;
-  var kL=document.getElementById('mkL');if(kL)kL.textContent=todayLetter.ch;
-  var eW=document.getElementById('mtW');if(eW)eW.textContent=todayWord[0];
-  var kW=document.getElementById('mkW');if(kW)kW.textContent=todayWord[1];
-  setRow('mrowLetter','mcL',mission.letter);setRow('mrowWord','mcW',mission.word);setRow('mrowPlay','mcP',mission.play);
-  var n=(mission.letter?1:0)+(mission.word?1:0)+(mission.play?1:0);
+  var mep=(typeof curEpisode==='function')?curEpisode():null;
+  var combine=!!(mep&&mep.type==='combine');
+  var wRow=document.getElementById('mrowWord'),pRow=document.getElementById('mrowPlay');
+  var mtx=document.querySelector('#mrowLetter .mtx');
+  if(combine){
+    if(wRow)wRow.style.display='none';if(pRow)pRow.style.display='none';
+    var ckL=document.getElementById('mkL');if(ckL)ckL.textContent='🔨';
+    var ctL=document.getElementById('mtL');if(ctL)ctL.textContent=mep.ch+' 만들기';
+    if(mtx){if(mtx.childNodes[0])mtx.childNodes[0].nodeValue='글자 공방 ';var csm=mtx.querySelector('small');if(csm)csm.textContent='자음과 모음을 합쳐요';}
+  }else{
+    if(wRow)wRow.style.display='';if(pRow)pRow.style.display='';
+    var eL=document.getElementById('mtL');if(eL)eL.textContent=todayLetter.ch;
+    var kL=document.getElementById('mkL');if(kL)kL.textContent=todayLetter.ch;
+    var eW=document.getElementById('mtW');if(eW)eW.textContent=todayWord[0];
+    var kW=document.getElementById('mkW');if(kW)kW.textContent=todayWord[1];
+    if(mtx){if(mtx.childNodes[0])mtx.childNodes[0].nodeValue='글자 숲 ';var lsm=mtx.querySelector('small');if(lsm)lsm.textContent='숨어 있는 글자 친구를 만나요';}
+  }
+  setRow('mrowLetter','mcL',mission.letter);
+  if(!combine){setRow('mrowWord','mcW',mission.word);setRow('mrowPlay','mcP',mission.play);}
+  var n=combine?(mission.letter?3:0):((mission.letter?1:0)+(mission.word?1:0)+(mission.play?1:0));
   var story=document.getElementById('storyText');
   if(story){
-    if(n===0)story.textContent='오늘은 '+todayLetter.ch+' 친구와 '+todayWord[0]+' 단어가 한글 마을에서 기다리고 있어요.';
+    if(combine){
+      if(!mission.letter)story.textContent='글자 공방에서 자음과 모음을 합쳐 '+mep.ch+'을(를) 만들어요!';
+      else story.textContent='글자 공방에서 '+mep.ch+'을(를) 완성했어요! 정말 멋져요!';
+    }
+    else if(n===0)story.textContent='오늘은 '+todayLetter.ch+' 친구와 '+todayWord[0]+' 단어가 한글 마을에서 기다리고 있어요.';
     else if(!mission.letter)story.textContent='먼저 글자 숲에서 '+todayLetter.ch+' 친구를 만나볼까요?';
     else if(!mission.word)story.textContent='좋아요! 이제 단어 동산에서 '+todayWord[0]+' 단어를 찾아봐요.';
     else if(!mission.play)story.textContent='마지막은 소리 동굴이에요. 소리를 듣고 문을 열어봐요!';
@@ -350,7 +389,7 @@ function renderMission(){
   twemojify(document.getElementById('mission'));
   if(n===3&&!mission.rewarded){mission.rewarded=true;saveMission();updateStreak();onEpisodeComplete();setTimeout(function(){confetti();earnSticker();},350);}
 }
-function openTodayLetter(){var isV=VOWS.indexOf(todayLetter)>=0;lettersTab=isV?'vow':'con';var tabs=document.querySelectorAll('#letterTabs button');tabs.forEach(function(x){x.classList.remove('con-on','vow-on');});if(tabs[isV?1:0])tabs[isV?1:0].classList.add(lettersTab+'-on');renderLetters();openLetterDetail(todayLetter);}
+function openTodayLetter(){var oep=(typeof curEpisode==='function')?curEpisode():null;if(oep&&oep.type==='combine'){if(typeof openCombine==='function')openCombine();return;}var isV=VOWS.indexOf(todayLetter)>=0;lettersTab=isV?'vow':'con';var tabs=document.querySelectorAll('#letterTabs button');tabs.forEach(function(x){x.classList.remove('con-on','vow-on');});if(tabs[isV?1:0])tabs[isV?1:0].classList.add(lettersTab+'-on');renderLetters();openLetterDetail(todayLetter);}
 /* 부모 잠금 + 리포트 */
 var parentUnlocked=false,gateAns=0;
 var gateModal=document.getElementById('gateModal');

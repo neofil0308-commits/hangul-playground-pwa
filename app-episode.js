@@ -22,6 +22,8 @@ function narrateEpisode(){
       var word=(lo&&lo.word)?lo.word:'';
       if(word&&typeof speakSeq==='function')speakSeq([sound,word]);
       else if(typeof speak==='function')speak(sound);
+    }else if(ep.type==='combine'){
+      if(typeof speak==='function')speak('자음과 모음을 합쳐 '+ep.ch+'를 만들어요');
     }else if(typeof speak==='function'){speak('곧 새로운 이야기가 열려요');}
   }catch(e){}
 }
@@ -35,6 +37,13 @@ function renderEpisodeBanner(){
       +'<span class="book-ch">'+ep.ch+'</span>'
       +(pic?'<span class="book-pic">'+pic+'</span>':'')
       +'<span class="book-hear-label">🔊 하니가 읽어줄게</span>'
+    +'</button>';
+  }else if(ep.type==='combine'){
+    var co=curLetterObj();var cpic=(co&&co.emoji)?co.emoji:'🧩';
+    el.innerHTML='<button class="book-page" id="epHearBtn" aria-label="하니가 글자 만들기를 알려줄게요">'
+      +'<span class="book-ch">'+ep.ch+'</span>'
+      +'<span class="book-pic">'+cpic+'</span>'
+      +'<span class="book-hear-label">🔊 하니가 알려줄게</span>'
     +'</button>';
   }else{
     el.innerHTML='<button class="book-page book-page-soon" id="epHearBtn">'
@@ -91,9 +100,10 @@ function showMilestone(m){
 // 한 글자(에피소드)를 다 깬 순간: 별 추가 + 그림길 갱신 + 맛보기 검사.
 // 글자 마무리 정리(recap) + 지난 글자 복습 — 글자를 다 익힌 뒤 한번 정리해 설명.
 function showRecap(){
-  var ep=curEpisode();if(!ep||ep.type!=='letter')return;
+  var ep=curEpisode();if(!ep||(ep.type!=='letter'&&ep.type!=='combine'))return;
   var ch=ep.ch;var lo=(typeof ALL_LETTER_OBJS!=='undefined')?ALL_LETTER_OBJS[ch]:null;
   var words=((typeof LETTER_WORDS!=='undefined')&&LETTER_WORDS[ch])||[];
+  if(!words.length&&ep.type==='combine'&&ep.word)words=[[ep.word,ep.emoji||'']];
   var learned=(typeof masteredLetters==='function'?masteredLetters():[]).filter(function(c){return c!==ch;});
   var review=learned.length?learned[Math.floor(Math.random()*learned.length)]:'';
   var el=document.getElementById('recapPop');if(!el)return;

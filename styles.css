@@ -653,6 +653,9 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
 .wb-tray{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
 .wb-card{width:60px;height:70px;font-size:2.1rem;border:none;cursor:pointer;border-radius:16px;}
 .wb-card.used{opacity:.35;}
+/* 글자 공방(3막): 목표 음절은 흐린 실루엣 힌트만 — 정답 노출 최소 */
+.cb-goal{font-family:'Jua',sans-serif;font-size:6rem;line-height:1;color:transparent;-webkit-text-stroke:3px #d8c4a4;text-stroke:3px #d8c4a4;opacity:.55;letter-spacing:2px;margin-bottom:-6px;}
+#combine .wb-target{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;min-height:90px;border-radius:20px;padding:6px;transition:background .12s,box-shadow .12s;}
 .wb-card.bad{animation:shake .4s;}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 /* 단어 동산 자모 카드 디자인 (자음=주황, 모음=청록, 입체 버튼) */

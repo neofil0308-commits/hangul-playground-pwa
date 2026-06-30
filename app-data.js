@@ -173,6 +173,8 @@ const CURRICULUM=[
    letters:['ㅁ','ㄴ','ㅇ','ㄱ','ㄷ','ㅂ','ㅅ','ㄹ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'],
    intro:'이제 자음 친구가 모음 옆에 서면 진짜 글자가 태어나요.',relic:'자음 열쇠'},
   {act:3,key:'syllable',type:'combine',title:'3막 글자 공방',place:'글자 공방',
+   syllables:['가','나','다','마','고','모'],
+   sylWords:{'가':['가방','🎒'],'나':['나비','🦋'],'다':['다리','🌉'],'마':['마차','🐴'],'고':['고래','🐳'],'모':['모자','🧢']},
    intro:'자음과 모음을 합치면 글자가 돼요. 가·나·다를 만들어요.',relic:'글자 망치'},
   {act:4,key:'final',type:'letter',title:'4막 받침의 문',place:'글자 공방',
    letters:['ㄱ','ㄴ','ㄷ','ㄹ','ㅁ','ㅂ','ㅇ'],
@@ -200,6 +202,7 @@ const STORY_MILESTONES=[
 // 진행 경로: 글자형 막은 글자 하나하나가 에피소드, 그 외 막은 막 자체가 한 단계.
 const EPISODE_PATH=(function(){var p=[];CURRICULUM.forEach(function(a){
   if(a.type==='letter'){a.letters.forEach(function(ch){p.push({act:a.act,actKey:a.key,actTitle:a.title,place:a.place,type:'letter',ch:ch});});}
+  else if(a.type==='combine'){a.syllables.forEach(function(ch){var ex=(a.sylWords&&a.sylWords[ch])||[];p.push({act:a.act,actKey:a.key,actTitle:a.title,place:a.place,type:'combine',ch:ch,word:ex[0]||'',emoji:ex[1]||''});});}
   else{p.push({act:a.act,actKey:a.key,actTitle:a.title,place:a.place,type:a.type});}
 });return p;})();
 // 익힘 판정(관대): 글자를 만나고(met) + 카드 짝맞추기(matched) + 소리퀴즈 정답(quizzed) 셋이면 마스터.

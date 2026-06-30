@@ -146,10 +146,103 @@ function initWordStudy(){Object.keys(WORDS).forEach((cat,i)=>{const b=document.c
   var wbW=document.getElementById('wbWrite');if(wbW)wbW.addEventListener('click',()=>{if(typeof loadCustomTrace==='function'&&wbWord)loadCustomTrace([...wbWord]);if(typeof go==='function')go('trace');});
 }
 
+/* ===== 글자 공방 (3막 combine): 자음+모음을 끌어다 음절을 합치기 =====
+   wordBuild 드래그 기계장치를 재사용. 목표 음절은 흐리게 힌트만, 소리·그림 우선, 관대한 판정. */
+var cbCh='',cbWord='',cbEmoji='',cbExpected=[],cbPos=0;
+function openCombine(){
+  var ep=(typeof curEpisode==='function')?curEpisode():null;
+  if(!ep||ep.type!=='combine')return;
+  var lo=(typeof curLetterObj==='function')?curLetterObj():null;
+  cbCh=ep.ch;
+  cbWord=(lo&&lo.word)||ep.word||'';
+  cbEmoji=(lo&&lo.emoji)||ep.emoji||'';
+  cbExpected=(lo&&lo.jamo&&lo.jamo.length)?lo.jamo.slice():((decompose(cbCh)[0])||[]);
+  cbPos=0;
+  var goal=document.getElementById('cbGoal');if(goal)goal.textContent=cbCh;
+  var pic=document.getElementById('cbPic');if(pic){pic.textContent=cbEmoji;pic.style.display=cbEmoji?'':'none';}
+  var wn=document.getElementById('cbWord');if(wn){wn.textContent=cbWord;wn.style.display=cbWord?'':'none';}
+  var tgt=document.getElementById('cbTarget');tgt.innerHTML='';
+  var blk=document.createElement('div');blk.className='wb-syl cb-syl';
+  var head=document.createElement('div');head.className='wb-syl-head';head.textContent=cbExpected.join(' + ');head.setAttribute('data-syl',cbCh);blk.appendChild(head);
+  cbExpected.forEach(function(){var s=document.createElement('div');s.className='wb-slot';blk.appendChild(s);});
+  tgt.appendChild(blk);
+  // 방해 카드: 이미 익힌 자모에서 1~2장(없으면 기본 자모로 폴백)
+  var need=cbExpected.slice();var distract=[];
+  var pool=(typeof masteredLetters==='function'?masteredLetters():[]).filter(function(c){return CHO.indexOf(c)>=0||JUNG.indexOf(c)>=0;});
+  if(pool.length<3)pool=CHO.slice(0,9).concat(JUNG.slice(0,6));
+  var tries=0;while(distract.length<2&&tries<200){tries++;var r=pool[Math.floor(Math.random()*pool.length)];if(need.indexOf(r)<0&&distract.indexOf(r)<0)distract.push(r);}
+  var trayEl=document.getElementById('cbTray');trayEl.innerHTML='';
+  shuffle(need.concat(distract)).forEach(function(j){var b=document.createElement('button');b.className='wb-card jchip jrole-'+(CHO.indexOf(j)>=0?'c':'v');b.textContent=j;b.addEventListener('pointerdown',function(e){cbDragStart(e,b,j);});trayEl.appendChild(b);});
+  var fb=document.getElementById('cbFeedback');if(fb)fb.textContent=(cbExpected[0]||'')+'부터 끌어다 놓아요 👈';
+  go('combine');
+  setTimeout(combinePrompt,450);
+}
+// 합치기 전 안내: "ㄱ하고 ㅏ를 합쳐서 가를 만들어요"
+function combinePrompt(){
+  try{var seq=[];cbExpected.forEach(function(j,i){seq.push(jamoSay(j));if(i<cbExpected.length-1)seq.push('하고');});
+    seq.push('합쳐서');seq.push(cbCh);seq.push('를 만들어요');
+    if(typeof speakSeq==='function')speakSeq(seq);else if(typeof speak==='function')speak(cbCh);}catch(e){}
+}
+// 완성 순간 규칙 가르치기: "ㄱ에 ㅏ를 더하면 가!"
+function combineTeach(){
+  try{var seq=[];
+    if(cbExpected.length>=2){
+      seq.push(jamoSay(cbExpected[0]));seq.push('에');seq.push(jamoSay(cbExpected[1]));seq.push('를 더하면');
+      if(cbExpected.length>=3){seq.push(String.fromCharCode(0xAC00+CHO.indexOf(cbExpected[0])*588+JUNG.indexOf(cbExpected[1])*28));seq.push(jamoSay(cbExpected[2]));seq.push('받침을 더하면');}
+      seq.push(cbCh);
+    }else seq.push(cbCh);
+    if(typeof speakSeq==='function')setTimeout(function(){speakSeq(seq);},500);
+  }catch(e){}
+}
+function cbTap(btn,j){
+  if(cbPos>=cbExpected.length)return;
+  if(j===cbExpected[cbPos]){
+    sfxCorrect();var slot=document.querySelectorAll('#cbTarget .wb-slot')[cbPos];
+    if(slot){slot.textContent=j;slot.classList.add('filled');slot.classList.remove('pop');void slot.offsetWidth;slot.classList.add('pop');wbMiniPraise(slot);}
+    btn.disabled=true;btn.classList.add('used');sayJamo(j);cbPos++;
+    if(cbPos>=cbExpected.length){
+      var head=document.querySelector('#cbTarget .wb-syl-head');if(head){head.classList.add('done');if(head.textContent.indexOf('=')<0)head.textContent=head.textContent+' = '+cbCh;}
+      var fb=document.getElementById('cbFeedback');if(fb)fb.textContent='완성! '+cbCh+' 🎉';
+      confetti();earnSticker();wbBigCorrect(cbCh);combineTeach();
+      setTimeout(function(){if(typeof completeCombine==='function')completeCombine();},1300);
+    }
+  }else{sfxWrong();btn.classList.add('bad');setTimeout(function(){btn.classList.remove('bad');},400);}
+}
+// 글자 공방 드래그: wbDragStart를 그대로 본떠 cbTarget/cbTap에 연결.
+function cbDragStart(e,btn,j){
+  if(btn.disabled||btn.classList.contains('used'))return;
+  try{e.preventDefault();}catch(_){}
+  var sx=e.clientX,sy=e.clientY,moved=false,ghost=null;
+  var tgt=document.getElementById('cbTarget');
+  function mv(ev){
+    if(!moved&&(Math.abs(ev.clientX-sx)+Math.abs(ev.clientY-sy))>8){
+      moved=true;ghost=btn.cloneNode(true);ghost.className=btn.className+' wb-ghost';
+      ghost.style.position='fixed';ghost.style.pointerEvents='none';ghost.style.margin='0';ghost.style.zIndex='9999';ghost.style.transform='translate(-50%,-50%) scale(1.08)';
+      document.body.appendChild(ghost);btn.classList.add('wb-dragging');
+    }
+    if(ghost){ghost.style.left=ev.clientX+'px';ghost.style.top=ev.clientY+'px';tgt.classList.toggle('wb-target-over',wbOverTarget(ev,tgt));}
+  }
+  function up(ev){
+    document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);
+    tgt.classList.remove('wb-target-over');if(ghost)ghost.remove();btn.classList.remove('wb-dragging');
+    if(!moved){cbTap(btn,j);return;}
+    if(wbOverTarget(ev,tgt))cbTap(btn,j);
+  }
+  document.addEventListener('pointermove',mv);
+  document.addEventListener('pointerup',up);
+  document.addEventListener('pointercancel',up);
+}
+function initCombine(){
+  var b=document.getElementById('cbBack');if(b)b.addEventListener('click',function(){go('home');});
+  var h=document.getElementById('cbHear');if(h)h.addEventListener('click',combinePrompt);
+  var r=document.getElementById('cbReset');if(r)r.addEventListener('click',openCombine);
+}
+
 function initLearningScreens(){
   initLetterTabs();
   renderLetters();
   ldSound.addEventListener('click',()=>{if(curLetter)sayJamo(curLetter.ch);});
   document.getElementById('ldBack').addEventListener('click',()=>go('home'));
   initWordStudy();
+  initCombine();
 }

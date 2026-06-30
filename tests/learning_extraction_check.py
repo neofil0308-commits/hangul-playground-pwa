@@ -66,4 +66,4 @@ def test_learning_drops_legacy_word_modal():
 
 def test_service_worker_precaches_external_learning_file_with_new_cache_version():
     assert "./app-learning.js" in SW
-    assert "hangul-playground-v37" in SW
+    assert "hangul-playground-v38" in SW
