@@ -155,6 +155,18 @@ const LETTER_WORDS={
 };
 
 const PRESET_SENTS=['고양이가 우유를 마셔요','아기가 사과를 먹어요','강아지가 공을 던져요','토끼가 책을 봐요','곰이 밥을 먹어요','오리가 물을 마셔요'];
+// 문장 단어 → 그림(이모지) 단서. 주어/목적어/서술어 짝에서 정확히 일치하는 토큰을 먼저 쓰고,
+// 없으면 받침/조사를 떼어 LETTER_WORDS/WORDS에서 보충(글 못 읽는 아이용 그림 힌트).
+const SENT_EMOJI=(function(){var m={};[].concat(SUBJ,OBJ,VERB).forEach(function(p){m[p[0]]=p[1];});return m;})();
+function sentCue(word){
+  if(!word)return '';
+  if(SENT_EMOJI[word])return SENT_EMOJI[word];
+  var stem=word.replace(/(가|이|를|을|은|는|에|와|과|도|요)$/,'');
+  if(SENT_EMOJI[word.slice(0,-1)])return SENT_EMOJI[word.slice(0,-1)];
+  for(var k in WORDS){for(var i=0;i<WORDS[k].length;i++){if(WORDS[k][i][0]===stem)return WORDS[k][i][1];}}
+  return '';
+}
+function sentCues(words){return (words||[]).map(sentCue);}
 
 const CRAYONS=[['검정','#222'],['분홍','#ff6fa5'],['파랑','#4aa3ff'],['노랑','#ffb02e'],['초록','#3fb964']];
 
@@ -188,6 +200,7 @@ const CURRICULUM=[
   {act:7,key:'word',type:'word',title:'7막 단어 마을',place:'단어 동산',
    intro:'글자들이 모여 단어가 됐어요. 이제 단어를 읽어요.',relic:'단어 꽃다발'},
   {act:8,key:'sentence',type:'sentence',title:'8막 이야기 책',place:'별빛 우체국',
+   sentences:PRESET_SENTS.slice(),
    intro:'드디어 문장을 읽어요. 하얀 편지에 글이 떠올라요.',relic:'별빛 편지'},
 ];
 // 빠른 성취형(B): 정해진 글자를 익히면 곧장 진짜 말 맛보기를 띄워 동기부여.
@@ -203,6 +216,7 @@ const STORY_MILESTONES=[
 const EPISODE_PATH=(function(){var p=[];CURRICULUM.forEach(function(a){
   if(a.type==='letter'){a.letters.forEach(function(ch){p.push({act:a.act,actKey:a.key,actTitle:a.title,place:a.place,type:'letter',ch:ch});});}
   else if(a.type==='combine'){a.syllables.forEach(function(ch){var ex=(a.sylWords&&a.sylWords[ch])||[];p.push({act:a.act,actKey:a.key,actTitle:a.title,place:a.place,type:'combine',ch:ch,word:ex[0]||'',emoji:ex[1]||''});});}
+  else if(a.type==='sentence'){(a.sentences||[]).forEach(function(s){var words=s.split(' ');p.push({act:a.act,actKey:a.key,actTitle:a.title,place:a.place,type:'sentence',sent:s,words:words,cues:sentCues(words)});});}
   else{p.push({act:a.act,actKey:a.key,actTitle:a.title,place:a.place,type:a.type});}
 });return p;})();
 // 익힘 판정(관대): 글자를 만나고(met) + 카드 짝맞추기(matched) + 소리퀴즈 정답(quizzed) 셋이면 마스터.

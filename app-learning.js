@@ -238,6 +238,67 @@ function initCombine(){
   var r=document.getElementById('cbReset');if(r)r.addEventListener('click',openCombine);
 }
 
+/* ===== 이야기 책 (8막 sentence·졸업): 문장을 스스로 읽기 =====
+   읽기 우선 화면 — 문장은 보여주는 게 맞다(원칙7 "정답 숨기기"는 듣기게임용, 읽기는 아님).
+   단어 칩을 누르면 그 단어 소리, "하니가 읽어줄게"는 단어별 하이라이트로 전체 읽기,
+   "읽었어요!"는 아이가 스스로 신고 → 관대한 판정으로 완료(졸업 축하). */
+var stSent='',stWords=[],stCues=[];
+function openStory(){
+  var ep=(typeof curEpisode==='function')?curEpisode():null;
+  if(!ep||ep.type!=='sentence')return;
+  var lo=(typeof curLetterObj==='function')?curLetterObj():null;
+  stSent=ep.sent||(lo&&lo.sent)||'';
+  stWords=(ep.words&&ep.words.length)?ep.words.slice():((lo&&lo.words&&lo.words.length)?lo.words.slice():stSent.split(' '));
+  stCues=(ep.cues&&ep.cues.length)?ep.cues.slice():((lo&&lo.cues&&lo.cues.length)?lo.cues.slice():(typeof sentCues==='function'?sentCues(stWords):[]));
+  var box=document.getElementById('stSentence');if(box){box.innerHTML='';
+    stWords.forEach(function(w,i){
+      var chip=document.createElement('button');chip.className='st-word';chip.setAttribute('data-i',i);
+      var cue=stCues[i]||'';
+      chip.innerHTML=(cue?'<span class="st-cue">'+cue+'</span>':'<span class="st-cue st-cue-empty">·</span>')+'<span class="st-text">'+w+'</span>';
+      chip.addEventListener('click',function(){stTapWord(i);});
+      box.appendChild(chip);
+    });
+    if(typeof twemojify==='function')twemojify(box);
+  }
+  var fb=document.getElementById('stFeedback');if(fb)fb.textContent='손가락으로 짚으며 읽어볼까요? 모르는 단어는 눌러요 👆';
+  go('story');
+}
+// 단어 칩 탭: 그 단어 소리 + 부드러운 하이라이트(단어별 도움).
+function stTapWord(i){
+  var w=stWords[i];if(!w)return;
+  var chips=document.querySelectorAll('#stSentence .st-word');
+  if(chips[i]){chips[i].classList.remove('st-lit');void chips[i].offsetWidth;chips[i].classList.add('st-lit');}
+  if(typeof speak==='function')speak(w);
+}
+// 하니가 전체 문장을 단어별 하이라이트로 읽어줌(도움 버튼).
+function stReadAll(){
+  if(!stWords.length)return;
+  var chips=document.querySelectorAll('#stSentence .st-word');
+  var i=0;
+  (function nx(){
+    if(i>=stWords.length){chips.forEach(function(c){c.classList.remove('st-lit');});return;}
+    chips.forEach(function(c){c.classList.remove('st-lit');});
+    if(chips[i])chips[i].classList.add('st-lit');
+    var w=stWords[i++];
+    if(typeof speakOne==='function')speakOne(w,nx);
+    else if(typeof speak==='function'){speak(w);setTimeout(nx,750);}
+  })();
+}
+// "읽었어요!" — 아이가 스스로 읽었다고 신고. 관대한 판정(정답 검사 없음) → 졸업 축하.
+function stDoneReading(){
+  var fb=document.getElementById('stFeedback');if(fb)fb.textContent='스스로 읽었어요! 🎉';
+  document.querySelectorAll('#stSentence .st-word').forEach(function(c){c.classList.add('st-lit');});
+  if(typeof confetti==='function')confetti();
+  if(typeof earnSticker==='function')earnSticker();
+  if(typeof wbBigCorrect==='function')wbBigCorrect('🎓');
+  setTimeout(function(){if(typeof completeStory==='function')completeStory();},900);
+}
+function initStory(){
+  var b=document.getElementById('stBack');if(b)b.addEventListener('click',function(){go('home');});
+  var r=document.getElementById('stReadAll');if(r)r.addEventListener('click',stReadAll);
+  var d=document.getElementById('stDone');if(d)d.addEventListener('click',stDoneReading);
+}
+
 function initLearningScreens(){
   initLetterTabs();
   renderLetters();
@@ -245,4 +306,5 @@ function initLearningScreens(){
   document.getElementById('ldBack').addEventListener('click',()=>go('home'));
   initWordStudy();
   initCombine();
+  initStory();
 }

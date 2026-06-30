@@ -658,6 +658,27 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
 #combine .wb-target{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;min-height:90px;border-radius:20px;padding:6px;transition:background .12s,box-shadow .12s;}
 .wb-card.bad{animation:shake .4s;}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+/* 이야기 책(8막 sentence·졸업): 읽기 우선 — 문장을 크게 보여주고 단어 칩을 눌러 소리 도움 */
+.story-read{max-width:880px;margin:0 auto;padding:8px 12px 28px;display:flex;flex-direction:column;align-items:center;gap:18px;}
+.story-read-head{font-family:'Jua',sans-serif;font-size:1.25rem;color:var(--sent-d,#5a8);background:linear-gradient(180deg,#fffdf6,#fff3da);border:3px solid #ffe1ab;border-radius:22px;padding:8px 22px;box-shadow:0 4px 0 #f0d3a6;}
+.st-sentence{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin:6px 0;}
+.st-word{font-family:'Jua',sans-serif;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;border:3px solid #ffe1ab;border-radius:22px;background:linear-gradient(180deg,#fffef9,#fff5e2);padding:12px 18px 10px;box-shadow:0 6px 0 #f0d3a6,0 9px 14px rgba(150,110,50,.14);transition:transform .1s,box-shadow .1s,background .15s;}
+.st-word:active{transform:translateY(5px);box-shadow:0 2px 0 #f0d3a6;}
+.st-word .st-cue{font-size:2.5rem;line-height:1;}
+.st-word .st-cue-empty{opacity:.18;}
+.st-word .st-text{font-size:2.5rem;line-height:1;color:var(--ink);}
+.st-word.st-lit{background:linear-gradient(180deg,#fff7d6,#ffe9a6);border-color:#ffcf66;box-shadow:0 6px 0 #f0bf66,0 0 0 4px rgba(255,200,80,.35);}
+.st-feedback{font-family:'Jua',sans-serif;font-size:1.15rem;color:var(--ink);text-align:center;min-height:1.4em;}
+.st-tools{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
+.st-readall,.st-done{font-family:'Jua',sans-serif;font-size:1.2rem;border:none;cursor:pointer;border-radius:24px;padding:14px 26px;color:#fff;}
+.st-readall{background:var(--listen);box-shadow:0 5px 0 var(--listen-d);}
+.st-done{background:var(--trace);box-shadow:0 5px 0 var(--trace-d);}
+.st-readall:active,.st-done:active{transform:translateY(4px);}
+/* 그림책 배너의 문장 미리보기 */
+.book-page-sent .book-sent{font-family:'Jua',sans-serif;font-size:1.6rem;line-height:1.3;color:var(--ink);text-align:center;margin:2px 6px;}
+/* 졸업 축하 카드 */
+.grad-card .grad-emoji{font-size:3rem;line-height:1;margin:6px 0;}
+.grad-card .grad-sent{font-family:'Jua',sans-serif;font-size:1.9rem;color:var(--sent-d,#5a8);margin:6px 0 2px;}
 /* 단어 동산 자모 카드 디자인 (자음=주황, 모음=청록, 입체 버튼) */
 .wb-tray .wb-card{font-family:'Jua',sans-serif;width:68px;height:84px;font-size:2.4rem;border:none;cursor:pointer;border-radius:20px;display:flex;align-items:center;justify-content:center;position:relative;padding-top:10px;transition:transform .08s,box-shadow .08s;}
 .wb-tray .wb-card::before{position:absolute;top:7px;left:0;right:0;font-size:.62rem;font-weight:700;letter-spacing:1px;opacity:.7;}

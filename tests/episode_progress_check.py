@@ -131,7 +131,7 @@ def test_index_has_episode_and_album_dom_and_hooks():
 
 def test_service_worker_precaches_episode_module_with_bumped_cache():
     assert "./app-episode.js" in SW
-    assert "hangul-playground-v38" in SW
+    assert "hangul-playground-v39" in SW
 
 
 def test_stage_b_combine_act_is_playable():
@@ -199,6 +199,70 @@ def test_combine_episode_does_not_fall_back_to_random_letter():
     assert out["ch"] == "가"  # 첫 combine 음절
     assert out["jamo"] == ["ㄱ", "ㅏ"]  # 분해된 자모(랜덤 폴백 아님)
     assert out["word"] == "가방"
+
+
+def test_stage_c_sentence_act_is_playable():
+    data = DATA.read_text(encoding="utf-8")
+    state = STATE.read_text(encoding="utf-8")
+    ep = EPISODE.read_text(encoding="utf-8")
+    learning = (ROOT / "app-learning.js").read_text(encoding="utf-8")
+    # 8막 sentence 콘텐츠: 졸업용 문장 + 단어 그림 단서
+    assert "sentences:PRESET_SENTS" in data
+    assert "function sentCues" in data
+    # EPISODE_PATH가 sentence 막을 문장별 노드로 펼침(sent/words/cues)
+    assert "a.type==='sentence'" in data
+    assert "type:'sentence',sent:s" in data
+    # 상태 분기점: curLetterObj가 sentence 허용(랜덤 글자 폴백 방지), 단일 완료 함수
+    assert "function sentenceTarget" in state
+    assert "ep.type==='sentence'" in state
+    assert "function completeStory" in state
+    # 배너/내레이션 sentence 분기 — 읽기 우선(미리 읽어주지 않고 초대만)
+    assert "ep.type==='sentence'" in ep
+    assert "스스로 읽어볼까요" in ep
+    assert "function showGraduation" in ep
+    # 이야기 책 읽기 화면(speakSeq/단어별 하이라이트 재사용)
+    for token in ["function openStory", "function stTapWord", "function stReadAll", "function stDoneReading", "function initStory"]:
+        assert token in learning, token
+    # 화면 DOM + 미션 라우팅이 sentence를 인식
+    assert 'id="story"' in HTML
+    assert 'id="stSentence"' in HTML
+    assert 'id="stDone"' in HTML
+    assert "openStory()" in HTML
+    assert "initStory();" in learning
+
+
+def test_sentence_episode_does_not_fall_back_to_random_letter():
+    # sentence 막에서 curLetterObj는 null이 아닌 문장 목표 객체를 돌려줘야 한다(랜덤 글자 폴백 방지).
+    src = DATA.read_text(encoding="utf-8")
+    probe = (
+        src
+        + ";var si=-1;for(var z=0;z<EPISODE_PATH.length;z++){if(EPISODE_PATH[z].type==='sentence'){si=z;break;}}"
+        + "var progress={idx:si,mastery:{},album:[],milestones:[]};"
+        + "function curEpisode(){return EPISODE_PATH[Math.min(progress.idx,EPISODE_PATH.length-1)];}"
+        + "function sentenceTarget(ep){if(!ep||ep.type!=='sentence'||!ep.sent)return null;var words=(ep.words&&ep.words.length)?ep.words.slice():ep.sent.split(' ');var cues=(ep.cues&&ep.cues.length)?ep.cues.slice():(typeof sentCues==='function'?sentCues(words):[]);return {ch:'\\ud83d\\udcd6',sound:ep.sent,sentence:true,sent:ep.sent,words:words,cues:cues,word:words[0]||'',emoji:cues[0]||''};}"
+        + "function curLetterObj(){var ep=curEpisode();if(!ep)return null;if(ep.type==='sentence')return sentenceTarget(ep);return null;}"
+        + ";var lo=curLetterObj();this.__out=JSON.stringify({si:si,sent:lo&&lo.sent,words:lo&&lo.words,cue0:lo&&lo.cues&&lo.cues[0],isSent:!!(lo&&lo.sentence)});"
+    )
+    script = (
+        "const vm=require('vm');"
+        "let chunks='';process.stdin.on('data',d=>chunks+=d);"
+        "process.stdin.on('end',()=>{const ctx={};vm.createContext(ctx);"
+        "vm.runInContext(chunks,ctx);process.stdout.write(ctx.__out);});"
+    )
+    res = subprocess.run(
+        ["node", "-e", script],
+        input=probe,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
+    assert res.returncode == 0, res.stderr
+    out = json.loads(res.stdout)
+    assert out["si"] >= 0  # sentence 노드가 경로에 존재
+    assert out["isSent"] is True  # 문장 목표 객체(랜덤 글자 폴백 아님)
+    assert out["sent"] == "고양이가 우유를 마셔요"  # 첫 문장 텍스트
+    assert out["words"] == ["고양이가", "우유를", "마셔요"]  # 토큰화한 단어
+    assert out["cue0"] == "🐱"  # 단어 그림 단서(고양이가→🐱)
 
 
 def test_episode_engine_logic_runs_in_node():

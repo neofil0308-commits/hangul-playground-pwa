@@ -24,6 +24,9 @@ function narrateEpisode(){
       else if(typeof speak==='function')speak(sound);
     }else if(ep.type==='combine'){
       if(typeof speak==='function')speak('자음과 모음을 합쳐 '+ep.ch+'를 만들어요');
+    }else if(ep.type==='sentence'){
+      // 읽기 우선: 문장을 미리 읽어주지 않고, 아이가 먼저 읽어보도록 초대만 한다.
+      if(typeof speak==='function')speak('오늘은 이 문장을 스스로 읽어볼까요?');
     }else if(typeof speak==='function'){speak('곧 새로운 이야기가 열려요');}
   }catch(e){}
 }
@@ -44,6 +47,12 @@ function renderEpisodeBanner(){
       +'<span class="book-ch">'+ep.ch+'</span>'
       +'<span class="book-pic">'+cpic+'</span>'
       +'<span class="book-hear-label">🔊 하니가 알려줄게</span>'
+    +'</button>';
+  }else if(ep.type==='sentence'){
+    el.innerHTML='<button class="book-page book-page-sent" id="epHearBtn" aria-label="이야기 책에서 문장을 읽어요">'
+      +'<span class="book-ch">📖</span>'
+      +'<span class="book-sent">'+ep.sent+'</span>'
+      +'<span class="book-hear-label">📖 이야기 책에서 읽기</span>'
     +'</button>';
   }else{
     el.innerHTML='<button class="book-page book-page-soon" id="epHearBtn">'
@@ -118,7 +127,25 @@ function showRecap(){
     if(typeof speakSeq==='function')setTimeout(function(){speakSeq(seq);},350);}catch(e){}
   var nb=document.getElementById('recapNext');if(nb)nb.addEventListener('click',function(){el.style.display='none';goNextLetter();});
 }
+// 졸업 축하: 마지막 막(문장 읽기)을 끝낸 순간 — 큰 축하 + 하니 칭찬("스스로 읽었어요!").
+// album/showRecap은 글자 전용(ch 키)이라 문장은 건드리지 않고 별도 졸업 화면을 띄운다.
+function showGraduation(){
+  var ep=curEpisode();var sent=(ep&&ep.sent)||'';
+  var el=document.getElementById('recapPop');if(!el)return;
+  var html='<div class="recap-card grad-card"><div class="recap-title">스스로 읽었어요! 🎓</div>'
+    +'<div class="grad-emoji">🎉 📖 ⭐</div>'
+    +'<div class="grad-sent">'+sent+'</div>'
+    +'<div class="recap-review">하니가 정말 자랑스러워요. 이제 한글을 뗐어요!</div>'
+    +'<button class="recap-next" id="recapNext">다음 이야기로 ➡️</button></div>';
+  el.innerHTML=html;el.style.display='flex';if(typeof twemojify==='function')twemojify(el);
+  try{if(typeof confetti==='function')confetti();}catch(e){}
+  try{if(typeof speakSeq==='function')setTimeout(function(){speakSeq([sent,'스스로 읽었어요','정말 잘했어요']);},400);
+    else if(typeof speak==='function')speak('스스로 읽었어요');}catch(e){}
+  var nb=document.getElementById('recapNext');if(nb)nb.addEventListener('click',function(){el.style.display='none';goNextLetter();});
+}
 function onEpisodeComplete(){
+  var ep=curEpisode();
+  if(ep&&ep.type==='sentence'){renderStarAlbum();setTimeout(showGraduation,900);return;}
   addAlbumStar();
   renderStarAlbum();
   var m=checkMilestone();

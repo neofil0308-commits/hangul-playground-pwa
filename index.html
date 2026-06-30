@@ -176,6 +176,19 @@
     </div>
   </section>
 
+  <section id="story" class="screen">
+    <button class="ld-back" id="stBack">⬅ 한글 마을</button>
+    <div class="story-read">
+      <div class="story-read-head">📖 이야기 책 · 스스로 읽어요</div>
+      <div class="st-sentence" id="stSentence" aria-label="오늘의 문장"></div>
+      <div class="st-feedback" id="stFeedback">손가락으로 짚으며 읽어볼까요? 모르는 단어는 눌러요 👆</div>
+      <div class="st-tools">
+        <button class="st-readall" id="stReadAll">🔊 하니가 읽어줄게</button>
+        <button class="st-done" id="stDone">✅ 읽었어요!</button>
+      </div>
+    </div>
+  </section>
+
   <section id="sent" class="screen"><div class="section-title">문장 쓰기</div><div class="hint">예문을 고르거나, 직접 만들어요 ✏️</div>
     <div class="pick-h">📚 예문 고르기</div>
     <div class="sent-presets" id="sentPresets"></div>
@@ -347,13 +360,21 @@ function renderMission(){
   if(!todayLetter)pickToday();
   var mep=(typeof curEpisode==='function')?curEpisode():null;
   var combine=!!(mep&&mep.type==='combine');
+  var sentence=!!(mep&&mep.type==='sentence');
+  var single=combine||sentence;
   var wRow=document.getElementById('mrowWord'),pRow=document.getElementById('mrowPlay');
   var mtx=document.querySelector('#mrowLetter .mtx');
-  if(combine){
+  if(single){
     if(wRow)wRow.style.display='none';if(pRow)pRow.style.display='none';
-    var ckL=document.getElementById('mkL');if(ckL)ckL.textContent='🔨';
-    var ctL=document.getElementById('mtL');if(ctL)ctL.textContent=mep.ch+' 만들기';
-    if(mtx){if(mtx.childNodes[0])mtx.childNodes[0].nodeValue='글자 공방 ';var csm=mtx.querySelector('small');if(csm)csm.textContent='자음과 모음을 합쳐요';}
+    if(combine){
+      var ckL=document.getElementById('mkL');if(ckL)ckL.textContent='🔨';
+      var ctL=document.getElementById('mtL');if(ctL)ctL.textContent=mep.ch+' 만들기';
+      if(mtx){if(mtx.childNodes[0])mtx.childNodes[0].nodeValue='글자 공방 ';var csm=mtx.querySelector('small');if(csm)csm.textContent='자음과 모음을 합쳐요';}
+    }else{
+      var skL=document.getElementById('mkL');if(skL)skL.textContent='📖';
+      var stL=document.getElementById('mtL');if(stL)stL.textContent='이야기 책 읽기';
+      if(mtx){if(mtx.childNodes[0])mtx.childNodes[0].nodeValue='이야기 책 ';var ssm=mtx.querySelector('small');if(ssm)ssm.textContent='문장을 스스로 읽어요';}
+    }
   }else{
     if(wRow)wRow.style.display='';if(pRow)pRow.style.display='';
     var eL=document.getElementById('mtL');if(eL)eL.textContent=todayLetter.ch;
@@ -363,13 +384,17 @@ function renderMission(){
     if(mtx){if(mtx.childNodes[0])mtx.childNodes[0].nodeValue='글자 숲 ';var lsm=mtx.querySelector('small');if(lsm)lsm.textContent='숨어 있는 글자 친구를 만나요';}
   }
   setRow('mrowLetter','mcL',mission.letter);
-  if(!combine){setRow('mrowWord','mcW',mission.word);setRow('mrowPlay','mcP',mission.play);}
-  var n=combine?(mission.letter?3:0):((mission.letter?1:0)+(mission.word?1:0)+(mission.play?1:0));
+  if(!single){setRow('mrowWord','mcW',mission.word);setRow('mrowPlay','mcP',mission.play);}
+  var n=single?(mission.letter?3:0):((mission.letter?1:0)+(mission.word?1:0)+(mission.play?1:0));
   var story=document.getElementById('storyText');
   if(story){
     if(combine){
       if(!mission.letter)story.textContent='글자 공방에서 자음과 모음을 합쳐 '+mep.ch+'을(를) 만들어요!';
       else story.textContent='글자 공방에서 '+mep.ch+'을(를) 완성했어요! 정말 멋져요!';
+    }
+    else if(sentence){
+      if(!mission.letter)story.textContent='이야기 책에서 오늘의 문장을 스스로 읽어볼까요?';
+      else story.textContent='문장을 스스로 읽었어요! 한글을 뗐어요. 정말 멋져요! 🎓';
     }
     else if(n===0)story.textContent='오늘은 '+todayLetter.ch+' 친구와 '+todayWord[0]+' 단어가 한글 마을에서 기다리고 있어요.';
     else if(!mission.letter)story.textContent='먼저 글자 숲에서 '+todayLetter.ch+' 친구를 만나볼까요?';
@@ -389,7 +414,7 @@ function renderMission(){
   twemojify(document.getElementById('mission'));
   if(n===3&&!mission.rewarded){mission.rewarded=true;saveMission();updateStreak();onEpisodeComplete();setTimeout(function(){confetti();earnSticker();},350);}
 }
-function openTodayLetter(){var oep=(typeof curEpisode==='function')?curEpisode():null;if(oep&&oep.type==='combine'){if(typeof openCombine==='function')openCombine();return;}var isV=VOWS.indexOf(todayLetter)>=0;lettersTab=isV?'vow':'con';var tabs=document.querySelectorAll('#letterTabs button');tabs.forEach(function(x){x.classList.remove('con-on','vow-on');});if(tabs[isV?1:0])tabs[isV?1:0].classList.add(lettersTab+'-on');renderLetters();openLetterDetail(todayLetter);}
+function openTodayLetter(){var oep=(typeof curEpisode==='function')?curEpisode():null;if(oep&&oep.type==='combine'){if(typeof openCombine==='function')openCombine();return;}if(oep&&oep.type==='sentence'){if(typeof openStory==='function')openStory();return;}var isV=VOWS.indexOf(todayLetter)>=0;lettersTab=isV?'vow':'con';var tabs=document.querySelectorAll('#letterTabs button');tabs.forEach(function(x){x.classList.remove('con-on','vow-on');});if(tabs[isV?1:0])tabs[isV?1:0].classList.add(lettersTab+'-on');renderLetters();openLetterDetail(todayLetter);}
 /* 부모 잠금 + 리포트 */
 var parentUnlocked=false,gateAns=0;
 var gateModal=document.getElementById('gateModal');

@@ -34,9 +34,18 @@ function combineTarget(ep){
   var jamo=(typeof decompose==='function')?(decompose(ep.ch)[0]||[]):[];
   return {ch:ep.ch,sound:ep.ch,combine:true,jamo:jamo,word:ep.word||'',emoji:ep.emoji||''};
 }
+// 문장형 막(8막) → 문장 텍스트 + 토큰화한 단어 + 그림 단서를 담은 합성 객체.
+// ch:'📖'를 둬서 todayLetter.ch를 참조하는 코드가 깨지지 않게 함(랜덤 글자 폴백 방지).
+function sentenceTarget(ep){
+  if(!ep||ep.type!=='sentence'||!ep.sent)return null;
+  var words=(ep.words&&ep.words.length)?ep.words.slice():ep.sent.split(' ');
+  var cues=(ep.cues&&ep.cues.length)?ep.cues.slice():((typeof sentCues==='function')?sentCues(words):[]);
+  return {ch:'📖',sound:ep.sent,sentence:true,sent:ep.sent,words:words,cues:cues,word:words[0]||'',emoji:cues[0]||''};
+}
 function curLetterObj(){var ep=curEpisode();if(!ep)return null;
   if(ep.type==='letter')return ALL_LETTER_OBJS[ep.ch]||null;
   if(ep.type==='combine')return combineTarget(ep);
+  if(ep.type==='sentence')return sentenceTarget(ep);
   return null;}
 function masteredLetters(){return Object.keys(progress.mastery).filter(function(ch){return isMasteredRec(progress.mastery[ch]);});}
 function markLetterProgress(part){var ep=curEpisode();if(!ep||(ep.type!=='letter'&&ep.type!=='combine'))return;
@@ -72,6 +81,12 @@ function completeMission(part){if(!mission||mission[part])return;mission[part]=t
 // 글자 공방(3막): 음절 하나를 합쳐 완성하면 그 막의 단일 미션이 한 번에 끝난다(글자형 3단계 대신 1단계).
 function completeCombine(){var ep=curEpisode();if(!ep||ep.type!=='combine'||!mission||mission.letter)return;
   if(ep.ch){progress.mastery[ep.ch]={met:true,matched:true,quizzed:true};saveProgress();}
+  mission.letter=true;mission.word=true;mission.play=true;mission.lastReaction='all';saveMission();
+  if(typeof showHaniReaction==='function')showHaniReaction('all');
+  if(typeof renderMission==='function')renderMission();}
+// 이야기 책(8막·졸업): 문장을 스스로 읽으면 단일 미션이 한 번에 끝난다.
+// 문장은 단일 글자(ch)가 아니므로 mastery/album을 더럽히지 않고, 미션 플래그만 채워 n===3 보상 게이트를 연다.
+function completeStory(){var ep=curEpisode();if(!ep||ep.type!=='sentence'||!mission||mission.letter)return;
   mission.letter=true;mission.word=true;mission.play=true;mission.lastReaction='all';saveMission();
   if(typeof showHaniReaction==='function')showHaniReaction('all');
   if(typeof renderMission==='function')renderMission();}
