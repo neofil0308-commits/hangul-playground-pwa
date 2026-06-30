@@ -619,7 +619,8 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
 #wordBuild .wb-tray .wb-card{width:auto;height:104px;font-size:3rem;border-radius:22px;padding-top:14px;}
 #wordBuild .wb-tray .wb-card::before{top:9px;font-size:.7rem;}
 /* 조립판/빈칸 크게 */
-#wordBuild .wb-target{display:flex;gap:22px;flex-wrap:wrap;justify-content:center;min-height:96px;border-radius:20px;padding:6px;transition:background .12s,box-shadow .12s;}
+#wordBuild .wb-target{display:flex;gap:22px;flex-wrap:wrap;justify-content:center;min-height:96px;border-radius:20px;padding:6px;transition:background .12s,box-shadow .12s;margin-top:40px;row-gap:48px;}
+/* 여러 음절이 줄바꿈될 때 떠있는 수식 라벨(.wb-syl-head top:-36px)이 윗줄/단어와 겹치지 않게 위 여백·줄간격 확보 */
 #wordBuild .wb-slot{position:relative;width:60px;height:74px;border-radius:16px;font-size:2.7rem;}
 #wordBuild .wb-syl-head{top:-36px;font-size:1.5rem;white-space:nowrap;letter-spacing:1px;background:rgba(255,255,255,.7);border-radius:12px;padding:1px 8px;}
 .wb-target-over{background:rgba(95,180,120,.16);box-shadow:0 0 0 3px var(--word,#5fb478);}
@@ -655,7 +656,7 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
 .wb-card.used{opacity:.35;}
 /* 글자 공방(3막): 목표 음절은 흐린 실루엣 힌트만 — 정답 노출 최소 */
 .cb-goal{font-family:'Jua',sans-serif;font-size:3.4rem;line-height:1;color:transparent;-webkit-text-stroke:3px #d8c4a4;text-stroke:3px #d8c4a4;opacity:.55;letter-spacing:2px;margin-bottom:4px;}
-#combine .wb-target{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;min-height:90px;border-radius:20px;padding:6px;transition:background .12s,box-shadow .12s;}
+#combine .wb-target{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;min-height:90px;border-radius:20px;padding:6px;transition:background .12s,box-shadow .12s;row-gap:48px;}
 /* 3막 세로/과밀 레이아웃 정리: 떠있는 'ㄱ+ㅏ' 헤드가 단어와 겹치지 않게 여백 확보 + 슬롯 수직중앙 + 요소 축소 */
 #combine .wb-pic{font-size:3.8rem;}
 #combine .wb-word{font-size:2rem;margin:2px 0 12px;}
