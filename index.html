@@ -280,7 +280,7 @@ function probeMp3(){try{fetch('audio/'+VOICE+'/'+keyOf('\uac00')+'.mp3',{method:
 probeMp3();
 function stopAllVoice(){
   try{if('speechSynthesis' in window)speechSynthesis.cancel();}catch(e){}
-  try{if(audioEl){audioEl.pause();audioEl=null;}}catch(e){}
+  try{if(audioEl){audioEl._aborted=true;audioEl.pause();audioEl=null;}}catch(e){}
   try{if(typeof explainAudio!=='undefined'&&explainAudio){explainAudio.pause();explainAudio=null;}}catch(e){}
   try{if(typeof introAudio!=='undefined'&&introAudio){introAudio.pause();introAudio=null;}}catch(e){}
 }
@@ -288,11 +288,11 @@ function speakOne(t,cb){
   stopAllVoice();
   if(!USE_MP3){deviceSpeak(t,cb);return;}
   try{if('speechSynthesis' in window)speechSynthesis.cancel();}catch(e){}
-  if(audioEl){try{audioEl.pause();}catch(e){}audioEl=null;}
+  if(audioEl){try{audioEl._aborted=true;audioEl.pause();}catch(e){}audioEl=null;}
   var a=new Audio();var done=false,started=false;
-  function fb(){if(done)return;done=true;clearTimeout(tm);deviceSpeak(t,cb);}
+  function fb(){if(done||a._aborted)return;done=true;clearTimeout(tm);deviceSpeak(t,cb);}
   a.onerror=fb;
-  a.onplay=a.onplaying=function(){started=true;clearTimeout(tm);};
+  a.onplay=a.onplaying=function(){if(a._aborted||done){try{a.pause();}catch(e){}return;}started=true;clearTimeout(tm);};
   a.onended=function(){if(!done){done=true;clearTimeout(tm);if(cb)cb();}};
   try{a.playbackRate=Math.max(0.5,Math.min(2,RATE/0.8));}catch(e){}
   a.volume=Math.max(0,Math.min(1,volVoice));a.src='audio/'+VOICE+'/'+keyOf(t)+'.mp3';

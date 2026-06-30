@@ -1,4 +1,4 @@
-import json
+﻿import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -35,7 +35,7 @@ def test_manifest_and_service_worker_are_ipad_pwa_ready():
     assert manifest["orientation"] == "landscape-primary"
     assert manifest["start_url"] == "./index.html?source=pwa"
     assert "categories" in manifest and "education" in manifest["categories"]
-    assert "hangul-playground-v43" in sw
+    assert "hangul-playground-v44" in sw
     assert "./styles.css" in sw
     assert "./app-data.js" in sw
     assert "./app-state.js" in sw

@@ -107,6 +107,43 @@ def test_med_matches_actual_jung_array():
         assert out[ch] is True, ch
 
 
+def test_strokes_has_all_complex_vowels():
+    # 복합·이중 모음 11개가 STROKES에 추가되어 단일 자모 획순 오버레이가 나오는지.
+    src = DATA.read_text(encoding="utf-8")
+    probe = (
+        src
+        + ";var cv=['\\u3150','\\u3154','\\u3152','\\u3156','\\u3158','\\u3159',"
+        "'\\u315a','\\u315d','\\u315e','\\u315f','\\u3162'];"
+        + "var out=cv.map(function(ch){var a=STROKES[ch];"
+        "return {ch:ch,ok:Array.isArray(a),n:a?a.length:0};});"
+        + "this.__out=JSON.stringify(out);"
+    )
+    out = _run(probe)
+    expect_n = {
+        "ㅐ": 3, "ㅔ": 3, "ㅒ": 4, "ㅖ": 4, "ㅘ": 4, "ㅙ": 5,
+        "ㅚ": 3, "ㅝ": 4, "ㅞ": 5, "ㅟ": 3, "ㅢ": 2,
+    }
+    assert len(out) == 11
+    for row in out:
+        assert row["ok"] is True, row["ch"]
+        assert row["n"] == expect_n[row["ch"]], row["ch"]
+
+
+def test_composed_strokes_for_complex_vowel_syllables_nonnull():
+    # 개/게/과/외/의 — 복합모음이 STROKES에 생겼으니 자음만 들어간 부분 오버레이가 아니라
+    # 자음+모음 전체 획순(>= 자음획수+모음획수)이 합성돼야 한다.
+    src = DATA.read_text(encoding="utf-8")
+    probe = (
+        src
+        + ";var out={};['\\uac1c','\\uac8c','\\uacfc','\\uc678','\\uc758'].forEach("
+        "function(ch){var r=composedStrokes(ch);out[ch]=r?r.length:0;});"
+        + "this.__out=JSON.stringify(out);"
+    )
+    out = _run(probe)
+    for ch in ["개", "게", "과", "외", "의"]:
+        assert out[ch] > 0, ch
+
+
 def test_basic_vowel_set_for_act1_unchanged():
     # 복합모음 추가가 1막 기본 모음 집합을 바꾸지 않아야 한다.
     src = DATA.read_text(encoding="utf-8")

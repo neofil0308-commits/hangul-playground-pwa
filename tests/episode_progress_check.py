@@ -1,4 +1,4 @@
-import json
+﻿import json
 import subprocess
 from pathlib import Path
 
@@ -131,7 +131,7 @@ def test_index_has_episode_and_album_dom_and_hooks():
 
 def test_service_worker_precaches_episode_module_with_bumped_cache():
     assert "./app-episode.js" in SW
-    assert "hangul-playground-v43" in SW
+    assert "hangul-playground-v44" in SW
 
 
 def test_stage_b_combine_act_is_playable():

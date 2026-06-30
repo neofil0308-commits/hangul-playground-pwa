@@ -1,4 +1,4 @@
-from pathlib import Path
+﻿from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 HTML = (ROOT / "index.html").read_text(encoding="utf-8")
@@ -37,4 +37,4 @@ def test_mission_state_logic_lives_in_external_state_file():
 
 def test_service_worker_precaches_external_state_file_with_new_cache_version():
     assert "./app-state.js" in SW
-    assert "hangul-playground-v43" in SW
+    assert "hangul-playground-v44" in SW
