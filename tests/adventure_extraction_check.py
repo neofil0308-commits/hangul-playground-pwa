@@ -66,4 +66,4 @@ def test_adventure_file_keeps_visible_story_and_copy_behaviors():
 
 def test_service_worker_precaches_external_adventure_file_with_new_cache_version():
     assert "./app-adventure.js" in SW
-    assert "hangul-playground-v41" in SW
+    assert "hangul-playground-v42" in SW

@@ -52,4 +52,4 @@ def test_router_drops_legacy_match_and_quiz_branches():
 
 def test_service_worker_precaches_external_router_file_with_new_cache_version():
     assert "./app-router.js" in SW
-    assert "hangul-playground-v41" in SW
+    assert "hangul-playground-v42" in SW

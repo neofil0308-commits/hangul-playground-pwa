@@ -17,6 +17,16 @@ const VOWS=[
   {ch:'ㅜ',sound:'우',word:'우산',emoji:'☂️',med:13},{ch:'ㅠ',sound:'유',word:'유니콘',emoji:'🦄',med:17},
   {ch:'ㅡ',sound:'으',word:'음악',emoji:'🎵',med:18},{ch:'ㅣ',sound:'이',word:'이빨',emoji:'🦷',med:20},
 ];
+// 복합·이중 모음(6막 숨은 모음). med=JUNG 인덱스. sound=ㅇ 받친 소릿값(애·에…). 기본 VOWS와 같은 모양.
+// 드문 모음(ㅒㅙㅞ)은 4세에 맞는 깔끔한 단어가 없어 소리 위주(억지 단어 금지).
+const VOWS_COMPLEX=[
+  {ch:'ㅐ',sound:'애',word:'개미',emoji:'🐜',med:1},{ch:'ㅔ',sound:'에',word:'게',emoji:'🦀',med:5},
+  {ch:'ㅒ',sound:'얘',word:'얘기',emoji:'💬',med:3},{ch:'ㅖ',sound:'예',word:'시계',emoji:'🕐',med:7},
+  {ch:'ㅘ',sound:'와',word:'사과',emoji:'🍎',med:9},{ch:'ㅙ',sound:'왜',word:'왜',emoji:'❓',med:10},
+  {ch:'ㅚ',sound:'외',word:'참외',emoji:'🍈',med:11},{ch:'ㅝ',sound:'워',word:'원숭이',emoji:'🐵',med:14},
+  {ch:'ㅞ',sound:'웨',word:'웨',emoji:'🔊',med:15},{ch:'ㅟ',sound:'위',word:'귀',emoji:'👂',med:16},
+  {ch:'ㅢ',sound:'의',word:'의자',emoji:'🪑',med:19},
+];
 const FINALS=[{ch:'·',jong:0},{ch:'ㄱ',jong:1},{ch:'ㄴ',jong:4},{ch:'ㄷ',jong:7},{ch:'ㄹ',jong:8},{ch:'ㅁ',jong:16},{ch:'ㅂ',jong:17},{ch:'ㅅ',jong:19},{ch:'ㅇ',jong:21}];
 const WORDS={
   '동물':[['강아지','🐶'],['고양이','🐱'],['토끼','🐰'],['호랑이','🐯'],['코끼리','🐘'],['기린','🦒'],['사자','🦁'],['곰','🐻'],['여우','🦊'],['오리','🦆'],['돼지','🐷'],['거북이','🐢'],['낙타','🐪'],['펭귄','🐧'],['말','🐴'],['양','🐑'],['새','🐦'],['악어','🐊'],['하마','🦛'],['다람쥐','🐿️']],
@@ -152,6 +162,17 @@ const LETTER_WORDS={
  'ㅠ':[['유니콘','🦄'],['유령','👻'],['유모차','🚼']],
  'ㅡ':[['음악','🎵'],['음식','🍲']],
  'ㅣ':[['이빨','🦷'],['이불','🛏️'],['이모','👩'],['인형','🧸']],
+ 'ㅐ':[['개미','🐜'],['개','🐶']],
+ 'ㅔ':[['게','🦀']],
+ 'ㅒ':[['얘기','💬']],
+ 'ㅖ':[['시계','🕐']],
+ 'ㅘ':[['사과','🍎']],
+ 'ㅙ':[['왜','❓']],
+ 'ㅚ':[['참외','🍈']],
+ 'ㅝ':[['원숭이','🐵']],
+ 'ㅞ':[['웨','🔊']],
+ 'ㅟ':[['귀','👂']],
+ 'ㅢ':[['의자','🪑']],
 };
 
 const PRESET_SENTS=['고양이가 우유를 마셔요','아기가 사과를 먹어요','강아지가 공을 던져요','토끼가 책을 봐요','곰이 밥을 먹어요','오리가 물을 마셔요'];
@@ -226,8 +247,8 @@ function pendingMilestone(mastered,shown){for(var i=0;i<STORY_MILESTONES.length;
   if(shown.indexOf(m.word)>=0)continue;
   var ok=m.after.every(function(ch){return mastered.indexOf(ch)>=0;});
   if(ok)return m;}return null;}
-// 글자 ch → 글자 객체(소리/예시단어) 빠른 조회. 기본 자모만 포함(후속 막 글자는 null 허용).
-const ALL_LETTER_OBJS=(function(){var m={};CONS.concat(VOWS).forEach(function(o){m[o.ch]=o;});return m;})();
+// 글자 ch → 글자 객체(소리/예시단어) 빠른 조회. 자음·기본모음·복합모음(6막) 포함.
+const ALL_LETTER_OBJS=(function(){var m={};CONS.concat(VOWS).concat(VOWS_COMPLEX).forEach(function(o){m[o.ch]=o;});return m;})();
 
 // ===== 인트로 그림책 — 모험을 시작하는 이야기 (하니가 음성으로 읽어줌) =====
 // 글 못 읽는 아이용: 큰 그림 + 하니 목소리가 핵심, 글(cap)은 부모가 같이 읽을 수 있게.
