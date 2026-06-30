@@ -28,7 +28,7 @@ def test_learning_logic_lives_in_external_learning_file():
         "const letterTabsBox=document.getElementById('letterTabs')",
         "function openLetterDetail",
         "const wordCats=document.getElementById('wordCats')",
-        "function openWord",
+        "function openWordBuild",
         "function renderWords",
         "function initLearningScreens",
     ]:
@@ -53,11 +53,17 @@ def test_learning_file_keeps_mission_and_audio_behavior_tokens():
         "completeMission('word')",
         "decompose(word)",
         "speak(word)",
-        "modal.classList.add('show')",
+        "go('wordBuild')",
     ]:
         assert token in learning
 
 
+def test_learning_drops_legacy_word_modal():
+    learning = LEARNING.read_text(encoding="utf-8")
+    for token in ["function openWord(", "wordModal", "modal.classList", "getElementById('mPlay')"]:
+        assert token not in learning, token
+
+
 def test_service_worker_precaches_external_learning_file_with_new_cache_version():
     assert "./app-learning.js" in SW
-    assert "hangul-playground-v35" in SW
+    assert "hangul-playground-v37" in SW

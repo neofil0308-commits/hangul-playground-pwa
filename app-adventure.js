@@ -11,7 +11,11 @@ function buildAdventureMap(){
     b.dataset.target=p.target;
     b.dataset.quest=p.quest||'';
     b.innerHTML='<span class="map-ic">'+p.ic+'</span><span class="map-copy"><b>'+p.place+'</b><small>'+p.hint+'</small></span>';
-    b.addEventListener('click',function(){go(p.target);});
+    b.addEventListener('click',function(){
+      if(p.action==='letter')openTodayLetter();
+      else if(p.action==='word')openWordBuild(todayWord[0],todayWord[1]);
+      else go(p.target);
+    });
     mapGrid.appendChild(b);
   });
   twemojify(mapGrid);

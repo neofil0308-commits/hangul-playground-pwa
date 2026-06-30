@@ -30,20 +30,13 @@ const BATCHIM_SYLL=['강','산','곰','문','손','발','눈','별','빵','컵']
 const TRACE_WORDS=['나비','사과','토끼','포도','우유','모자','우산','신발','사탕','강아지','바나나','코끼리'];
 const STICKERS=['⭐','🌈','🦋','🐥','🌸','🍭','🎈','🦄','🐻','🚀','🍓','👑','🐬','🌟','🎁','🦉'];
 const MENU=[
-  {id:'letters',ic:'🔤',label:'글자 친구들',cls:'m-con'},
-  {id:'syl',ic:'🧩',label:'글자 만들기',cls:'m-syl'},
-  {id:'word',ic:'📚',label:'단어 공부',cls:'m-word'},{id:'sent',ic:'✍️',label:'문장 쓰기',cls:'m-sent'},
-  {id:'trace',ic:'✏️',label:'따라쓰기',cls:'m-trace'},{id:'match',ic:'🃏',label:'짝 맞추기',cls:'m-match'},
-  {id:'quiz',ic:'🎯',label:'소리 퀴즈',cls:'m-quiz'},{id:'listen',ic:'🔊',label:'듣고 찾기',cls:'m-listen'},{id:'sticker',ic:'🏅',label:'내 스티커',cls:'m-sticker'},{id:'set',ic:'⚙️',label:'설정',cls:'m-set'},
+  {id:'listen',ic:'🔊',label:'듣고 찾기',cls:'m-listen'},{id:'sticker',ic:'🏅',label:'내 스티커',cls:'m-sticker'},{id:'set',ic:'⚙️',label:'설정',cls:'m-set'},
 ];
+// 한글 마을 지도: 오늘의 모험 장소만 노출. 글자 숲/단어 동산은 자유찾기 화면 대신 오늘의 모험으로 바로 진입(action).
 const MAP_PLACES=[
-  {id:'letters',target:'letters',ic:'🌳',place:'글자 숲',hint:'오늘의 글자 친구를 만나요',quest:'letter'},
-  {id:'syl',target:'syl',ic:'🧩',place:'글자 공방',hint:'자음과 모음을 조립해요'},
-  {id:'word',target:'word',ic:'🌼',place:'단어 동산',hint:'오늘의 단어 꽃을 찾아요',quest:'word'},
-  {id:'trace',target:'trace',ic:'💧',place:'쓰기 연못',hint:'손가락으로 글자를 그려요'},
-  {id:'match',target:'match',ic:'🃏',place:'카드 광장',hint:'짝꿍 글자와 단어를 찾아요'},
-  {id:'quiz',target:'quiz',ic:'🎯',place:'소리 동굴',hint:'소리를 듣고 문을 열어요',quest:'play'},
-  {id:'listen',target:'listen',ic:'🔊',place:'듣기 전망대',hint:'하니 목소리를 따라 찾아요',quest:'play'},
+  {id:'letters',target:'letters',ic:'🌳',place:'글자 숲',hint:'오늘의 글자 친구를 만나요',quest:'letter',action:'letter'},
+  {id:'word',target:'word',ic:'🌼',place:'단어 동산',hint:'오늘의 단어 꽃을 찾아요',quest:'word',action:'word'},
+  {id:'listen',target:'listen',ic:'🔊',place:'소리 동굴',hint:'하니 목소리를 따라 찾아요',quest:'play'},
   {id:'sticker',target:'sticker',ic:'🏅',place:'스티커 집',hint:'모험 보상을 모아봐요'},
 ];
 const CHO=['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];

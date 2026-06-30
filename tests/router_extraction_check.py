@@ -39,13 +39,17 @@ def test_router_keeps_route_side_effects_for_existing_screens():
         "startListenRound()",
         "if(id==='trace')",
         "if(id==='letterDetail')",
-        "if(id==='match'&&!matchBuilt)newMatch()",
-        "if(id==='quiz')",
         "window.scrollTo",
     ]:
         assert token in router
 
 
+def test_router_drops_legacy_match_and_quiz_branches():
+    router = ROUTER.read_text(encoding="utf-8")
+    for token in ["matchBuilt", "newMatch", "quizBuilt", "newQuiz"]:
+        assert token not in router, token
+
+
 def test_service_worker_precaches_external_router_file_with_new_cache_version():
     assert "./app-router.js" in SW
-    assert "hangul-playground-v35" in SW
+    assert "hangul-playground-v37" in SW

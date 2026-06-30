@@ -176,15 +176,6 @@
     <div class="trace-tools"><button class="tbtn sound" id="traceSound">🔊 소리</button><button class="tbtn stroke off" id="traceStrokeBtn">🔢 획순</button><button class="tbtn clear" id="traceClear">🧽 지우기</button></div>
     <div class="picker"><h4>무엇을 써볼까요?</h4><div class="cat-pills trace-modes" id="traceModes"></div><div class="chips" id="traceChips"></div></div></section>
 
-  <section id="match" class="screen"><div class="section-title">짝 맞추기</div><div class="hint">같은 짝 두 장을 찾아요 🃏</div>
-    <div class="match-top"><div class="mscore" id="mscore">짝 0 / 6</div><div class="cat-pills mmode" id="matchMode"></div><div class="cat-pills diff" id="matchDiff"></div><button class="mbtn" id="matchNew">🔄 새 게임</button></div>
-    <div class="board" id="board"></div><div class="feedback" id="mfeedback"></div></section>
-
-  <section id="quiz" class="screen"><div class="section-title">소리 퀴즈</div><div class="hint">🔊를 눌러 소리를 듣고, 알맞은 글자/단어까지 손으로 선을 그어요 ➰</div>
-    <div class="quiz-top"><div class="cat-pills mmode" id="quizMode"></div><div class="cat-pills diff" id="quizDiff"></div><div class="qscore" id="qscore">0 / 4</div><button class="mbtn" id="quizNew">🔄 새 게임</button></div>
-    <div class="qboard" id="qBoard"><svg class="qlines" id="qLines"></svg><div class="qcol qcol-l" id="qLeft"></div><div class="qcol qcol-r" id="qRight"></div></div>
-    <div class="feedback" id="qfeedback"></div></section>
-
   <section id="listen" class="screen"><div class="section-title">듣고 찾기</div><div class="hint">🔊 소리를 잘 듣고, 알맞은 것을 골라요!</div>
     <div class="listen-wrap">
     <div class="listen-top">
@@ -219,19 +210,6 @@
   </section>
 </div>
 
-<div class="modal" id="wordModal"><div class="modal-card">
-  <button class="modal-x" id="modalX">✕</button>
-  <div class="m-emoji" id="mEmoji">🦒</div>
-  <div class="m-word" id="mWord">기린</div>
-  <div class="m-tip">자음·모음·받침을 눌러 소리를 들어요 🔊</div>
-  <div class="m-syls" id="mSyls"></div>
-  <div class="modal-btns">
-    <button class="playbtn" id="mPlay" style="background:var(--word);box-shadow:0 5px 0 var(--word-d)">🔊 단어 듣기</button>
-    <button class="playbtn" id="mExplain" style="background:var(--quiz);box-shadow:0 5px 0 var(--quiz-d)">🔊 풀어 듣기</button>
-    <button class="playbtn" id="mWrite" style="background:var(--trace);box-shadow:0 5px 0 var(--trace-d)">✏️ 써보기</button>
-  </div>
-</div></div>
-
 <div class="modal" id="gateModal"><div class="modal-card gate-card">
   <div class="m-tip">어른에게 물어보세요 🔒</div>
   <div class="gq" id="gateQ">7 × 8 = ?</div>
@@ -247,7 +225,6 @@
 <script src="app-adventure.js"></script>
 <script src="app-learning.js"></script>
 <script src="app-writing.js"></script>
-<script src="app-games.js"></script>
 <script src="app-episode.js"></script>
 <script>
 let RATE=parseFloat(lsGet('hp_rate','0.8'))||0.8;
@@ -331,8 +308,6 @@ initAdventureHome();
 initLearningScreens();
 
 initWritingScreens();
-
-initGameScreens();
 
 initEpisodeScreens();
 

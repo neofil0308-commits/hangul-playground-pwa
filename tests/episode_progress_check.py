@@ -104,17 +104,17 @@ def test_intro_storybook_exists_and_is_narrated():
         assert token in HTML, token
 
 
-def test_index_loads_episode_module_after_games_before_main():
-    games_tag = '<script src="app-games.js"></script>'
+def test_index_loads_episode_module_after_writing_before_main():
+    writing_tag = '<script src="app-writing.js"></script>'
     episode_tag = '<script src="app-episode.js"></script>'
     main_tag = "<script>"
     assert episode_tag in HTML
-    assert HTML.index(games_tag) < HTML.index(episode_tag) < HTML.index(main_tag)
+    assert HTML.index(writing_tag) < HTML.index(episode_tag) < HTML.index(main_tag)
 
 
-def test_index_calls_episode_initializer_after_games():
+def test_index_calls_episode_initializer_after_writing():
     assert "initEpisodeScreens();" in HTML
-    assert HTML.index("initGameScreens();") < HTML.index("initEpisodeScreens();")
+    assert HTML.index("initWritingScreens();") < HTML.index("initEpisodeScreens();")
 
 
 def test_index_has_episode_and_album_dom_and_hooks():
@@ -131,7 +131,7 @@ def test_index_has_episode_and_album_dom_and_hooks():
 
 def test_service_worker_precaches_episode_module_with_bumped_cache():
     assert "./app-episode.js" in SW
-    assert "hangul-playground-v35" in SW
+    assert "hangul-playground-v37" in SW
 
 
 def test_episode_engine_logic_runs_in_node():

@@ -34,12 +34,12 @@ def test_writing_logic_lives_in_external_writing_file():
         assert token not in HTML
 
 
-def test_index_calls_writing_initializer_after_learning_before_games():
+def test_index_calls_writing_initializer_after_learning_before_episode():
     assert "initLearningScreens();" in HTML
     assert "initWritingScreens();" in HTML
-    assert "initGameScreens();" in HTML
+    assert "initGameScreens();" not in HTML
     assert HTML.index("initLearningScreens();") < HTML.index("initWritingScreens();")
-    assert HTML.index("initWritingScreens();") < HTML.index("initGameScreens();")
+    assert HTML.index("initWritingScreens();") < HTML.index("initEpisodeScreens();")
 
 
 def test_writing_file_keeps_canvas_and_audio_behavior_tokens():
@@ -62,4 +62,4 @@ def test_writing_file_keeps_canvas_and_audio_behavior_tokens():
 
 def test_service_worker_precaches_external_writing_file_with_new_cache_version():
     assert "./app-writing.js" in SW
-    assert "hangul-playground-v35" in SW
+    assert "hangul-playground-v37" in SW
