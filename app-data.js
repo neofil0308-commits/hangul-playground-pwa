@@ -175,6 +175,18 @@ const LETTER_WORDS={
  'ㅢ':[['의자','🪑']],
 };
 
+// 4막 받침(끝소리) 예시 단어 — 글자가 음절의 '끝소리(받침)'로 들어간 단어들.
+// 2막 초성(LETTER_WORDS)과 분리: 4막 글자 숲은 이 목록으로 받침을 가르친다(끝소리 ㄱ → 책·약).
+const FINAL_WORDS={
+ 'ㄱ':[['책','📖'],['약','💊']],
+ 'ㄴ':[['산','⛰️'],['손','✋']],
+ 'ㄷ':[['숟가락','🥄']],
+ 'ㄹ':[['발','🦶'],['별','⭐']],
+ 'ㅁ':[['곰','🐻'],['밤','🌰']],
+ 'ㅂ':[['컵','☕'],['밥','🍚']],
+ 'ㅇ':[['강','🏞️'],['빵','🍞']],
+};
+
 const PRESET_SENTS=['고양이가 우유를 마셔요','아기가 사과를 먹어요','강아지가 공을 던져요','토끼가 책을 봐요','곰이 밥을 먹어요','오리가 물을 마셔요'];
 // 문장 단어 → 그림(이모지) 단서. 주어/목적어/서술어 짝에서 정확히 일치하는 토큰을 먼저 쓰고,
 // 없으면 받침/조사를 떼어 LETTER_WORDS/WORDS에서 보충(글 못 읽는 아이용 그림 힌트).
@@ -235,7 +247,7 @@ const STORY_MILESTONES=[
 ];
 // 진행 경로: 글자형 막은 글자 하나하나가 에피소드, 그 외 막은 막 자체가 한 단계.
 const EPISODE_PATH=(function(){var p=[];CURRICULUM.forEach(function(a){
-  if(a.type==='letter'){a.letters.forEach(function(ch){p.push({act:a.act,actKey:a.key,actTitle:a.title,place:a.place,type:'letter',ch:ch});});}
+  if(a.type==='letter'){var isFin=(a.key==='final');a.letters.forEach(function(ch){var node={act:a.act,actKey:a.key,actTitle:a.title,place:a.place,type:'letter',ch:ch};if(isFin)node.final=true;p.push(node);});}
   else if(a.type==='combine'){a.syllables.forEach(function(ch){var ex=(a.sylWords&&a.sylWords[ch])||[];p.push({act:a.act,actKey:a.key,actTitle:a.title,place:a.place,type:'combine',ch:ch,word:ex[0]||'',emoji:ex[1]||''});});}
   else if(a.type==='sentence'){(a.sentences||[]).forEach(function(s){var words=s.split(' ');p.push({act:a.act,actKey:a.key,actTitle:a.title,place:a.place,type:'sentence',sent:s,words:words,cues:sentCues(words)});});}
   else{p.push({act:a.act,actKey:a.key,actTitle:a.title,place:a.place,type:a.type});}

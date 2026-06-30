@@ -42,18 +42,29 @@ function sentenceTarget(ep){
   var cues=(ep.cues&&ep.cues.length)?ep.cues.slice():((typeof sentCues==='function')?sentCues(words):[]);
   return {ch:'📖',sound:ep.sent,sentence:true,sent:ep.sent,words:words,cues:cues,word:words[0]||'',emoji:cues[0]||''};
 }
+// 4막 받침(끝소리) 에피소드 → 같은 자음을 '끝소리'로 가르치는 변형 객체.
+// ch는 맨 자음 그대로(큰 글자·소리·받아쓰기 재사용), final 플래그 + 받침 예시단어(FINAL_WORDS)를 얹는다.
+function finalLetterObj(ep){var base=ALL_LETTER_OBJS[ep.ch]||null;if(!base)return null;
+  var fw=(typeof FINAL_WORDS!=='undefined'&&FINAL_WORDS[ep.ch])||[];
+  var o={};for(var k in base)o[k]=base[k];o.final=true;o.words=fw;
+  if(fw[0]){o.word=fw[0][0];o.emoji=fw[0][1];}
+  return o;}
 function curLetterObj(){var ep=curEpisode();if(!ep)return null;
-  if(ep.type==='letter')return ALL_LETTER_OBJS[ep.ch]||null;
+  if(ep.type==='letter')return ep.final?finalLetterObj(ep):(ALL_LETTER_OBJS[ep.ch]||null);
   if(ep.type==='combine')return combineTarget(ep);
   if(ep.type==='sentence')return sentenceTarget(ep);
   return null;}
-function masteredLetters(){return Object.keys(progress.mastery).filter(function(ch){return isMasteredRec(progress.mastery[ch]);});}
+// 진행/앨범 키: 보통은 글자 그대로, 4막 받침은 'F:'+글자로 분리 → 2막 초성과 collapse 방지.
+function progKey(ep){return ep?((ep.final?'F:':'')+(ep.ch||'')):'';}
+// 마스터 목록은 맨 글자(초성·모음)만 — 받침 키('F:')는 게임/복습 풀을 더럽히지 않게 제외.
+function masteredLetters(){return Object.keys(progress.mastery).filter(function(ch){return ch.indexOf('F:')!==0&&isMasteredRec(progress.mastery[ch]);});}
 function markLetterProgress(part){var ep=curEpisode();if(!ep||(ep.type!=='letter'&&ep.type!=='combine'))return;
-  var rec=progress.mastery[ep.ch]||(progress.mastery[ep.ch]={met:false,matched:false,quizzed:false});
+  var key=progKey(ep);
+  var rec=progress.mastery[key]||(progress.mastery[key]={met:false,matched:false,quizzed:false});
   if(part==='letter')rec.met=true;else if(part==='word')rec.matched=true;else if(part==='play')rec.quizzed=true;
   saveProgress();}
-function letterDone(){var ep=curEpisode();if(!ep||ep.type!=='letter')return false;return isMasteredRec(progress.mastery[ep.ch]);}
-function addAlbumStar(){var ep=curEpisode();if(!ep||(ep.type!=='letter'&&ep.type!=='combine')||!ep.ch)return;if(progress.album.indexOf(ep.ch)<0){progress.album.push(ep.ch);saveProgress();}}
+function letterDone(){var ep=curEpisode();if(!ep||ep.type!=='letter')return false;return isMasteredRec(progress.mastery[progKey(ep)]);}
+function addAlbumStar(){var ep=curEpisode();if(!ep||(ep.type!=='letter'&&ep.type!=='combine')||!ep.ch)return;var key=progKey(ep);if(progress.album.indexOf(key)<0){progress.album.push(key);saveProgress();}}
 function advanceEpisode(){if(progress.idx<EPISODE_PATH.length-1){progress.idx++;saveProgress();}}
 function checkMilestone(){return pendingMilestone(masteredLetters(),progress.milestones);}
 function markMilestoneShown(word){if(progress.milestones.indexOf(word)<0){progress.milestones.push(word);saveProgress();}}

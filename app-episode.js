@@ -19,6 +19,7 @@ function narrateEpisode(){
     if(ep.type==='letter'){
       var lo=curLetterObj();
       var sound=lo?(lo.sound||lo.name||ep.ch):ep.ch;
+      if(lo&&lo.final)sound='끝소리 '+(lo.name||ep.ch);
       var word=(lo&&lo.word)?lo.word:'';
       if(word&&typeof speakSeq==='function')speakSeq([sound,word]);
       else if(typeof speak==='function')speak(sound);
@@ -35,11 +36,11 @@ function renderEpisodeBanner(){
   var el=document.getElementById('episodeBanner');if(!el)return;
   var ep=curEpisode();if(!ep){el.innerHTML='';return;}
   if(ep.type==='letter'){
-    var lo=curLetterObj();var pic=(lo&&lo.emoji)?lo.emoji:'';
-    el.innerHTML='<button class="book-page" id="epHearBtn" aria-label="하니가 글자를 읽어줄게요">'
+    var lo=curLetterObj();var pic=(lo&&lo.emoji)?lo.emoji:'';var isFin=!!(lo&&lo.final);
+    el.innerHTML='<button class="book-page" id="epHearBtn" aria-label="'+(isFin?'하니가 받침 끝소리를 읽어줄게요':'하니가 글자를 읽어줄게요')+'">'
       +'<span class="book-ch">'+ep.ch+'</span>'
       +(pic?'<span class="book-pic">'+pic+'</span>':'')
-      +'<span class="book-hear-label">🔊 하니가 읽어줄게</span>'
+      +'<span class="book-hear-label">'+(isFin?'🔊 받침 끝소리 들어요':'🔊 하니가 읽어줄게')+'</span>'
     +'</button>';
   }else if(ep.type==='combine'){
     var co=curLetterObj();var cpic=(co&&co.emoji)?co.emoji:'🧩';
@@ -110,19 +111,19 @@ function showMilestone(m){
 // 글자 마무리 정리(recap) + 지난 글자 복습 — 글자를 다 익힌 뒤 한번 정리해 설명.
 function showRecap(){
   var ep=curEpisode();if(!ep||(ep.type!=='letter'&&ep.type!=='combine'))return;
-  var ch=ep.ch;var lo=(typeof ALL_LETTER_OBJS!=='undefined')?ALL_LETTER_OBJS[ch]:null;
-  var words=((typeof LETTER_WORDS!=='undefined')&&LETTER_WORDS[ch])||[];
+  var ch=ep.ch;var lo=(typeof ALL_LETTER_OBJS!=='undefined')?ALL_LETTER_OBJS[ch]:null;var isFin=!!ep.final;
+  var words=isFin?(((typeof FINAL_WORDS!=='undefined')&&FINAL_WORDS[ch])||[]):(((typeof LETTER_WORDS!=='undefined')&&LETTER_WORDS[ch])||[]);
   if(!words.length&&ep.type==='combine'&&ep.word)words=[[ep.word,ep.emoji||'']];
   var learned=(typeof masteredLetters==='function'?masteredLetters():[]).filter(function(c){return c!==ch;});
   var review=learned.length?learned[Math.floor(Math.random()*learned.length)]:'';
   var el=document.getElementById('recapPop');if(!el)return;
-  var html='<div class="recap-card"><div class="recap-title">오늘은 <b>'+ch+'</b> 완성! ⭐</div>'
+  var html='<div class="recap-card"><div class="recap-title">오늘은 <b>'+ch+'</b> '+(isFin?'받침 ':'')+'완성! ⭐</div>'
     +'<div class="recap-big">'+ch+'</div>'
     +'<div class="recap-words">'+words.map(function(w){return '<span class="recap-w"><i>'+w[1]+'</i><em>'+w[0]+'</em></span>';}).join('')+'</div>';
   if(review)html+='<div class="recap-review">지난 글자도 기억나요? <b>'+review+'</b></div>';
   html+='<button class="recap-next" id="recapNext">다음 글자로 ➡️</button></div>';
   el.innerHTML=html;el.style.display='flex';if(typeof twemojify==='function')twemojify(el);
-  try{var seq=[lo?(lo.sound||lo.name||ch):ch];words.forEach(function(w){seq.push(w[0]);});seq.push('잘했어요');
+  try{var seq=[isFin?('끝소리 '+((lo&&lo.name)||ch)):(lo?(lo.sound||lo.name||ch):ch)];words.forEach(function(w){seq.push(w[0]);});seq.push('잘했어요');
     if(review){var ro=ALL_LETTER_OBJS[review];seq.push((ro&&(ro.sound||ro.name))||review);}
     if(typeof speakSeq==='function')setTimeout(function(){speakSeq(seq);},350);}catch(e){}
   var nb=document.getElementById('recapNext');if(nb)nb.addEventListener('click',function(){el.style.display='none';goNextLetter();});
