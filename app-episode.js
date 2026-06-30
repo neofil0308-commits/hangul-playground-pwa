@@ -81,10 +81,27 @@ function renderStarAlbum(){
     if(i<EPISODE_PATH.length-1)html+='<span class="stop-link"></span>';
   });
   html+='</div>';
+  html+=relicShelfHTML();
   el.innerHTML=html;
   if(typeof twemojify==='function')twemojify(el);
   el.querySelectorAll('.stop-go').forEach(function(s){s.addEventListener('click',function(){goToEpisode(+s.getAttribute('data-i'));});});
   try{var now=el.querySelector('.stop-now');if(now&&now.scrollIntoView)now.scrollIntoView({inline:'center',block:'nearest'});}catch(e){}
+}
+// 보물 창고 선반: 막마다 하나씩 모으는 보물. 얻은 막은 이모지, 아직이면 ❔(잠금).
+// renderStarAlbum 안에서 같이 그려져 보물이 바뀌면 함께 다시 렌더된다.
+function relicShelfHTML(){
+  if(typeof CURRICULUM==='undefined')return '';
+  var got=(progress.relics||[]);
+  var slots=CURRICULUM.map(function(a){
+    var have=got.indexOf(a.act)>=0;
+    var em=have?(a.relicEmoji||'⭐'):'❔';
+    var cls='relic-slot '+(have?'got':'lock');
+    var tip=a.act+'막 '+a.relic+(have?'':' (아직)');
+    return '<i class="'+cls+'" title="'+tip+'">'+em+'</i>';
+  }).join('');
+  return '<div class="relic-shelf" aria-label="보물 창고 — 막마다 보물 하나를 모아요">'
+    +'<span class="relic-shelf-title">🏺 보물 창고</span>'
+    +'<span class="relic-shelf-row">'+slots+'</span></div>';
 }
 // 아이가 지난 글자를 다시 익히고 싶을 때: 그 단계로 이동(이전 단계만 허용).
 function goToEpisode(i){
@@ -144,14 +161,39 @@ function showGraduation(){
     else if(typeof speak==='function')speak('스스로 읽었어요');}catch(e){}
   var nb=document.getElementById('recapNext');if(nb)nb.addEventListener('click',function(){el.style.display='none';goNextLetter();});
 }
+// 막 클리어 보물 획득 연출: ○막 클리어! + 큰 보물 이모지 + 보물 이름 + 하니 칭찬.
+// recap/graduation과 같은 #relicPop(=recap-pop 오버레이) 구조·쇼/디스미스 패턴을 그대로 따른다.
+function showRelic(act){
+  var info=(typeof relicForAct==='function')?relicForAct(act):null;
+  var el=document.getElementById('relicPop');if(!el)return;
+  var emoji=info?info.emoji:'⭐';var name=info?info.relic:'보물';
+  var atEnd=(progress.idx>=EPISODE_PATH.length-1);
+  var html='<div class="recap-card relic-card">'
+    +'<div class="recap-title">'+act+'막 클리어! 🎉</div>'
+    +'<div class="relic-emoji">'+emoji+'</div>'
+    +'<div class="relic-name">'+name+'</div>'
+    +'<div class="recap-review">보물 <b>'+name+'</b>을(를) 얻었어요! 보물 창고에 모았어요. 🏺</div>'
+    +'<button class="recap-next" id="relicNext">'+(atEnd?'여정 마치기 🎓':'다음 막으로 ➡️')+'</button></div>';
+  el.innerHTML=html;el.style.display='flex';if(typeof twemojify==='function')twemojify(el);
+  try{if(typeof confetti==='function')confetti();}catch(e){}
+  try{if(typeof speakSeq==='function')setTimeout(function(){speakSeq([act+'막 클리어','보물 '+name+'을 얻었어요','정말 잘했어요']);},400);
+    else if(typeof speak==='function')speak('보물을 얻었어요');}catch(e){}
+  var nb=document.getElementById('relicNext');if(nb)nb.addEventListener('click',function(){el.style.display='none';goNextLetter();});
+}
 function onEpisodeComplete(){
   var ep=curEpisode();
+  // 방금 깬 에피소드가 그 막의 마지막이면 막 번호(아니면 0). 막 클리어면 보물 적립.
+  var actDone=(typeof actCompletedAt==='function')?actCompletedAt(progress.idx):0;
+  if(actDone&&typeof awardRelic==='function')awardRelic(actDone);
+  // 8막(문장)은 졸업 연출이 곧 막 클리어 축하 — 보물(별빛 편지)은 적립만 하고 졸업 화면 유지.
   if(ep&&ep.type==='sentence'){renderStarAlbum();setTimeout(showGraduation,900);return;}
   addAlbumStar();
   renderStarAlbum();
   var m=checkMilestone();
   if(m){markMilestoneShown(m.word);setTimeout(function(){showMilestone(m);},1000);}
-  setTimeout(showRecap, m?3400:1300);
+  // 막의 마지막 글자/음절이면 recap 대신 보물 연출 하나로(이중 스택 방지). 그 외엔 평소 recap.
+  if(actDone)setTimeout(function(){showRelic(actDone);}, m?3400:1300);
+  else setTimeout(showRecap, m?3400:1300);
 }
 // 다음 글자로 진행: 포인터 +1, 미션 새로 깔고 홈으로, 하니가 새 글자 읽어줌.
 function goNextLetter(){

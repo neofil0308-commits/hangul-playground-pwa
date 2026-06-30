@@ -25,7 +25,9 @@ function hashStr(s){var h=5381;for(var i=0;i<s.length;i++)h=((h*33)^s.charCodeAt
 
 // ===== 커리큘럼 진행도 + 별빛 앨범 =====
 // idx: 현재 에피소드(글자) 위치, mastery: 글자별 익힘 기록, album: 켠 별 글자, milestones: 띄운 맛보기.
-var progress=lsJSON('hp_progress',{idx:0,mastery:{},album:[],milestones:[]});
+var progress=lsJSON('hp_progress',{idx:0,mastery:{},album:[],milestones:[],relics:[]});
+// 옛 저장본 관대 처리: relics 없던 진행도 깨지지 않게 기본 빈 배열.
+if(!progress.relics)progress.relics=[];
 function saveProgress(){lsSetJSON('hp_progress',progress);}
 function curEpisode(){return EPISODE_PATH[Math.min(progress.idx,EPISODE_PATH.length-1)];}
 // 글자형 막 → 자모 객체(소리/예시). 합치기형(combine) 막 → 목표 음절을 분해한 합성 객체(목표+필요한 자모 카드).
@@ -68,6 +70,23 @@ function addAlbumStar(){var ep=curEpisode();if(!ep||(ep.type!=='letter'&&ep.type
 function advanceEpisode(){if(progress.idx<EPISODE_PATH.length-1){progress.idx++;saveProgress();}}
 function checkMilestone(){return pendingMilestone(masteredLetters(),progress.milestones);}
 function markMilestoneShown(word){if(progress.milestones.indexOf(word)<0){progress.milestones.push(word);saveProgress();}}
+// ===== 막 클리어 보물(relic) =====
+// 막 번호 → CURRICULUM 막 객체(보물 이름/이모지 조회). act는 1부터, 배열 인덱스와 어긋날 수 있어 탐색.
+function actCurriculum(n){for(var i=0;i<CURRICULUM.length;i++){if(CURRICULUM[i].act===n)return CURRICULUM[i];}return null;}
+// 막 번호 → {act,relic,emoji}. 보물 연출/선반에서 같이 씀.
+function relicForAct(n){var a=actCurriculum(n);return a?{act:n,relic:a.relic,emoji:a.relicEmoji||'⭐'}:null;}
+function hasRelic(n){return (progress.relics||[]).indexOf(n)>=0;}
+// 막 클리어 시 보물 적립(중복 방지). 한 막당 한 번만 쌓인다.
+function awardRelic(n){if(!progress.relics)progress.relics=[];if(progress.relics.indexOf(n)<0){progress.relics.push(n);saveProgress();}}
+// idx 에피소드가 그 막의 '마지막' 에피소드면 그 막 번호를, 아니면 0을 돌려줌.
+// 다음 노드가 다른 막이거나(막 경계) idx가 경로의 끝이면 막이 끝난 것.
+function actCompletedAt(idx){
+  if(idx<0||idx>=EPISODE_PATH.length)return 0;
+  var cur=EPISODE_PATH[idx];if(!cur)return 0;
+  var nxt=EPISODE_PATH[idx+1];
+  if(!nxt||nxt.act!==cur.act)return cur.act;
+  return 0;
+}
 
 // ===== 주제 풀: 게임이 랜덤 대신 '오늘의 글자(+이미 익힌 글자)'를 앞세워 쓰도록 =====
 // 오늘의 글자를 맨 앞에, 그 뒤로 이미 익힌 글자들. 게임은 여기서부터 채우고 모자라면 전체로 보충.
