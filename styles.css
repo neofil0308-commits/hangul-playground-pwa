@@ -654,8 +654,14 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
 .wb-card{width:60px;height:70px;font-size:2.1rem;border:none;cursor:pointer;border-radius:16px;}
 .wb-card.used{opacity:.35;}
 /* 글자 공방(3막): 목표 음절은 흐린 실루엣 힌트만 — 정답 노출 최소 */
-.cb-goal{font-family:'Jua',sans-serif;font-size:6rem;line-height:1;color:transparent;-webkit-text-stroke:3px #d8c4a4;text-stroke:3px #d8c4a4;opacity:.55;letter-spacing:2px;margin-bottom:-6px;}
+.cb-goal{font-family:'Jua',sans-serif;font-size:3.4rem;line-height:1;color:transparent;-webkit-text-stroke:3px #d8c4a4;text-stroke:3px #d8c4a4;opacity:.55;letter-spacing:2px;margin-bottom:4px;}
 #combine .wb-target{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;min-height:90px;border-radius:20px;padding:6px;transition:background .12s,box-shadow .12s;}
+/* 3막 세로/과밀 레이아웃 정리: 떠있는 'ㄱ+ㅏ' 헤드가 단어와 겹치지 않게 여백 확보 + 슬롯 수직중앙 + 요소 축소 */
+#combine .wb-pic{font-size:3.8rem;}
+#combine .wb-word{font-size:2rem;margin:2px 0 12px;}
+#combine .cb-target{margin-top:38px;}
+#combine .wb-syl{align-items:center;}
+#combine .wb-syl-head{font-size:1.4rem;top:-26px;}
 .wb-card.bad{animation:shake .4s;}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 /* 이야기 책(8막 sentence·졸업): 읽기 우선 — 문장을 크게 보여주고 단어 칩을 눌러 소리 도움 */
