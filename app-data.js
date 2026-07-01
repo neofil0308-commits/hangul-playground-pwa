@@ -312,19 +312,27 @@ function aiBub(x,y,r,ch,fill,eye,cls){cls=cls||'';
 }
 function aiOp(x,ch){return '<text x="'+x+'" y="122" font-family="Jua, sans-serif" font-size="30" fill="#fff" text-anchor="middle" opacity="0.9">'+ch+'</text>';}
 function aiHani(x,y,s,cls,sing){s=(s==null?1:s);cls=cls||'';
-  var mouth=sing?'<ellipse cx="0" cy="-4" rx="3.2" ry="4.2" fill="#e8663f"/>':'<path d="M-3,-7 L3,-7 L0,-3 z" fill="#ff9a3c"/>';
+  // 별빛 그림책: 더 둥글고 포동포동한 아기 병아리 — 큰 머리, 통통한 몸, 발그레 볼, 방긋 얼굴.
+  var mouth=sing
+    ?'<ellipse cx="0" cy="-3" rx="3.4" ry="4.4" fill="#f0703f"/>'                       // 노래(입 벌림)
+    :'<path d="M-3.4,-8 Q0,-4.2 3.4,-8 Q0,-5.4 -3.4,-8 Z" fill="#ffa23c"/>';            // 방긋 부리
   return '<g transform="translate('+x+','+y+') scale('+s+')"><g class="hani '+cls+'">'
-    +'<ellipse cx="0" cy="22" rx="16" ry="4.5" fill="#000" fill-opacity="0.13"/>'
-    +'<ellipse cx="0" cy="6" rx="15" ry="16" fill="#ffd54a"/>'
-    +'<ellipse cx="-15" cy="8" rx="5" ry="9" fill="#ffc62e"/><ellipse cx="15" cy="8" rx="5" ry="9" fill="#ffc62e"/>'
-    +'<circle cx="0" cy="-10" r="12" fill="#ffd54a"/>'
-    +'<circle cx="-5" cy="-11" r="2" fill="#3a2a1a"/><circle cx="5" cy="-11" r="2" fill="#3a2a1a"/>'
+    +'<ellipse cx="0" cy="24" rx="17" ry="4.6" fill="#000" fill-opacity="0.12"/>'          // 바닥 그림자
+    +'<ellipse cx="0" cy="8" rx="17" ry="16.5" fill="#ffd75a"/>'                           // 통통한 몸
+    +'<ellipse cx="0" cy="8" rx="17" ry="16.5" fill="#fff" fill-opacity="0.16"/>'          // 윗 하이라이트(부드러움)
+    +'<ellipse cx="-16" cy="9" rx="5.2" ry="9.5" fill="#ffc62e"/><ellipse cx="16" cy="9" rx="5.2" ry="9.5" fill="#ffc62e"/>'  // 날개
+    +'<circle cx="0" cy="-11" r="14" fill="#ffdd63"/>'                                     // 큰 머리
+    +'<circle cx="-4.5" cy="-15" r="5" fill="#fff" fill-opacity="0.35"/>'                  // 머리 광택
+    +'<circle cx="-5.4" cy="-12" r="2.5" fill="#3a2a1a"/><circle cx="5.4" cy="-12" r="2.5" fill="#3a2a1a"/>'  // 눈
+    +'<circle cx="-4.6" cy="-13" r="0.9" fill="#fff"/><circle cx="6.2" cy="-13" r="0.9" fill="#fff"/>'        // 눈 반짝
     +mouth
-    +'<ellipse cx="-9" cy="-6" rx="3" ry="2.2" fill="#ff9eb0" opacity="0.8"/><ellipse cx="9" cy="-6" rx="3" ry="2.2" fill="#ff9eb0" opacity="0.8"/>'
-    +'<path d="M-3,-23 q3,-5 5,-1 M3,-23 q3,-4 4,0" fill="none" stroke="#ffb02e" stroke-width="2.2" stroke-linecap="round"/>'
-    +'<path d="M-6,23 l-3,5 M6,23 l3,5" stroke="#ff9a3c" stroke-width="2.8" stroke-linecap="round"/>'
+    +'<ellipse cx="-9.5" cy="-6.5" rx="3.2" ry="2.3" fill="#ff9eb0" opacity="0.75"/><ellipse cx="9.5" cy="-6.5" rx="3.2" ry="2.3" fill="#ff9eb0" opacity="0.75"/>'  // 발그레 볼
+    +'<path d="M-3,-25 q3,-5.5 5.5,-1 M3,-25 q3,-4.5 4.5,0" fill="none" stroke="#ffb02e" stroke-width="2.3" stroke-linecap="round"/>'  // 머리 깃털
+    +'<path d="M-6,25 l-3.2,5.4 M6,25 l3.2,5.4" stroke="#ffa23c" stroke-width="3" stroke-linecap="round"/>'  // 발
     +'</g></g>';
 }
+// 별빛 그림책: 헤더/이야기 얼굴용 독립 SVG 래퍼(장면과 같은 병아리). 가볍게 유지.
+function aiHaniSVG(cls){return '<svg class="hani-svg" viewBox="-24 -30 48 62" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="병아리 하니">'+aiHani(0,0,1,cls||'')+'</svg>';}
 function aiScene(label,sky0,sky1,inner){
   return '<svg class="scene" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+label+'">'
     +'<defs><clipPath id="rc"><rect x="0" y="0" width="400" height="280" rx="26"/></clipPath>'

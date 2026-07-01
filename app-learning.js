@@ -328,7 +328,7 @@ function openFind(){
   cards=shuffle(cards.concat(distract));
   var grid=document.getElementById('fdGrid');if(grid)grid.innerHTML='';
   cards.forEach(function(ch){
-    var b=document.createElement('button');b.className='lopt';
+    var b=document.createElement('button');b.className='lopt lopt-jamo jrole-'+(fdKind(ch)||'c');
     b.innerHTML='<div class="lglyph">'+ch+'</div>';
     b.addEventListener('click',function(){fdTap(b,ch);});
     if(grid)grid.appendChild(b);

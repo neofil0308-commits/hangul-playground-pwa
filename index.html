@@ -335,21 +335,10 @@ const EMOJI_KEYS=Object.keys(EMOJI_MAP).sort(function(a,b){return b.length-a.len
 const EMOJI_PAT=EMOJI_KEYS.map(function(e){return e.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}).join('|');
 const EMOJI_TEST=new RegExp(EMOJI_PAT);
 const EMOJI_RE=new RegExp(EMOJI_PAT,'g');
-function twemojify(root){
-  if(!root||!EMOJI_PAT)return;
-  var nodes=[],w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,null),n;
-  while(n=w.nextNode()){var p=n.parentNode;if(!p)continue;var t=p.nodeName;if(t==='SCRIPT'||t==='STYLE'||t==='TEXTAREA')continue;if(EMOJI_TEST.test(n.nodeValue))nodes.push(n);}
-  nodes.forEach(function(node){
-    var text=node.nodeValue,frag=document.createDocumentFragment(),last=0,mm;EMOJI_RE.lastIndex=0;
-    while((mm=EMOJI_RE.exec(text))){
-      if(mm.index>last)frag.appendChild(document.createTextNode(text.slice(last,mm.index)));
-      var img=document.createElement('img');img.className='twe';img.src=EMOJI_MAP[mm[0]];img.alt=mm[0];img.setAttribute('draggable','false');frag.appendChild(img);
-      last=mm.index+mm[0].length;
-    }
-    if(last<text.length)frag.appendChild(document.createTextNode(text.slice(last)));
-    node.parentNode.replaceChild(frag,node);
-  });
-}
+/* 별빛 그림책: 네이티브(OS) 이모지 톤 사용 — 트웨모지(flat Twitter) 이미지 치환을 끈다.
+   이모지는 그대로 텍스트로 남겨 iPad/Apple 등 OS가 부드러운 네이티브 글리프로 렌더한다.
+   모든 호출부가 안전하도록 no-op 패스스루로 유지한다(EMOJI_MAP 등은 미사용). */
+function twemojify(root){ return; }
 
 /* 스티커(도장) */
 let stickerCount=parseInt(lsGet('hp_stickers','0'))||0;
@@ -498,6 +487,11 @@ var _vb=document.getElementById('volBgm');if(_vb){_vb.value=_pct(volBgm);_vb.add
 setBgmBtn();setSfxBtn();
 
 twemojify(document.body);
+/* 별빛 그림책: 헤더 마스코트 + 이야기 얼굴을 아기 병아리 하니 SVG로 교체(장면 병아리와 통일) */
+(function(){try{if(typeof aiHaniSVG!=='function')return;
+  var m=document.querySelector('header .mascot');if(m)m.innerHTML=aiHaniSVG();
+  var sf=document.querySelector('#storyHero .story-face');if(sf)sf.innerHTML=aiHaniSVG();
+}catch(e){}})();
 </script>
 <script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
 </body>

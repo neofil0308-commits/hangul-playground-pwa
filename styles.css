@@ -246,7 +246,16 @@ header .sub{font-family:'Gowun Dodum',sans-serif;font-weight:400;font-size:1.05r
 .ld-back:active{transform:translateY(3px);box-shadow:0 1px 0 #f4b59c;}
 .ld-wrap{display:grid;grid-template-columns:1fr;gap:16px;}
 .ld-left{background:var(--card);border-radius:30px;padding:26px 20px;text-align:center;box-shadow:0 8px 0 #f4b59c,0 12px 18px rgba(150,80,40,.16);display:flex;flex-direction:column;align-items:center;justify-content:center;}
-.ld-glyph{font-size:7rem;line-height:1;color:var(--con-d);}
+/* 별빛 그림책: 큰 글자를 부드러운 둥근 색 타일로(자음 파랑 기본) */
+.ld-glyph{--jt:#7FB5E8;--jt2:#a9d0f2;--jtd:#3E6EA8;--jsh:40,70,120;
+  font-size:5.4rem;line-height:1;color:#fff;font-family:'Jua',sans-serif;
+  display:inline-flex;align-items:center;justify-content:center;width:1.5em;height:1.5em;
+  border-radius:34px;position:relative;margin-bottom:4px;
+  background:linear-gradient(180deg,var(--jt2),var(--jt) 66%);
+  box-shadow:0 9px 0 var(--jtd),0 15px 20px rgba(var(--jsh),.24),inset 0 4px 7px rgba(255,255,255,.55),inset 0 -6px 10px rgba(0,0,0,.10);
+  text-shadow:0 3px 0 rgba(0,0,0,.12);}
+.ld-glyph::after{content:'';position:absolute;left:16%;right:16%;top:9%;height:30%;border-radius:50%;
+  background:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,0));pointer-events:none;}
 .ld-name{font-size:1.4rem;margin-top:8px;color:#8a715a;}
 .ld-sound{margin-top:18px;font-family:'Jua',sans-serif;font-size:1.15rem;color:#fff;background:var(--con);border:none;border-radius:30px;padding:13px 30px;box-shadow:0 5px 0 var(--con-d);cursor:pointer;}
 .ld-sound:active{transform:translateY(4px);box-shadow:0 1px 0 var(--con-d);}
@@ -268,7 +277,7 @@ header .sub{font-family:'Gowun Dodum',sans-serif;font-weight:400;font-size:1.05r
 .ld-word:active{transform:translateY(3px);box-shadow:0 1px 0 #cfe7d3;}
 .ld-word .em{font-size:2rem;}
 .ld-word .spk{margin-left:auto;font-size:1rem;opacity:.5;}
-#letterDetail.vow .ld-glyph{color:var(--vow-d);}
+#letterDetail.vow .ld-glyph{--jt:#F3899F;--jt2:#f8b3c1;--jtd:#C25C74;--jsh:180,60,110;color:#fff;}
 #letterDetail.vow .ld-left{box-shadow:0 8px 0 #9fdcd8,0 12px 18px rgba(20,120,110,.16);}
 #letterDetail.vow .ld-sound{background:var(--vow);box-shadow:0 5px 0 var(--vow-d);}
 #letterDetail.vow .ld-back{color:var(--vow-d);box-shadow:0 4px 0 #9fdcd8;}
@@ -302,14 +311,37 @@ header .sub{font-family:'Gowun Dodum',sans-serif;font-weight:400;font-size:1.05r
   .m-syls .jsyl{font-size:2.4rem;min-width:82px;height:82px;}
   .sticker-slot .big{font-size:3.4rem;}
   .ld-wrap{grid-template-columns:1.05fr 1.25fr;align-items:start;}
-  .ld-glyph{font-size:10rem;} .ld-name{font-size:1.8rem;} .ld-sound{font-size:1.4rem;padding:15px 36px;}
+  .ld-glyph{font-size:7.4rem;} .ld-name{font-size:1.8rem;} .ld-sound{font-size:1.4rem;padding:15px 36px;}
   .mt-stage{max-width:360px;} .mt-guide{font-size:14rem;}
   .ld-panel h4{font-size:1.3rem;}
   .ld-word{font-size:1.6rem;padding:14px 20px;} .ld-word .em{font-size:2.5rem;}
   .pick3{gap:16px;} .pcard{padding:18px 12px;} .pcard h4{font-size:1.3rem;}
   .pick3 .chip{width:66px;height:66px;font-size:1.75rem;border-radius:18px;} .chips.col{max-height:460px;gap:10px;}
 }
-img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:-0.15em;}
+/* ===== 별빛 그림책: 자모 타일(재사용 트리트먼트) =====
+   부드러운 둥근 색 타일 + 윗광택(gloss) + 도톰한 그림자. 자음=파랑 기본, .jamo-vow=분홍.
+   (트웨모지 이미지를 걷어내 오브젝트 이모지는 네이티브 톤 텍스트로 렌더된다.) */
+.jamo-tile{--jt:#7FB5E8;--jt2:#a9d0f2;--jtd:#3E6EA8;--jsh:40,70,120;
+  display:inline-flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;
+  line-height:1;color:#fff;position:relative;border-radius:24px;
+  background:linear-gradient(180deg,var(--jt2),var(--jt) 66%);
+  box-shadow:0 7px 0 var(--jtd),0 11px 15px rgba(var(--jsh),.2),inset 0 3px 5px rgba(255,255,255,.55),inset 0 -5px 9px rgba(0,0,0,.1);
+  text-shadow:0 2px 0 rgba(0,0,0,.12);}
+.jamo-tile.jamo-vow{--jt:#F3899F;--jt2:#f8b3c1;--jtd:#C25C74;--jsh:180,60,110;}
+.jamo-tile::after{content:'';position:absolute;left:15%;right:15%;top:9%;height:30%;border-radius:50%;
+  background:linear-gradient(180deg,rgba(255,255,255,.58),rgba(255,255,255,0));pointer-events:none;}
+/* 소리 동굴/글자 찾기: 자모 보기 글리프를 색 타일로(단어 보기의 이모지는 그대로 둠) */
+.lopt.lopt-jamo .lglyph{--jt:#7FB5E8;--jt2:#a9d0f2;--jtd:#3E6EA8;--jsh:40,70,120;
+  font-size:3.4rem;width:1.35em;height:1.35em;border-radius:22px;color:#fff;position:relative;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:linear-gradient(180deg,var(--jt2),var(--jt) 66%);
+  box-shadow:0 6px 0 var(--jtd),0 9px 12px rgba(var(--jsh),.2),inset 0 3px 5px rgba(255,255,255,.55),inset 0 -4px 8px rgba(0,0,0,.1);
+  text-shadow:0 2px 0 rgba(0,0,0,.12);}
+.lopt.lopt-jamo.jrole-v .lglyph{--jt:#F3899F;--jt2:#f8b3c1;--jtd:#C25C74;--jsh:180,60,110;}
+.lopt.lopt-jamo .lglyph::after{content:'';position:absolute;left:15%;right:15%;top:9%;height:30%;border-radius:50%;
+  background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0));pointer-events:none;}
+/* 헤더 마스코트 / 이야기 얼굴: 병아리 SVG를 글자 크기(em)에 맞춰 표시 */
+header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:auto;display:block;overflow:visible;}
 .m-listen{background:var(--listen);box-shadow:0 6px 0 var(--listen-d);}
 #lscore{font-family:'Jua',sans-serif;font-size:1.15rem;color:var(--listen-d);margin-top:2px;}
 .mission{background:var(--cream2);border-radius:26px;padding:16px 16px 14px;margin:0 0 18px;box-shadow:0 7px 0 #E9D3B0,0 12px 20px rgba(120,80,40,.14);}
@@ -745,16 +777,17 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
 .letter-progress .lp-star{font-style:normal;font-size:1rem;line-height:1;opacity:.35;color:#b9c6d6;}
 .letter-progress .lp-star.on{opacity:1;}
 .letter-progress .lp-count{font-family:'Jua',sans-serif;font-size:.85rem;color:#e08a3c;}
-/* 단어 동산 자모 카드 디자인 (자음=주황, 모음=청록, 입체 버튼) */
-.wb-tray .wb-card{font-family:'Jua',sans-serif;width:68px;height:84px;font-size:2.4rem;border:none;cursor:pointer;border-radius:20px;display:flex;align-items:center;justify-content:center;position:relative;padding-top:10px;transition:transform .08s,box-shadow .08s;}
-.wb-tray .wb-card::before{position:absolute;top:7px;left:0;right:0;font-size:.62rem;font-weight:700;letter-spacing:1px;opacity:.7;}
-.wb-tray .wb-card.jrole-c{background:linear-gradient(180deg,#fff0ea,#ffd9cb);color:var(--con-d);box-shadow:0 6px 0 #f0b29c,0 10px 14px rgba(200,90,50,.18);}
-.wb-tray .wb-card.jrole-c::before{content:'자음';color:var(--con-d);}
-.wb-tray .wb-card.jrole-v{background:linear-gradient(180deg,#e6f7f4,#c4ebe6);color:var(--vow-d);box-shadow:0 6px 0 #a3dbd4,0 10px 14px rgba(30,150,140,.2);}
-.wb-tray .wb-card.jrole-v::before{content:'모음';color:var(--vow-d);}
+/* 단어 동산 자모 카드 = 자모 타일(자음=파랑, 모음=분홍, 흰 글리프 + 윗광택 + 입체 그림자) */
+.wb-tray .wb-card{font-family:'Jua',sans-serif;width:68px;height:84px;font-size:2.4rem;border:none;cursor:pointer;border-radius:20px;display:flex;align-items:center;justify-content:center;position:relative;padding-top:10px;transition:transform .08s,box-shadow .08s;text-shadow:0 2px 0 rgba(0,0,0,.12);}
+.wb-tray .wb-card::before{position:absolute;top:7px;left:0;right:0;font-size:.62rem;font-weight:700;letter-spacing:1px;opacity:.85;z-index:1;}
+.wb-tray .wb-card::after{content:'';position:absolute;left:16%;right:16%;top:15%;height:26%;border-radius:50%;background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(255,255,255,0));pointer-events:none;}
+.wb-tray .wb-card.jrole-c{background:linear-gradient(180deg,#a9d0f2,#7FB5E8 66%);color:#fff;box-shadow:0 6px 0 #3E6EA8,0 10px 14px rgba(40,70,120,.2),inset 0 3px 5px rgba(255,255,255,.5),inset 0 -4px 8px rgba(0,0,0,.1);}
+.wb-tray .wb-card.jrole-c::before{content:'자음';color:rgba(255,255,255,.9);}
+.wb-tray .wb-card.jrole-v{background:linear-gradient(180deg,#f8b3c1,#F3899F 66%);color:#fff;box-shadow:0 6px 0 #C25C74,0 10px 14px rgba(180,60,110,.2),inset 0 3px 5px rgba(255,255,255,.5),inset 0 -4px 8px rgba(0,0,0,.1);}
+.wb-tray .wb-card.jrole-v::before{content:'모음';color:rgba(255,255,255,.9);}
 .wb-tray .wb-card:active{transform:translateY(5px);}
-.wb-tray .wb-card.jrole-c:active{box-shadow:0 1px 0 #f0b29c;}
-.wb-tray .wb-card.jrole-v:active{box-shadow:0 1px 0 #a3dbd4;}
+.wb-tray .wb-card.jrole-c:active{box-shadow:0 1px 0 #3E6EA8;}
+.wb-tray .wb-card.jrole-v:active{box-shadow:0 1px 0 #C25C74;}
 .wb-tray .wb-card.used{opacity:.28;pointer-events:none;}
 /* 글자 숲(letterDetail) 재구성: 위 낱말 / 아래 받아쓰기 */
 .lf-head{display:flex;align-items:center;justify-content:center;gap:14px;margin:0 0 4px;flex-wrap:wrap;}
