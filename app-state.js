@@ -60,7 +60,8 @@ function curLetterObj(){var ep=curEpisode();if(!ep)return null;
 function progKey(ep){return ep?((ep.final?'F:':'')+(ep.ch||'')):'';}
 // 마스터 목록은 맨 글자(초성·모음)만 — 받침 키('F:')는 게임/복습 풀을 더럽히지 않게 제외.
 function masteredLetters(){return Object.keys(progress.mastery).filter(function(ch){return ch.indexOf('F:')!==0&&isMasteredRec(progress.mastery[ch]);});}
-function markLetterProgress(part){var ep=curEpisode();if(!ep||(ep.type!=='letter'&&ep.type!=='combine'))return;
+function markLetterProgress(part){if(part==='find')return;/* 글자 찾기는 추가 활동 플래그 — 마스터 키(met/matched/quizzed)에 영향 없음 */
+  var ep=curEpisode();if(!ep||(ep.type!=='letter'&&ep.type!=='combine'))return;
   var key=progKey(ep);
   var rec=progress.mastery[key]||(progress.mastery[key]={met:false,matched:false,quizzed:false});
   if(part==='letter')rec.met=true;else if(part==='word')rec.matched=true;else if(part==='play')rec.quizzed=true;
@@ -104,7 +105,7 @@ function pickToday(){
 
 var mission=lsJSON('hp_mission',{});
 // 미션은 날짜가 아니라 현재 에피소드(글자)에 묶인다. 글자가 바뀌면 새 미션, 같은 글자는 여러 날 이어감.
-function loadMission(){pickToday();if(mission.ep!==progress.idx){mission={ep:progress.idx,date:MD,letter:false,word:false,play:false,rewarded:false};lsSetJSON('hp_mission',mission);}}
+function loadMission(){pickToday();if(mission.ep!==progress.idx){mission={ep:progress.idx,date:MD,letter:false,word:false,play:false,find:false,rewarded:false};lsSetJSON('hp_mission',mission);}}
 function saveMission(){lsSetJSON('hp_mission',mission);}
 function updateStreak(){if(lastDone===MD)return;streak=(lastDone===yKey())?streak+1:1;lastDone=MD;lsSet('hp_streak',streak);lsSet('hp_lastdone',lastDone);}
 function completeMission(part){if(!mission||mission[part])return;mission[part]=true;mission.lastReaction=part;markLetterProgress(part);saveMission();showHaniReaction(part);renderMission();}

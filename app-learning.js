@@ -298,6 +298,103 @@ function initStory(){
   var d=document.getElementById('stDone');if(d)d.addEventListener('click',stDoneReading);
 }
 
+/* ===== 글자 찾기 (LETTER 4단계 find): 여러 글자 카드 속에서 오늘의 글자 찾기 =====
+   소리 동굴(듣고 찾기)의 시각판 — 그림·소리로 목표를 주고(정답 글자도 참고로 보여줌: 재인 게임이라 숨기지 않음),
+   같은 종류(자음/모음)의 방해 카드, 관대한 판정(오답 감점 없음), 차등 피드백(하나씩 작게 / 다 찾으면 크게). */
+var fdCh='',fdSay='',fdTargetCount=1,fdFound=0,fdLock=false;
+// 글자 종류: 모음(v)/자음(c). CHO/JUNG 멤버십으로 판정(쌍자음·복합모음 포함).
+function fdKind(ch){if(typeof JUNG!=='undefined'&&JUNG.indexOf(ch)>=0)return 'v';if(typeof CHO!=='undefined'&&CHO.indexOf(ch)>=0)return 'c';return '';}
+function fdSayText(){return fdSay||fdCh;}
+function openFind(){
+  var ep=(typeof curEpisode==='function')?curEpisode():null;
+  // 글자(letter) 막 전용 — 합치기/문장 막은 이 게임을 쓰지 않음.
+  if(ep&&(ep.type==='combine'||ep.type==='sentence')){go('home');return;}
+  var lo=(typeof curLetterObj==='function')?curLetterObj():null;
+  if((!lo||!lo.ch)&&typeof todayLetter!=='undefined')lo=todayLetter;
+  if(!lo||!lo.ch){go('home');return;}
+  fdCh=lo.ch;
+  fdSay=lo.sound||lo.name||fdCh;
+  fdLock=false;fdFound=0;
+  var kind=fdKind(fdCh);
+  var GRID=6;
+  fdTargetCount=(Math.random()<0.4)?2:1;   // 오늘 글자가 1~2장 등장
+  // 방해 카드 풀: 같은 종류의 이미 익힌 글자 우선 → 모자라면 기본 자모(자음 CONS / 모음 VOWS)로 보충.
+  var mastered=(typeof masteredLetters==='function'?masteredLetters():[]).filter(function(c){return c!==fdCh&&fdKind(c)===kind;});
+  var base=(kind==='v')?VOWS.map(function(v){return v.ch;}):CONS.map(function(c){return c.ch;});
+  var pool=[];shuffle(mastered).forEach(function(c){if(pool.indexOf(c)<0)pool.push(c);});
+  shuffle(base).forEach(function(c){if(c!==fdCh&&pool.indexOf(c)<0)pool.push(c);});
+  var distract=pool.slice(0,Math.max(1,GRID-fdTargetCount));
+  var cards=[];for(var t=0;t<fdTargetCount;t++)cards.push(fdCh);
+  cards=shuffle(cards.concat(distract));
+  var grid=document.getElementById('fdGrid');if(grid)grid.innerHTML='';
+  cards.forEach(function(ch){
+    var b=document.createElement('button');b.className='lopt';
+    b.innerHTML='<div class="lglyph">'+ch+'</div>';
+    b.addEventListener('click',function(){fdTap(b,ch);});
+    if(grid)grid.appendChild(b);
+  });
+  if(grid&&typeof twemojify==='function')twemojify(grid);
+  var cue=document.getElementById('fdCue');if(cue)cue.textContent=fdCh;
+  var q=document.getElementById('fdQ');if(q)q.textContent=fdCh+' 글자를 모두 찾아요!';
+  var fb=document.getElementById('fdFeedback');if(fb)fb.textContent='그림처럼 생긴 글자를 콕 눌러요 👆';
+  renderFindProgress();
+  go('find');
+  setTimeout(function(){if(typeof speak==='function')speak(fdSayText());},350);
+}
+// 진행 표시: 찾을 개수만큼 돋보기 칸이 하나씩 켜짐
+function renderFindProgress(){
+  var p=document.getElementById('fdProgress');if(!p)return;
+  var h='';for(var i=0;i<fdTargetCount;i++){h+='<span class="lc-bell'+(i<fdFound?' on':'')+'">🔎</span>';}
+  p.innerHTML=h;if(typeof twemojify==='function')twemojify(p);
+}
+// 하나 찾음(작게)
+function fdMini(btn,text){
+  var s=document.createElement('span');s.className='lc-mini';s.textContent=text;
+  btn.appendChild(s);setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s);},900);
+}
+// 모두 찾음(크게)
+function fdBigOpen(){
+  var sec=document.getElementById('find');if(!sec)return;
+  var o=document.createElement('div');o.className='lc-big';
+  o.innerHTML='<div class="lc-big-inner"><div class="lc-big-emoji">🔎🎉</div><div class="lc-big-label">'+fdCh+' 글자를 다 찾았어요!</div></div>';
+  sec.appendChild(o);if(typeof twemojify==='function')twemojify(o);
+  setTimeout(function(){o.classList.add('show');},10);
+  setTimeout(function(){o.classList.remove('show');setTimeout(function(){if(o.parentNode)o.parentNode.removeChild(o);},420);},1800);
+}
+function fdTap(btn,ch){
+  if(fdLock)return;
+  if(btn.classList.contains('good'))return;   // 이미 찾은 카드
+  if(ch===fdCh){
+    if(typeof sfxCorrect==='function')sfxCorrect();
+    btn.classList.add('good','pop');btn.disabled=true;
+    if(typeof speak==='function')speak(fdSayText());
+    fdFound++;renderFindProgress();
+    if(fdFound>=fdTargetCount){
+      fdLock=true;
+      var fb=document.getElementById('fdFeedback');if(fb)fb.textContent='';
+      if(typeof confetti==='function')confetti();
+      if(typeof earnSticker==='function')earnSticker();
+      fdBigOpen();
+      if(typeof completeMission==='function')completeMission('find');
+      setTimeout(function(){if(typeof go==='function')go('home');},1900);
+    }else{
+      fdMini(btn,'찾았다!');
+      var fb2=document.getElementById('fdFeedback');if(fb2)fb2.textContent='하나 더 있어요! 찾아봐요 👀';
+    }
+  }else{
+    // 관대한 판정: 감점 없이 부드럽게 다시 시도(쉐이크 + 소리 힌트)
+    if(typeof sfxWrong==='function')sfxWrong();
+    btn.classList.add('bad');
+    var fb3=document.getElementById('fdFeedback');if(fb3)fb3.textContent=fdCh+' 글자를 찾아봐요!';
+    if(typeof speak==='function')speak(fdSayText());
+    setTimeout(function(){btn.classList.remove('bad');},500);
+  }
+}
+function initFind(){
+  var b=document.getElementById('fdBack');if(b)b.addEventListener('click',function(){go('home');});
+  var p=document.getElementById('fdPlay');if(p)p.addEventListener('click',function(){if(typeof speak==='function')speak(fdSayText());});
+}
+
 function initLearningScreens(){
   initLetterTabs();
   renderLetters();
@@ -306,4 +403,5 @@ function initLearningScreens(){
   initWordStudy();
   initCombine();
   initStory();
+  initFind();
 }

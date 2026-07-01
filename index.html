@@ -48,6 +48,7 @@
       <button class="mrow" id="mrowLetter"><span class="mk" id="mkL">ㄱ</span><span class="mtx">글자 숲 <b id="mtL">ㄱ</b><small>숨어 있는 글자 친구를 만나요</small></span><span class="mck" id="mcL">○</span></button>
       <button class="mrow" id="mrowWord"><span class="mk" id="mkW">🦒</span><span class="mtx">단어 동산 <b id="mtW">기린</b><small>글자 친구가 좋아하는 단어를 찾아요</small></span><span class="mck" id="mcW">○</span></button>
       <button class="mrow" id="mrowPlay"><span class="mk">🔊</span><span class="mtx">소리 동굴 <b>듣고 찾기</b><small>소리를 듣고 문을 열어요</small></span><span class="mck" id="mcP">○</span></button>
+      <button class="mrow" id="mrowFind"><span class="mk">🔎</span><span class="mtx">글자 찾기 <b id="mtF">ㄱ</b><small>여러 글자 속에서 오늘 글자를 찾아요</small></span><span class="mck" id="mcF">○</span></button>
       <div class="alldone" id="missionDone" style="display:none">한글 마을에 빛이 하나 켜졌어요! 모험 보상: 하니가 스티커를 준비했어요 🎉</div>
       <button class="next-letter" id="nextLetterBtn" style="display:none">다음 글자 만나러 가기 ⭐</button>
       <section class="story-world" id="storyWorld" aria-label="한글 마을 이야기">
@@ -233,6 +234,23 @@
     </div>
   </section>
 
+  <section id="find" class="screen">
+    <button class="ld-back" id="fdBack">⬅ 한글 마을</button>
+    <div class="listen-wrap">
+    <div class="listen-top">
+      <div class="lc-hani">🐥</div>
+      <div class="lc-letter" id="fdCue">ㄱ</div>
+      <div class="lc-q" id="fdQ">오늘 글자를 모두 찾아요</div>
+      <button class="bigplay" id="fdPlay">🔊 다시 듣기</button>
+      <div class="lc-progress" id="fdProgress"></div>
+    </div>
+    <div class="listen-right">
+      <div class="listen-opts" id="fdGrid"></div>
+      <div class="feedback" id="fdFeedback"></div>
+    </div>
+    </div>
+  </section>
+
   <section id="sticker" class="screen"><div class="section-title">내 스티커</div><div class="hint" id="stickerHint">도장을 모아요! 🏅</div><div class="grid sticker-grid" id="stickerGrid"></div></section>
 
   <section id="set" class="screen"><div class="section-title">설정</div><div class="hint">소리와 도장을 관리해요 ⚙️</div>
@@ -364,10 +382,10 @@ function renderMission(){
   var combine=!!(mep&&mep.type==='combine');
   var sentence=!!(mep&&mep.type==='sentence');
   var single=combine||sentence;
-  var wRow=document.getElementById('mrowWord'),pRow=document.getElementById('mrowPlay');
+  var wRow=document.getElementById('mrowWord'),pRow=document.getElementById('mrowPlay'),fRow=document.getElementById('mrowFind');
   var mtx=document.querySelector('#mrowLetter .mtx');
   if(single){
-    if(wRow)wRow.style.display='none';if(pRow)pRow.style.display='none';
+    if(wRow)wRow.style.display='none';if(pRow)pRow.style.display='none';if(fRow)fRow.style.display='none';
     if(combine){
       var ckL=document.getElementById('mkL');if(ckL)ckL.textContent='🔨';
       var ctL=document.getElementById('mtL');if(ctL)ctL.textContent=mep.ch+' 만들기';
@@ -378,16 +396,22 @@ function renderMission(){
       if(mtx){if(mtx.childNodes[0])mtx.childNodes[0].nodeValue='이야기 책 ';var ssm=mtx.querySelector('small');if(ssm)ssm.textContent='문장을 스스로 읽어요';}
     }
   }else{
-    if(wRow)wRow.style.display='';if(pRow)pRow.style.display='';
+    if(wRow)wRow.style.display='';if(pRow)pRow.style.display='';if(fRow)fRow.style.display='';
     var eL=document.getElementById('mtL');if(eL)eL.textContent=todayLetter.ch;
     var kL=document.getElementById('mkL');if(kL)kL.textContent=todayLetter.ch;
     var eW=document.getElementById('mtW');if(eW)eW.textContent=todayWord[0];
     var kW=document.getElementById('mkW');if(kW)kW.textContent=todayWord[1];
+    var eF=document.getElementById('mtF');if(eF)eF.textContent=todayLetter.ch+' 찾기';
     if(mtx){if(mtx.childNodes[0])mtx.childNodes[0].nodeValue='글자 숲 ';var lsm=mtx.querySelector('small');if(lsm)lsm.textContent='숨어 있는 글자 친구를 만나요';}
   }
   setRow('mrowLetter','mcL',mission.letter);
-  if(!single){setRow('mrowWord','mcW',mission.word);setRow('mrowPlay','mcP',mission.play);}
-  var n=single?(mission.letter?3:0):((mission.letter?1:0)+(mission.word?1:0)+(mission.play?1:0));
+  if(!single){setRow('mrowWord','mcW',mission.word);setRow('mrowPlay','mcP',mission.play);setRow('mrowFind','mcF',mission.find);}
+  // 완료 게이트 일반화: 글자 막은 4단계(글자·단어·소리·찾기), 합치기/문장 막은 단일 트립(letter·word·play).
+  var req=single?['letter','word','play']:['letter','word','play','find'];
+  var done=0;for(var ri=0;ri<req.length;ri++){if(mission[req[ri]])done++;}
+  var total=req.length;
+  var allDone=done===total;
+  var complete=allDone||!!mission.rewarded;
   var story=document.getElementById('storyText');
   if(story){
     if(combine){
@@ -398,23 +422,24 @@ function renderMission(){
       if(!mission.letter)story.textContent='이야기 책에서 오늘의 문장을 스스로 읽어볼까요?';
       else story.textContent='문장을 스스로 읽었어요! 한글을 뗐어요. 정말 멋져요! 🎓';
     }
-    else if(n===0)story.textContent='오늘은 '+todayLetter.ch+' 친구와 '+todayWord[0]+' 단어가 한글 마을에서 기다리고 있어요.';
+    else if(done===0)story.textContent='오늘은 '+todayLetter.ch+' 친구와 '+todayWord[0]+' 단어가 한글 마을에서 기다리고 있어요.';
     else if(!mission.letter)story.textContent='먼저 글자 숲에서 '+todayLetter.ch+' 친구를 만나볼까요?';
     else if(!mission.word)story.textContent='좋아요! 이제 단어 동산에서 '+todayWord[0]+' 단어를 찾아봐요.';
-    else if(!mission.play)story.textContent='마지막은 소리 동굴이에요. 소리를 듣고 문을 열어봐요!';
+    else if(!mission.play)story.textContent='이제 소리 동굴이에요. 소리를 듣고 문을 열어봐요!';
+    else if(!mission.find)story.textContent='마지막은 글자 찾기! 여러 글자 속에서 '+todayLetter.ch+' 글자를 모두 찾아봐요.';
     else story.textContent='한글 마을에 빛이 하나 켜졌어요. 하니가 모험 보상을 준비했어요!';
   }
-  var bf=document.getElementById('mbarFill');if(bf)bf.style.width=(n/3*100)+'%';
-  var md=document.getElementById('missionDone');if(md)md.style.display=(n===3)?'block':'none';
+  var bf=document.getElementById('mbarFill');if(bf)bf.style.width=(complete?100:(done/total*100))+'%';
+  var md=document.getElementById('missionDone');if(md)md.style.display=complete?'block':'none';
   updateAdventureMap();
   updateQuestRoute();
   updateStoryWorld();
   renderHaniReaction();
   renderEpisodeBanner();
   renderStarAlbum();
-  var nb=document.getElementById('nextLetterBtn');if(nb)nb.style.display=(n===3&&progress.idx<EPISODE_PATH.length-1)?'block':'none';
+  var nb=document.getElementById('nextLetterBtn');if(nb)nb.style.display=(complete&&progress.idx<EPISODE_PATH.length-1)?'block':'none';
   twemojify(document.getElementById('mission'));
-  if(n===3&&!mission.rewarded){mission.rewarded=true;saveMission();updateStreak();onEpisodeComplete();setTimeout(function(){confetti();earnSticker();},350);}
+  if(allDone&&!mission.rewarded){mission.rewarded=true;saveMission();updateStreak();onEpisodeComplete();setTimeout(function(){confetti();earnSticker();},350);}
 }
 function openTodayLetter(){var oep=(typeof curEpisode==='function')?curEpisode():null;if(oep&&oep.type==='combine'){if(typeof openCombine==='function')openCombine();return;}if(oep&&oep.type==='sentence'){if(typeof openStory==='function')openStory();return;}var isV=VOWS.indexOf(todayLetter)>=0;lettersTab=isV?'vow':'con';var tabs=document.querySelectorAll('#letterTabs button');tabs.forEach(function(x){x.classList.remove('con-on','vow-on');});if(tabs[isV?1:0])tabs[isV?1:0].classList.add(lettersTab+'-on');renderLetters();openLetterDetail(todayLetter);}
 /* 부모 잠금 + 리포트 */
@@ -429,6 +454,7 @@ function renderReport(){var r=document.getElementById('report');if(!r)return;var
 document.getElementById('mrowLetter').addEventListener('click',openTodayLetter);
 document.getElementById('mrowWord').addEventListener('click',function(){openWordBuild(todayWord[0],todayWord[1]);});
 document.getElementById('mrowPlay').addEventListener('click',function(){go('listen');});
+document.getElementById('mrowFind').addEventListener('click',function(){if(typeof openFind==='function')openFind();});
 /* 막 바로가기 (테스트·부모용): ?act=N → 그 막 첫 화로, ?ep=N → 해당 인덱스로 점프 */
 (function(){try{var q=new URLSearchParams(location.search);var aj=q.get('act'),ej=q.get('ep');var ti=-1;
 if(ej!==null&&ej!==''){ti=parseInt(ej,10);}
