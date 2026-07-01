@@ -28,7 +28,11 @@ function hashStr(s){var h=5381;for(var i=0;i<s.length;i++)h=((h*33)^s.charCodeAt
 var progress=lsJSON('hp_progress',{idx:0,mastery:{},album:[],milestones:[],relics:[]});
 // 옛 저장본 관대 처리: relics 없던 진행도 깨지지 않게 기본 빈 배열.
 if(!progress.relics)progress.relics=[];
+// 막 시작 그림책을 이미 본 막 번호 목록(막마다 1회만 자동 노출). 옛 저장본 관대 처리.
+if(!Array.isArray(progress.actIntrosSeen))progress.actIntrosSeen=[];
 function saveProgress(){lsSetJSON('hp_progress',progress);}
+function actIntroSeen(n){return (progress.actIntrosSeen||[]).indexOf(n)>=0;}
+function markActIntroSeen(n){if(!progress.actIntrosSeen)progress.actIntrosSeen=[];if(progress.actIntrosSeen.indexOf(n)<0){progress.actIntrosSeen.push(n);saveProgress();}}
 function curEpisode(){return EPISODE_PATH[Math.min(progress.idx,EPISODE_PATH.length-1)];}
 // 글자형 막 → 자모 객체(소리/예시). 합치기형(combine) 막 → 목표 음절을 분해한 합성 객체(목표+필요한 자모 카드).
 function combineTarget(ep){

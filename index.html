@@ -37,7 +37,7 @@
 
   <section id="home" class="screen active">
     <header aria-label="하니의 한글 모험"><div class="mascot">🐥</div><div class="logo">하니의 한<b>글</b> 모험</div><div class="sub">한글 마을에 흩어진 글자 친구들을 찾아요</div></header>
-    <div class="home-intro-bar"><button class="replay-intro" id="replayIntro">📖 이야기 다시 보기</button></div>
+    <div class="home-intro-bar"><button class="replay-intro" id="replayIntro">📖 이야기 다시 보기</button><button class="replay-intro replay-act-intro" id="replayActIntro">💡 오늘 배우는 것</button></div>
     <section class="star-album star-album-top" id="starAlbum" aria-label="여정 진행 상황 — 지난 글자를 누르면 다시 갈 수 있어요"></section>
     <div class="home-workbench" id="homeWorkbench" aria-label="iPad 기준 한글 모험 홈">
     <div class="mission" id="mission">
@@ -440,6 +440,7 @@ function renderMission(){
   var nb=document.getElementById('nextLetterBtn');if(nb)nb.style.display=(complete&&progress.idx<EPISODE_PATH.length-1)?'block':'none';
   twemojify(document.getElementById('mission'));
   if(allDone&&!mission.rewarded){mission.rewarded=true;saveMission();updateStreak();onEpisodeComplete();setTimeout(function(){confetti();earnSticker();},350);}
+  if(typeof maybeShowActIntro==='function')maybeShowActIntro();
 }
 function openTodayLetter(){var oep=(typeof curEpisode==='function')?curEpisode():null;if(oep&&oep.type==='combine'){if(typeof openCombine==='function')openCombine();return;}if(oep&&oep.type==='sentence'){if(typeof openStory==='function')openStory();return;}var isV=VOWS.indexOf(todayLetter)>=0;lettersTab=isV?'vow':'con';var tabs=document.querySelectorAll('#letterTabs button');tabs.forEach(function(x){x.classList.remove('con-on','vow-on');});if(tabs[isV?1:0])tabs[isV?1:0].classList.add(lettersTab+'-on');renderLetters();openLetterDetail(todayLetter);}
 /* 부모 잠금 + 리포트 */

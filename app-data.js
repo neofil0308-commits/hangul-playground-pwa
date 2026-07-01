@@ -299,3 +299,105 @@ const INTRO_PAGES=[
   {art:['✨','⭐','💌'],cap:'글자를 모아 편지를 살려요',say:'숨은 글자 친구들을 하나씩 모으면, 하얀 편지에 다시 반짝반짝 글자가 살아난대!',svg:'<svg class="scene" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="빛 조각을 모아요"><defs><clipPath id="rc"><rect x="0" y="0" width="400" height="280" rx="26"/></clipPath><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2c2752"/><stop offset="0.6" stop-color="#473c78"/><stop offset="1" stop-color="#6a5a9a"/></linearGradient><radialGradient id="glow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#ffe9a8" stop-opacity="0.85"/><stop offset="1" stop-color="#ffe9a8" stop-opacity="0"/></radialGradient><filter id="paper" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.08 0"/></filter></defs><g clip-path="url(#rc)"><rect x="0" y="0" width="400" height="280" fill="url(#sky)"/><circle cx="200" cy="120" r="150" fill="url(#glow)"/><g fill="#fff"><circle class="tw" cx="64" cy="44" r="1.8"/><circle class="tw t2" cx="330" cy="40" r="1.8"/><circle class="tw t3" cx="120" cy="150" r="1.6"/><circle class="tw" cx="300" cy="150" r="1.6"/></g><path d="M0,240 Q200,222 400,240 L400,280 L0,280 Z" fill="#534781"/><g transform="translate(200,122)"><circle cx="0" cy="2" r="46" fill="url(#glow)"/><g class="glowpulse"><rect x="-30" y="-38" width="60" height="76" rx="6" fill="#fffef8" stroke="#ffe6a0" stroke-width="2"/><line x1="-20" y1="-22" x2="20" y2="-22" stroke="#ffdf9c" stroke-width="2.5"/><line x1="-20" y1="-11" x2="20" y2="-11" stroke="#ffdf9c" stroke-width="2.5"/><line x1="-20" y1="0" x2="20" y2="0" stroke="#ffdf9c" stroke-width="2.5"/><line x1="-20" y1="11" x2="12" y2="11" stroke="#ffdf9c" stroke-width="2.5"/></g></g><g transform="translate(96,68)"><g class="gather" style="--dx:104px;--dy:54px"><circle r="12" fill="#7ec4e8"/><text y="5" font-family="Jua, sans-serif" font-size="14" fill="#fff" text-anchor="middle">ㄱ</text><circle cx="-4" cy="-3" r="1.5" fill="#27414e"/><circle cx="4" cy="-3" r="1.5" fill="#27414e"/></g></g><g transform="translate(308,74)"><g class="gather gg2" style="--dx:-108px;--dy:48px"><circle r="12" fill="#f3899f"/><text y="5" font-family="Jua, sans-serif" font-size="14" fill="#fff" text-anchor="middle">ㅏ</text><circle cx="-4" cy="-3" r="1.5" fill="#5a2436"/><circle cx="4" cy="-3" r="1.5" fill="#5a2436"/></g></g><g transform="translate(104,192)"><g class="gather gg3" style="--dx:96px;--dy:-70px"><circle r="12" fill="#f4b13c"/><text y="5" font-family="Jua, sans-serif" font-size="14" fill="#fff" text-anchor="middle">ㅁ</text><circle cx="-4" cy="-3" r="1.5" fill="#6a4810"/><circle cx="4" cy="-3" r="1.5" fill="#6a4810"/></g></g><g transform="translate(298,190)"><g class="gather gg4" style="--dx:-98px;--dy:-68px"><circle r="12" fill="#5fae7a"/><text y="5" font-family="Jua, sans-serif" font-size="14" fill="#fff" text-anchor="middle">ㅇ</text><circle cx="-4" cy="-3" r="1.5" fill="#2e5a3e"/><circle cx="4" cy="-3" r="1.5" fill="#2e5a3e"/></g></g><g transform="translate(200,236)"><g class="hani"><ellipse cx="0" cy="22" rx="17" ry="4.5" fill="#000" fill-opacity="0.18"/><ellipse cx="0" cy="6" rx="16" ry="17" fill="#ffd54a"/><ellipse cx="-17" cy="-2" rx="5" ry="10" fill="#ffc62e" transform="rotate(-34 -17 -2)"/><ellipse cx="17" cy="-2" rx="5" ry="10" fill="#ffc62e" transform="rotate(34 17 -2)"/><circle cx="0" cy="-10" r="13" fill="#ffd54a"/><circle cx="-5" cy="-12" r="2" fill="#3a2a1a"/><circle cx="5" cy="-12" r="2" fill="#3a2a1a"/><path d="M-3,-7 L3,-7 L0,-2 z" fill="#ff9a3c"/><ellipse cx="-9" cy="-6" rx="3" ry="2.2" fill="#ff9eb0" opacity="0.85"/><ellipse cx="9" cy="-6" rx="3" ry="2.2" fill="#ff9eb0" opacity="0.85"/><path d="M-6,23 l-3,5 M6,23 l3,5" stroke="#ff9a3c" stroke-width="2.8" stroke-linecap="round"/></g></g><rect x="0" y="0" width="400" height="280" filter="url(#paper)"/></g></svg>'},
   {art:['🗺️','🐥','➡️'],cap:'지도를 펼쳐 모험 출발!',say:'자, 한글 마을 지도를 펼쳐서 모험을 떠나자! 어디부터 가 볼까?',svg:'<svg class="scene" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="지도를 펼쳐 모험 출발"><defs><clipPath id="rc"><rect x="0" y="0" width="400" height="280" rx="26"/></clipPath><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8cc2dd"/><stop offset="1" stop-color="#dceede"/></linearGradient><filter id="paper" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.07 0"/></filter></defs><g clip-path="url(#rc)"><rect x="0" y="0" width="400" height="280" fill="url(#sky)"/><g transform="translate(200,144) rotate(-2)"><rect x="-156" y="-100" width="312" height="200" rx="14" fill="#f1e1bd" stroke="#cdb284" stroke-width="3"/><rect x="-148" y="-92" width="296" height="184" rx="10" fill="none" stroke="#e0ca9a" stroke-width="1.5" stroke-dasharray="3 6"/><path class="pathflow" d="M-120,72 Q-80,32 -40,52 Q12,78 32,20 Q46,-22 102,-46" fill="none" stroke="#c79a5a" stroke-width="4" stroke-dasharray="2 9" stroke-linecap="round"/><g transform="translate(-100,50)"><rect x="-2" y="0" width="4" height="9" fill="#9a6a44"/><path d="M0,-20 l-11,20 l22,0 z" fill="#5a9a6e"/></g><g transform="translate(-20,44)"><rect x="-1.5" y="0" width="3" height="9" fill="#5a9a6e"/><circle cx="0" cy="-3" r="7" fill="#f3899f"/><circle cx="0" cy="-3" r="2.6" fill="#ffe27a"/></g><path d="M28,28 a13,13 0 0 1 26,0 z" fill="#6a5a86"/><circle cx="41" cy="24" r="3.5" fill="#2e2750"/><path class="tw" d="M102,-58 l3.2,7.4 l8,1 l-6,5.8 l2,8 l-7.2,-4.2 l-7.2,4.2 l2,-8 l-6,-5.8 l8,-1 z" fill="#ffb02e" stroke="#e8902a" stroke-width="1"/><g transform="translate(116,-74)"><circle r="12" fill="#fff7e6" stroke="#cdb284" stroke-width="2"/><path d="M0,-9 L3,0 L0,9 L-3,0 z" fill="#e4392c"/><path d="M-9,0 L0,-3 L9,0 L0,3 z" fill="#6a5a86"/></g></g><g class="dust"><ellipse cx="62" cy="237" rx="5" ry="3" fill="#fffdf4" opacity="0.5"/></g><g class="dust du2"><ellipse cx="70" cy="239" rx="4" ry="2.4" fill="#fffdf4" opacity="0.45"/></g><g transform="translate(86,214)"><g class="hani dash"><ellipse cx="0" cy="22" rx="17" ry="4.5" fill="#000" fill-opacity="0.13"/><ellipse cx="0" cy="7" rx="16" ry="17" fill="#ffd54a"/><ellipse cx="-15" cy="9" rx="5" ry="9" fill="#ffc62e"/><ellipse cx="19" cy="-2" rx="5" ry="10" fill="#ffc62e" transform="rotate(56 19 -2)"/><circle cx="0" cy="-10" r="13" fill="#ffd54a"/><circle cx="-5" cy="-11" r="2" fill="#3a2a1a"/><circle cx="5" cy="-11" r="2" fill="#3a2a1a"/><path d="M-3,-7 L3,-7 L0,-3 z" fill="#ff9a3c"/><ellipse cx="-9" cy="-6" rx="3" ry="2.2" fill="#ff9eb0" opacity="0.85"/><ellipse cx="9" cy="-6" rx="3" ry="2.2" fill="#ff9eb0" opacity="0.85"/><path d="M-3,-23 q3,-5 5,-1 M3,-23 q3,-4 4,0" fill="none" stroke="#ffb02e" stroke-width="2.2" stroke-linecap="round"/><path d="M-6,24 l-3,5 M6,24 l3,5" stroke="#ff9a3c" stroke-width="2.8" stroke-linecap="round"/></g></g><rect x="0" y="0" width="400" height="280" filter="url(#paper)"/></g></svg>'},
 ];
+
+// ===== 막 시작 그림책 — 막마다 그 막의 개념을 한 장으로 소개 (하니가 기기 음성으로 읽어줌) =====
+// 인트로 그림책과 같은 화면/흐름을 재사용. 자모 버블 + 결합 애니메이션으로 "글자가 만들어져요"를 보여준다.
+// 공용 빌더: 자모 버블(원+큰 글자+눈 2개), 하니 병아리, 연산자(+/→), 장면 프레임.
+function aiBub(x,y,r,ch,fill,eye,cls){cls=cls||'';
+  var f=Math.round(r*1.15),ty=(r*0.36).toFixed(1),ex=(r*0.33).toFixed(1),ey=(-r*0.28).toFixed(1),er=(r*0.13).toFixed(1);
+  var body='<circle r="'+r+'" fill="'+fill+'"/>'
+    +'<circle cx="-'+ex+'" cy="'+ey+'" r="'+er+'" fill="'+eye+'"/><circle cx="'+ex+'" cy="'+ey+'" r="'+er+'" fill="'+eye+'"/>'
+    +'<text y="'+ty+'" font-family="Jua, sans-serif" font-size="'+f+'" fill="#fff" text-anchor="middle">'+ch+'</text>';
+  return '<g transform="translate('+x+','+y+')">'+(cls?'<g class="'+cls+'">'+body+'</g>':body)+'</g>';
+}
+function aiOp(x,ch){return '<text x="'+x+'" y="122" font-family="Jua, sans-serif" font-size="30" fill="#fff" text-anchor="middle" opacity="0.9">'+ch+'</text>';}
+function aiHani(x,y,s,cls,sing){s=(s==null?1:s);cls=cls||'';
+  var mouth=sing?'<ellipse cx="0" cy="-4" rx="3.2" ry="4.2" fill="#e8663f"/>':'<path d="M-3,-7 L3,-7 L0,-3 z" fill="#ff9a3c"/>';
+  return '<g transform="translate('+x+','+y+') scale('+s+')"><g class="hani '+cls+'">'
+    +'<ellipse cx="0" cy="22" rx="16" ry="4.5" fill="#000" fill-opacity="0.13"/>'
+    +'<ellipse cx="0" cy="6" rx="15" ry="16" fill="#ffd54a"/>'
+    +'<ellipse cx="-15" cy="8" rx="5" ry="9" fill="#ffc62e"/><ellipse cx="15" cy="8" rx="5" ry="9" fill="#ffc62e"/>'
+    +'<circle cx="0" cy="-10" r="12" fill="#ffd54a"/>'
+    +'<circle cx="-5" cy="-11" r="2" fill="#3a2a1a"/><circle cx="5" cy="-11" r="2" fill="#3a2a1a"/>'
+    +mouth
+    +'<ellipse cx="-9" cy="-6" rx="3" ry="2.2" fill="#ff9eb0" opacity="0.8"/><ellipse cx="9" cy="-6" rx="3" ry="2.2" fill="#ff9eb0" opacity="0.8"/>'
+    +'<path d="M-3,-23 q3,-5 5,-1 M3,-23 q3,-4 4,0" fill="none" stroke="#ffb02e" stroke-width="2.2" stroke-linecap="round"/>'
+    +'<path d="M-6,23 l-3,5 M6,23 l3,5" stroke="#ff9a3c" stroke-width="2.8" stroke-linecap="round"/>'
+    +'</g></g>';
+}
+function aiScene(label,sky0,sky1,inner){
+  return '<svg class="scene" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+label+'">'
+    +'<defs><clipPath id="rc"><rect x="0" y="0" width="400" height="280" rx="26"/></clipPath>'
+    +'<linearGradient id="asky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+sky0+'"/><stop offset="1" stop-color="'+sky1+'"/></linearGradient>'
+    +'<filter id="paper" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.08 0"/></filter></defs>'
+    +'<g clip-path="url(#rc)"><rect x="0" y="0" width="400" height="280" fill="url(#asky)"/>'
+    +'<g fill="#fff"><circle class="tw" cx="60" cy="40" r="2"/><circle class="tw t2" cx="330" cy="36" r="1.8"/><circle class="tw t3" cx="205" cy="26" r="2"/></g>'
+    +'<path d="M0,240 Q200,220 400,240 L400,280 L0,280 Z" fill="#5fa07f" opacity="0.85"/>'
+    +inner
+    +'<rect x="0" y="0" width="400" height="280" filter="url(#paper)"/></g></svg>';
+}
+function aiNote(x,y,cls){return '<text class="notefloat '+(cls||'')+'" x="'+x+'" y="'+y+'" font-family="Jua, sans-serif" font-size="20" fill="#fffbe6" text-anchor="middle">♪</text>';}
+function aiSpark(x,y,cls){return '<g class="spark '+(cls||'')+'" transform="translate('+x+','+y+')"><path d="M0,-9 L2,-2 L9,0 L2,2 L0,9 L-2,2 L-9,0 L-2,-2 Z" fill="#ffe27a"/></g>';}
+
+// 색상 팔레트(자음/모음): 인트로 5페이지 버블과 통일.
+var _cB='#7ec4e8',_eB='#27414e';   // ㄱ 파랑
+var _cP='#f3899f',_eP='#5a2436';   // ㅏ 분홍
+var _cY='#f4b13c',_eY='#6a4810';   // ㅁ 노랑
+var _cG='#5fae7a',_eG='#2e5a3e';   // ㅇ 초록
+var _cT='#67c4c0',_eT='#1f4f4d';   // ㅣ 청록
+var _cR='#ef6b6b',_eR='#7a2222';   // 쌍자음 빨강
+var _cM='#8f7fe0',_eM='#3a2f66';   // 완성 글자 보라
+
+const ACT_INTROS={
+  1:{act:1,cap:'모음의 빛',say:'입을 크게 벌리면 소리가 나요. 아! 어! 오! 모음은 노래하는 소리예요.',
+    svg:aiScene('모음의 빛','#6a6bb0','#ffd79a',
+      aiNote(95,58)+aiNote(200,52,'n2')+aiNote(305,58,'n3')
+      +aiBub(95,108,26,'ㅏ',_cP,_eP)+aiBub(200,108,26,'ㅓ',_cB,_eB)+aiBub(305,108,26,'ㅗ',_cY,_eY)
+      +aiHani(200,244,0.95,'',true))},
+  2:{act:2,cap:'자음 친구들',say:'자음은 혼자선 조용해요. 모음 친구를 만나면 소리가 나요. ㄱ이 ㅏ를 만나니, 가!',
+    svg:aiScene('자음 친구들','#3d3470','#d79bae',
+      '<text class="notefloat" x="72" y="66" font-family="Jua, sans-serif" font-size="15" fill="#cfe6f3" text-anchor="middle">z z z</text>'
+      +aiBub(72,112,26,'ㄱ',_cB,_eB)+aiOp(121,'+')+aiBub(170,112,26,'ㅏ',_cP,_eP)+aiOp(230,'→')
+      +aiNote(300,60)+aiBub(302,112,32,'가',_cM,_eM,'merge')
+      +aiHani(200,246,0.9))},
+  3:{act:3,cap:'글자 공방',say:'자음과 모음이 손을 잡으면 새 글자가 태어나요. ㄱ 더하기 ㅏ는, 가!',
+    svg:aiScene('글자 공방','#4a72a8','#dbe7c9',
+      aiBub(74,112,28,'ㄱ',_cB,_eB,'slideR')+aiOp(128,'+')+aiBub(182,112,28,'ㅏ',_cP,_eP,'slideL')+aiOp(240,'→')
+      +aiSpark(276,80)+aiSpark(340,86,'s2')+aiSpark(310,150,'s3')
+      +aiBub(310,112,35,'가',_cM,_eM,'merge')
+      +aiHani(200,246,0.9))},
+  4:{act:4,cap:'받침의 문',say:'글자 아래에 받침이 살포시 앉으면 끝소리가 생겨요. 가에 이응이 앉으니, 강!',
+    svg:aiScene('받침의 문','#3d3470','#9a86b8',
+      aiBub(70,112,28,'가',_cB,_eB)+aiOp(122,'+')
+      +aiBub(172,102,24,'ㅇ',_cG,_eG,'drop')
+      +'<text x="172" y="150" font-family="Jua, sans-serif" font-size="13" fill="#ffe9c2" text-anchor="middle">받침</text>'
+      +aiOp(232,'→')+aiBub(305,112,33,'강',_cM,_eM,'merge')
+      +aiHani(200,246,0.9))},
+  5:{act:5,cap:'쌍둥이 소리',say:'쌍둥이 자음은 힘을 꾹 줘요. 가보다 더 센 소리, 까!',
+    svg:aiScene('쌍둥이 소리','#5a3a5a','#e0a08a',
+      aiBub(70,112,25,'ㄱ',_cB,_eB)+aiOp(118,'+')+aiBub(166,112,25,'ㄱ',_cB,_eB)+aiOp(226,'→')
+      +aiSpark(268,82,'s2')+aiSpark(340,150,'s3')
+      +aiBub(302,112,33,'ㄲ',_cR,_eR,'merge')
+      +'<text class="spark" x="302" y="176" font-family="Jua, sans-serif" font-size="20" fill="#ffe27a" text-anchor="middle">까!</text>'
+      +aiHani(200,246,0.9,'determined'))},
+  6:{act:6,cap:'숨은 모음',say:'모음 둘이 겹치면 숨어있던 소리가 나와요. 아 더하기 이는, 애!',
+    svg:aiScene('숨은 모음','#2c2752','#8fa8d8',
+      aiBub(74,112,28,'ㅏ',_cP,_eP,'slideR')+aiOp(128,'+')+aiBub(182,112,28,'ㅣ',_cT,_eT,'slideL')+aiOp(240,'→')
+      +aiSpark(276,82)+aiSpark(338,144,'s3')
+      +aiBub(310,112,34,'ㅐ',_cM,_eM,'merge')
+      +aiHani(200,246,0.9))},
+  7:{act:7,cap:'단어 마을',say:'글자들이 모이면 단어가 돼요. 오 그리고 이, 오이!',
+    svg:aiScene('단어 마을','#8cc2dd','#dceede',
+      aiBub(70,112,28,'오',_cB,_eB,'slideR')+aiOp(122,'+')+aiBub(170,112,28,'이',_cP,_eP,'slideL')+aiOp(232,'→')
+      +'<g transform="translate(305,108)"><g class="merge"><rect x="-42" y="-26" width="84" height="52" rx="16" fill="'+_cM+'"/><text y="9" font-family="Jua, sans-serif" font-size="27" fill="#fff" text-anchor="middle">오이</text></g></g>'
+      +'<g transform="translate(305,178)"><g class="notefloat"><ellipse cx="0" cy="0" rx="22" ry="9" fill="#7fbf52" transform="rotate(-18)"/><ellipse cx="0" cy="0" rx="22" ry="9" fill="none" stroke="#5f9e3a" stroke-width="1.5" transform="rotate(-18)"/><circle cx="-8" cy="2" r="1.3" fill="#4d8a2c"/><circle cx="4" cy="-3" r="1.3" fill="#4d8a2c"/></g></g>'
+      +aiHani(200,246,0.9))},
+  8:{act:8,cap:'이야기 책',say:'단어들이 손을 잡으면 문장이 돼요. 이제 스스로 읽어볼까요?',
+    svg:aiScene('이야기 책','#6a6bb0','#ffd79a',
+      '<g transform="translate(78,80)"><g class="merge"><rect x="-30" y="-18" width="60" height="36" rx="12" fill="'+_cB+'"/><text y="7" font-family="Jua, sans-serif" font-size="20" fill="#fff" text-anchor="middle">나</text></g></g>'
+      +'<g transform="translate(200,80)"><g class="merge" style="animation-delay:.4s"><rect x="-36" y="-18" width="72" height="36" rx="12" fill="'+_cP+'"/><text y="7" font-family="Jua, sans-serif" font-size="20" fill="#fff" text-anchor="middle">우유</text></g></g>'
+      +'<g transform="translate(322,80)"><g class="merge" style="animation-delay:.8s"><rect x="-36" y="-18" width="72" height="36" rx="12" fill="'+_cG+'"/><text y="7" font-family="Jua, sans-serif" font-size="20" fill="#fff" text-anchor="middle">좋아</text></g></g>'
+      +'<g transform="translate(150,168)"><rect x="-58" y="-30" width="116" height="60" rx="7" fill="#f6ecd6" stroke="#cdb284" stroke-width="2.5"/><line x1="0" y1="-28" x2="0" y2="28" stroke="#cdb284" stroke-width="2.5"/><g stroke="#d8c39a" stroke-width="2"><line x1="-48" y1="-14" x2="-8" y2="-14"/><line x1="-48" y1="-2" x2="-8" y2="-2"/><line x1="-48" y1="10" x2="-8" y2="10"/><line x1="8" y1="-14" x2="48" y2="-14"/><line x1="8" y1="-2" x2="48" y2="-2"/><line x1="8" y1="10" x2="48" y2="10"/></g></g>'
+      +aiSpark(228,150,'s2')
+      +aiHani(300,238,0.9,'',true))},
+};

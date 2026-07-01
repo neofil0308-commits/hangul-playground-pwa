@@ -223,6 +223,7 @@ function renderIntroPage(){
 // 따뜻한 신경망 음성(edge-tts) MP3로 내레이션. 없거나 막히면 기기 TTS로 폴백.
 function stopIntroAudio(){try{if(introAudio){introAudio.pause();introAudio=null;}}catch(e){}try{if('speechSynthesis' in window)speechSynthesis.cancel();}catch(e){}}
 function speakIntro(){
+  if(actIntroActive){speakActIntro();return;}
   var p=INTRO_PAGES[introIdx];if(!p)return;
   stopIntroAudio();
   var a=new Audio();var fell=false;
@@ -240,9 +241,50 @@ function showIntro(){
   renderIntroPage();
   setTimeout(speakIntro,300);
 }
-function introNext(){if(introIdx<INTRO_PAGES.length-1){introIdx++;renderIntroPage();speakIntro();}else{finishIntro();}}
-function introPrev(){if(introIdx>0){introIdx--;renderIntroPage();speakIntro();}}
-function finishIntro(){stopIntroAudio();try{lsSet('hp_intro_seen','1');}catch(e){}if(typeof go==='function')go('home');}
+function introNext(){if(actIntroActive){finishActIntro();return;}if(introIdx<INTRO_PAGES.length-1){introIdx++;renderIntroPage();speakIntro();}else{finishIntro();}}
+function introPrev(){if(actIntroActive)return;if(introIdx>0){introIdx--;renderIntroPage();speakIntro();}}
+function finishIntro(){if(actIntroActive){finishActIntro();return;}stopIntroAudio();try{lsSet('hp_intro_seen','1');}catch(e){}
+  // 오프닝 그림책을 다 보면 1막 시작 그림책은 겹치지 않게 본 것으로 표시(첫 실행 중복 방지).
+  try{if(typeof markActIntroSeen==='function')markActIntroSeen(1);}catch(e){}
+  if(typeof go==='function')go('home');}
+// ===== 막 시작 그림책 (막마다 그 막 개념을 한 장으로, 하니 기기 음성) — #intro 화면 재사용 =====
+var actIntroActive=false;var actIntroAct=0;
+function openActIntro(act){
+  var p=(typeof ACT_INTROS!=='undefined')?ACT_INTROS[act]:null;if(!p)return;
+  actIntroActive=true;actIntroAct=act;
+  stopIntroAudio();
+  if(typeof go==='function')go('intro');
+  try{var hb=document.getElementById('homeBtn');if(hb)hb.style.display='none';}catch(e){}
+  var art=document.getElementById('introArt');
+  if(art){art.innerHTML=p.svg;art.classList.add('has-scene');}
+  var cap=document.getElementById('introCap');if(cap)cap.textContent=p.cap;
+  var dots=document.getElementById('introDots');if(dots)dots.innerHTML='<i class="idot on"></i>';
+  var prev=document.getElementById('introPrev');if(prev)prev.style.visibility='hidden';
+  var next=document.getElementById('introNext');if(next){next.textContent='시작하기 ▶';if(typeof twemojify==='function')twemojify(next);}
+  setTimeout(speakActIntro,300);
+}
+// 이 막들은 MP3 내레이션이 없으니 기기 음성(deviceSpeak)으로 바로 읽는다. 🔊 다시 듣기도 이걸 재생.
+function speakActIntro(){var p=(typeof ACT_INTROS!=='undefined')?ACT_INTROS[actIntroAct]:null;if(!p)return;stopIntroAudio();
+  try{if(typeof deviceSpeak==='function')deviceSpeak(p.say);else if(typeof speak==='function')speak(p.say);}catch(e){}}
+function finishActIntro(){actIntroActive=false;stopIntroAudio();
+  try{if(typeof markActIntroSeen==='function')markActIntroSeen(actIntroAct);}catch(e){}
+  if(typeof go==='function')go('home');}
+// 트리거: 새 막에 처음 들어선 순간 1회만 자동 노출. 오프닝 그림책이 우선(첫 실행 중복 방지).
+function maybeShowActIntro(){
+  try{
+    if(actIntroActive)return;
+    if(typeof ACT_INTROS==='undefined')return;
+    var seenOpening='';try{seenOpening=lsGet('hp_intro_seen','');}catch(e){}
+    if(!seenOpening)return;                          // 오프닝 인트로가 먼저
+    var introScr=document.getElementById('intro');
+    if(introScr&&introScr.classList.contains('active'))return; // 인트로 화면이면 대기
+    var ep=(typeof curEpisode==='function')?curEpisode():null;if(!ep)return;
+    var act=ep.act;if(!act||!ACT_INTROS[act])return;
+    if(typeof actIntroSeen==='function'&&actIntroSeen(act))return;
+    if(typeof markActIntroSeen==='function')markActIntroSeen(act); // 즉시 표시 → 정확히 1회
+    setTimeout(function(){openActIntro(act);},90);
+  }catch(e){}
+}
 function initIntro(){
   var n=document.getElementById('introNext');if(n)n.addEventListener('click',introNext);
   var p=document.getElementById('introPrev');if(p)p.addEventListener('click',introPrev);
@@ -250,6 +292,7 @@ function initIntro(){
   var art=document.getElementById('introArt');if(art)art.addEventListener('click',speakIntro);
   var s=document.getElementById('introSkip');if(s)s.addEventListener('click',finishIntro);
   var r=document.getElementById('replayIntro');if(r)r.addEventListener('click',showIntro);
+  var ra=document.getElementById('replayActIntro');if(ra)ra.addEventListener('click',function(){var ep=(typeof curEpisode==='function')?curEpisode():null;var act=ep?ep.act:0;if(act)openActIntro(act);});
   var seen='';try{seen=lsGet('hp_intro_seen','');}catch(e){}
   if(!seen)showIntro();
 }

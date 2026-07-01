@@ -37,4 +37,4 @@ def test_mission_state_logic_lives_in_external_state_file():
 
 def test_service_worker_precaches_external_state_file_with_new_cache_version():
     assert "./app-state.js" in SW
-    assert "hangul-playground-v47" in SW
+    assert "hangul-playground-v48" in SW

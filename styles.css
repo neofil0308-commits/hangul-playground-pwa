@@ -515,9 +515,11 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
 .intro-next:active{box-shadow:0 1px 0 var(--con-d);}
 .intro-skip{margin-top:14px;background:none;border:none;color:#b7a384;font-family:'Jua',sans-serif;font-size:.95rem;cursor:pointer;text-decoration:underline;}
 /* 홈의 '이야기 다시 보기' */
-.home-intro-bar{text-align:center;margin:-4px 0 12px;}
+.home-intro-bar{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:-4px 0 12px;}
 .replay-intro{font-family:'Jua',sans-serif;font-size:1rem;color:var(--con-d);background:#fff;border:none;border-radius:22px;padding:8px 18px;box-shadow:0 4px 0 #f4d3bf;cursor:pointer;}
 .replay-intro:active{transform:translateY(3px);box-shadow:0 1px 0 #f4d3bf;}
+.replay-act-intro{color:#7a5ea8;box-shadow:0 4px 0 #d9c8ee;}
+.replay-act-intro:active{box-shadow:0 1px 0 #d9c8ee;}
 /* ===== 인트로 손그림 일러스트 장면 (SVG) ===== */
 .intro-art.has-scene{min-height:0;display:block;margin-bottom:14px;}
 .intro-art .scene{width:100%;height:auto;display:block;border-radius:22px;box-shadow:0 6px 16px rgba(60,40,90,.22);}
@@ -587,6 +589,23 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
 .scene .dust{animation:dust 1s ease-out infinite;}
 .scene .du2{animation-delay:.5s;}
 @keyframes dust{0%{opacity:0;transform:translateX(0) scale(.4)}25%{opacity:.55}100%{opacity:0;transform:translateX(-16px) scale(1.2)}}
+/* ===== 막 시작 그림책: 자모가 합쳐지는 결합 애니메이션(인트로 .gather/.hani 패턴과 통일) ===== */
+.scene .slideR{animation:slideR 3.2s ease-in-out infinite;transform-box:fill-box;transform-origin:center;}
+@keyframes slideR{0%,100%{transform:translateX(0)}44%,66%{transform:translateX(20px)}}
+.scene .slideL{animation:slideL 3.2s ease-in-out infinite;transform-box:fill-box;transform-origin:center;}
+@keyframes slideL{0%,100%{transform:translateX(0)}44%,66%{transform:translateX(-20px)}}
+.scene .merge{animation:mergePulse 3.2s ease-in-out infinite;transform-box:fill-box;transform-origin:center;}
+@keyframes mergePulse{0%,40%{transform:scale(.55);opacity:.3}56%{transform:scale(1.16);opacity:1}70%,100%{transform:scale(1);opacity:1}}
+.scene .drop{animation:dropIn 3s ease-in-out infinite;transform-box:fill-box;transform-origin:center;}
+@keyframes dropIn{0%,28%{transform:translateY(-24px);opacity:0}50%{transform:translateY(0);opacity:1}100%{transform:translateY(0);opacity:1}}
+.scene .spark{animation:sparkPop 2.6s ease-out infinite;transform-box:fill-box;transform-origin:center;}
+.scene .spark.s2{animation-delay:.5s;}
+.scene .spark.s3{animation-delay:1s;}
+@keyframes sparkPop{0%,52%{opacity:0;transform:scale(.3)}66%{opacity:1;transform:scale(1.3)}100%{opacity:0;transform:scale(1)}}
+.scene .notefloat{animation:notefloat 2.6s ease-in-out infinite;transform-box:fill-box;transform-origin:center;}
+.scene .notefloat.n2{animation-delay:.55s;}
+.scene .notefloat.n3{animation-delay:1.1s;}
+@keyframes notefloat{0%,100%{transform:translateY(0);opacity:.55}50%{transform:translateY(-9px);opacity:1}}
 /* 듣고찾기: 오답 시 정답 단어 강조(반복학습) */
 .lopt.reveal{outline:4px solid var(--quiz);outline-offset:2px;animation:pulse 0.7s ease-in-out 2;}
 .lopt .lwd{margin-top:2px;font-size:.95rem;color:var(--ink);}
