@@ -61,8 +61,8 @@ def test_mission_state_has_find_flag_and_mastery_unaffected():
     assert "met=true" in STATE and "matched=true" in STATE and "quizzed=true" in STATE
 
 
-def test_service_worker_cache_bumped_to_v48():
-    assert "hangul-playground-v48" in SW
+def test_service_worker_cache_bumped_to_v49():
+    assert "hangul-playground-v49" in SW
 
 
 def test_generalized_completion_gate_tokens_present():

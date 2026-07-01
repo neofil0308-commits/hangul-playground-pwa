@@ -11,30 +11,46 @@ CSS = (ROOT / "styles.css").read_text(encoding="utf-8")
 def test_act_intros_data_lives_in_app_data_with_all_eight_acts():
     assert "const ACT_INTROS=" in DATA
     assert "const ACT_INTROS" not in HTML
-    # 1~8막 각 항목이 존재하고 cap/say/svg 필드를 갖는지(순서대로 등장 확인).
+    # 1~8막 각 항목이 존재하고 pages 배열(쪽마다 cap/say/svg)을 갖는지(순서대로 등장 확인).
     pos = DATA.index("const ACT_INTROS=")
     block = DATA[pos:]
     prev = -1
     for n in range(1, 9):
-        key = f"\n  {n}:{{act:{n},"
+        key = f"\n  {n}:{{act:{n},pages:["
         i = block.find(key)
         assert i > prev, f"act {n} missing or out of order"
         prev = i
-        entry = block[i:i + 1400]
-        assert "cap:" in entry, f"act {n} cap"
-        assert "say:" in entry, f"act {n} say"
-        assert "svg:aiScene(" in entry, f"act {n} svg"
+        # 이 막 항목 = 다음 막 키(또는 블록 끝)까지.
+        nxt = block.find(f"\n  {n+1}:{{act:{n+1},pages:[") if n < 8 else len(block)
+        entry = block[i:nxt if nxt > 0 else len(block)]
+        # 막마다 정확히 3쪽: cap/say/svg:aiScene(가 세 번씩 등장.
+        assert entry.count("cap:") == 3, f"act {n} needs 3 pages (cap)"
+        assert entry.count("say:") == 3, f"act {n} needs 3 pages (say)"
+        assert entry.count("svg:aiScene(") == 3, f"act {n} needs 3 pages (svg)"
 
 
-def test_act_intro_caps_match_curriculum_concepts():
-    for cap in ["모음의 빛", "자음 친구들", "글자 공방", "받침의 문",
-                "쌍둥이 소리", "숨은 모음", "단어 마을", "이야기 책"]:
+def test_act_intro_caps_tell_a_connected_letter_story():
+    # 도착 → 도우미+개념 → 전환의 3쪽 흐름을 잇는 대표 caps.
+    for cap in ["텅 빈 편지", "반딧불이 깜빡이", "모음을 불러요",
+                "숲지기 도토리", "대장장이 곰", "받침돌을 얹어요",
+                "메아리 동굴", "별빛 뒤", "글자가 모여 단어", "편지가 살아나요"]:
         assert cap in DATA, cap
+    # 도우미 캐릭터(도토리/뚝딱/끄떡/요정)와 편지 모티프가 이야기에 등장.
+    for token in ["다람쥐 도토리", "두꺼비 끄떡", "별빛 요정", "별빛 우체국 편지"]:
+        assert token in DATA, token
 
 
 def test_act_intro_shared_svg_builders_exist():
-    for fn in ["function aiBub", "function aiHani", "function aiScene", "function aiOp"]:
+    for fn in ["function aiBub", "function aiHani", "function aiScene", "function aiOp",
+               "function aiHelper", "function aiLetter"]:
         assert fn in DATA, fn
+
+
+def test_act_intro_engine_is_multi_page():
+    # 오프닝처럼 dots/prev/next로 막의 3쪽을 페이징.
+    for token in ["function renderActIntroPage", "function actIntroNext",
+                  "function actIntroPrev", "var actIntroPage"]:
+        assert token in EPISODE, token
 
 
 def test_open_act_intro_engine_exists_in_episode():

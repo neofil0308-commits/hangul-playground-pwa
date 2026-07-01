@@ -338,6 +338,25 @@ function aiScene(label,sky0,sky1,inner){
 }
 function aiNote(x,y,cls){return '<text class="notefloat '+(cls||'')+'" x="'+x+'" y="'+y+'" font-family="Jua, sans-serif" font-size="20" fill="#fffbe6" text-anchor="middle">♪</text>';}
 function aiSpark(x,y,cls){return '<g class="spark '+(cls||'')+'" transform="translate('+x+','+y+')"><path d="M0,-9 L2,-2 L9,0 L2,2 L0,9 L-2,2 L-9,0 L-2,-2 Z" fill="#ffe27a"/></g>';}
+// 도우미 캐릭터: 큰 이모지 + 이름표(pill). 동물 SVG는 위험해서 트웨모지풍 이모지로 통일.
+function aiHelper(x,y,emoji,name,sz){sz=sz||46;var half=Math.max(30,name.length*7);
+  return '<g transform="translate('+x+','+y+')">'
+    +'<text x="0" y="'+(sz*0.34).toFixed(0)+'" font-size="'+sz+'" text-anchor="middle">'+emoji+'</text>'
+    +'<rect x="-'+half+'" y="'+(sz*0.52).toFixed(0)+'" width="'+(half*2)+'" height="20" rx="10" fill="#2b2350" fill-opacity="0.55"/>'
+    +'<text x="0" y="'+(sz*0.52+14).toFixed(0)+'" font-family="Jua, sans-serif" font-size="12" fill="#fff" text-anchor="middle">'+name+'</text></g>';}
+// 별빛 편지 모티프: 빈 줄만 있는 하얀 편지(도망친 글자). filled면 글자가 반짝 되살아난 편지.
+function aiLetter(x,y,s,filled,cls){s=(s==null?1:s);cls=cls||'';
+  var b='<rect x="-30" y="-38" width="60" height="76" rx="6" fill="#fffef8" stroke="#e6d8bf" stroke-width="2"/>';
+  if(filled){b+='<g font-family="Jua, sans-serif" font-size="12" fill="#8f7fe0" text-anchor="middle">'
+      +'<text x="-14" y="-20">별</text><text x="0" y="-20">빛</text><text x="14" y="-20">편</text>'
+      +'<text x="-14" y="-2">지</text><text x="0" y="-2">가</text><text x="14" y="-2">살</text>'
+      +'<text x="-7" y="16">아</text><text x="7" y="16">나</text></g>'
+      +'<path d="M18,-30 l2,5 l5,2 l-5,2 l-2,5 l-2,-5 l-5,-2 l5,-2 z" fill="#ffe27a"/>';}
+  else{b+='<line x1="-20" y1="-22" x2="20" y2="-22" stroke="#ece2cf" stroke-width="2.5"/>'
+      +'<line x1="-20" y1="-8" x2="20" y2="-8" stroke="#ece2cf" stroke-width="2.5"/>'
+      +'<line x1="-20" y1="6" x2="20" y2="6" stroke="#ece2cf" stroke-width="2.5"/>'
+      +'<line x1="-20" y1="20" x2="8" y2="20" stroke="#ece2cf" stroke-width="2.5"/>';}
+  return '<g transform="translate('+x+','+y+') scale('+s+')">'+(cls?'<g class="'+cls+'">'+b+'</g>':b)+'</g>';}
 
 // 색상 팔레트(자음/모음): 인트로 5페이지 버블과 통일.
 var _cB='#7ec4e8',_eB='#27414e';   // ㄱ 파랑
@@ -348,56 +367,71 @@ var _cT='#67c4c0',_eT='#1f4f4d';   // ㅣ 청록
 var _cR='#ef6b6b',_eR='#7a2222';   // 쌍자음 빨강
 var _cM='#8f7fe0',_eM='#3a2f66';   // 완성 글자 보라
 
+// 각 막 = 3쪽 이야기 장(도착 → 도우미+개념 → 전환). 오프닝 그림책과 같은 페이징(dots/prev/next)으로 넘긴다.
+// 이야기: 별빛 우체국 편지에서 도망친 글자들을 각 막(장소)에서 되찾아 편지를 살리는 모험. 막마다 도우미가 등장.
 const ACT_INTROS={
-  1:{act:1,cap:'모음의 빛',say:'입을 크게 벌리면 소리가 나요. 아! 어! 오! 모음은 노래하는 소리예요.',
-    svg:aiScene('모음의 빛','#6a6bb0','#ffd79a',
-      aiNote(95,58)+aiNote(200,52,'n2')+aiNote(305,58,'n3')
-      +aiBub(95,108,26,'ㅏ',_cP,_eP)+aiBub(200,108,26,'ㅓ',_cB,_eB)+aiBub(305,108,26,'ㅗ',_cY,_eY)
-      +aiHani(200,244,0.95,'',true))},
-  2:{act:2,cap:'자음 친구들',say:'자음은 혼자선 조용해요. 모음 친구를 만나면 소리가 나요. ㄱ이 ㅏ를 만나니, 가!',
-    svg:aiScene('자음 친구들','#3d3470','#d79bae',
-      '<text class="notefloat" x="72" y="66" font-family="Jua, sans-serif" font-size="15" fill="#cfe6f3" text-anchor="middle">z z z</text>'
-      +aiBub(72,112,26,'ㄱ',_cB,_eB)+aiOp(121,'+')+aiBub(170,112,26,'ㅏ',_cP,_eP)+aiOp(230,'→')
-      +aiNote(300,60)+aiBub(302,112,32,'가',_cM,_eM,'merge')
-      +aiHani(200,246,0.9))},
-  3:{act:3,cap:'글자 공방',say:'자음과 모음이 손을 잡으면 새 글자가 태어나요. ㄱ 더하기 ㅏ는, 가!',
-    svg:aiScene('글자 공방','#4a72a8','#dbe7c9',
-      aiBub(74,112,28,'ㄱ',_cB,_eB,'slideR')+aiOp(128,'+')+aiBub(182,112,28,'ㅏ',_cP,_eP,'slideL')+aiOp(240,'→')
-      +aiSpark(276,80)+aiSpark(340,86,'s2')+aiSpark(310,150,'s3')
-      +aiBub(310,112,35,'가',_cM,_eM,'merge')
-      +aiHani(200,246,0.9))},
-  4:{act:4,cap:'받침의 문',say:'글자 아래에 받침이 살포시 앉으면 끝소리가 생겨요. 가에 이응이 앉으니, 강!',
-    svg:aiScene('받침의 문','#3d3470','#9a86b8',
-      aiBub(70,112,28,'가',_cB,_eB)+aiOp(122,'+')
-      +aiBub(172,102,24,'ㅇ',_cG,_eG,'drop')
-      +'<text x="172" y="150" font-family="Jua, sans-serif" font-size="13" fill="#ffe9c2" text-anchor="middle">받침</text>'
-      +aiOp(232,'→')+aiBub(305,112,33,'강',_cM,_eM,'merge')
-      +aiHani(200,246,0.9))},
-  5:{act:5,cap:'쌍둥이 소리',say:'쌍둥이 자음은 힘을 꾹 줘요. 가보다 더 센 소리, 까!',
-    svg:aiScene('쌍둥이 소리','#5a3a5a','#e0a08a',
-      aiBub(70,112,25,'ㄱ',_cB,_eB)+aiOp(118,'+')+aiBub(166,112,25,'ㄱ',_cB,_eB)+aiOp(226,'→')
-      +aiSpark(268,82,'s2')+aiSpark(340,150,'s3')
-      +aiBub(302,112,33,'ㄲ',_cR,_eR,'merge')
-      +'<text class="spark" x="302" y="176" font-family="Jua, sans-serif" font-size="20" fill="#ffe27a" text-anchor="middle">까!</text>'
-      +aiHani(200,246,0.9,'determined'))},
-  6:{act:6,cap:'숨은 모음',say:'모음 둘이 겹치면 숨어있던 소리가 나와요. 아 더하기 이는, 애!',
-    svg:aiScene('숨은 모음','#2c2752','#8fa8d8',
-      aiBub(74,112,28,'ㅏ',_cP,_eP,'slideR')+aiOp(128,'+')+aiBub(182,112,28,'ㅣ',_cT,_eT,'slideL')+aiOp(240,'→')
-      +aiSpark(276,82)+aiSpark(338,144,'s3')
-      +aiBub(310,112,34,'ㅐ',_cM,_eM,'merge')
-      +aiHani(200,246,0.9))},
-  7:{act:7,cap:'단어 마을',say:'글자들이 모이면 단어가 돼요. 오 그리고 이, 오이!',
-    svg:aiScene('단어 마을','#8cc2dd','#dceede',
-      aiBub(70,112,28,'오',_cB,_eB,'slideR')+aiOp(122,'+')+aiBub(170,112,28,'이',_cP,_eP,'slideL')+aiOp(232,'→')
-      +'<g transform="translate(305,108)"><g class="merge"><rect x="-42" y="-26" width="84" height="52" rx="16" fill="'+_cM+'"/><text y="9" font-family="Jua, sans-serif" font-size="27" fill="#fff" text-anchor="middle">오이</text></g></g>'
-      +'<g transform="translate(305,178)"><g class="notefloat"><ellipse cx="0" cy="0" rx="22" ry="9" fill="#7fbf52" transform="rotate(-18)"/><ellipse cx="0" cy="0" rx="22" ry="9" fill="none" stroke="#5f9e3a" stroke-width="1.5" transform="rotate(-18)"/><circle cx="-8" cy="2" r="1.3" fill="#4d8a2c"/><circle cx="4" cy="-3" r="1.3" fill="#4d8a2c"/></g></g>'
-      +aiHani(200,246,0.9))},
-  8:{act:8,cap:'이야기 책',say:'단어들이 손을 잡으면 문장이 돼요. 이제 스스로 읽어볼까요?',
-    svg:aiScene('이야기 책','#6a6bb0','#ffd79a',
-      '<g transform="translate(78,80)"><g class="merge"><rect x="-30" y="-18" width="60" height="36" rx="12" fill="'+_cB+'"/><text y="7" font-family="Jua, sans-serif" font-size="20" fill="#fff" text-anchor="middle">나</text></g></g>'
-      +'<g transform="translate(200,80)"><g class="merge" style="animation-delay:.4s"><rect x="-36" y="-18" width="72" height="36" rx="12" fill="'+_cP+'"/><text y="7" font-family="Jua, sans-serif" font-size="20" fill="#fff" text-anchor="middle">우유</text></g></g>'
-      +'<g transform="translate(322,80)"><g class="merge" style="animation-delay:.8s"><rect x="-36" y="-18" width="72" height="36" rx="12" fill="'+_cG+'"/><text y="7" font-family="Jua, sans-serif" font-size="20" fill="#fff" text-anchor="middle">좋아</text></g></g>'
-      +'<g transform="translate(150,168)"><rect x="-58" y="-30" width="116" height="60" rx="7" fill="#f6ecd6" stroke="#cdb284" stroke-width="2.5"/><line x1="0" y1="-28" x2="0" y2="28" stroke="#cdb284" stroke-width="2.5"/><g stroke="#d8c39a" stroke-width="2"><line x1="-48" y1="-14" x2="-8" y2="-14"/><line x1="-48" y1="-2" x2="-8" y2="-2"/><line x1="-48" y1="10" x2="-8" y2="10"/><line x1="8" y1="-14" x2="48" y2="-14"/><line x1="8" y1="-2" x2="48" y2="-2"/><line x1="8" y1="10" x2="48" y2="10"/></g></g>'
-      +aiSpark(228,150,'s2')
-      +aiHani(300,238,0.9,'',true))},
+  1:{act:1,pages:[
+    {cap:'텅 빈 편지',say:'별빛 우체국 편지가 텅 비었어요. 겁이 난 글자들이 숲으로 도망쳤대요.',
+      svg:aiScene('텅 빈 편지','#2c2752','#6a5a9a',aiLetter(150,120,1.25,false)+aiSpark(250,80,'s2')+aiHani(310,246,0.85))},
+    {cap:'반딧불이 깜빡이',say:'반딧불이 깜빡이가 반짝! 모음 친구는 소리를 내면 나와요. 입을 크게 벌리고, 아—!',
+      svg:aiScene('반딧불이 깜빡이','#2c2752','#6a5a9a',aiSpark(90,72)+aiSpark(160,58,'s2')+aiSpark(240,66,'s3')+aiHelper(130,128,'✨','반딧불이 깜빡이')+aiHani(310,246,0.85,'',true))},
+    {cap:'모음을 불러요',say:'입 모양이 다르면 소리도 달라요. 아·어·오! 자, 숨은 모음 친구를 소리로 불러볼까?',
+      svg:aiScene('모음을 불러요','#2c2752','#7a68a8',aiNote(95,58)+aiNote(200,52,'n2')+aiNote(305,58,'n3')+aiBub(95,120,26,'ㅏ',_cP,_eP)+aiBub(200,120,26,'ㅓ',_cB,_eB)+aiBub(305,120,26,'ㅗ',_cY,_eY)+aiHani(200,248,0.9,'',true))},
+  ]},
+  2:{act:2,pages:[
+    {cap:'조용한 숲',say:'숲속 자음 친구들이 쿨쿨 잠들었어요. 아무 소리도 안 나요.',
+      svg:aiScene('조용한 숲','#2c2752','#5a7a68','<text class="notefloat" x="150" y="80" font-family="Jua, sans-serif" font-size="17" fill="#cfe6f3" text-anchor="middle">z  z  z</text>'+aiBub(150,132,30,'ㄱ',_cB,_eB)+aiHani(300,246,0.85))},
+    {cap:'숲지기 도토리',say:'다람쥐 도토리가 폴짝! 자음은 혼자선 조용해. 모음 친구 손을 잡아야 깨어난단다!',
+      svg:aiScene('숲지기 도토리','#3d3470','#5a9a78',aiHelper(105,126,'🐿️','다람쥐 도토리')+aiBub(232,120,24,'ㄱ',_cB,_eB)+aiOp(280,'+')+aiBub(322,120,24,'ㅏ',_cP,_eP)+aiHani(210,250,0.72))},
+    {cap:'손을 잡으니 가!',say:'ㄱ이 ㅏ 손을 잡으니— 가! 소리가 났어요. 자음을 깨워볼까?',
+      svg:aiScene('손을 잡으니 가!','#3d3470','#5a9a78',aiBub(72,120,26,'ㄱ',_cB,_eB,'slideR')+aiOp(121,'+')+aiBub(170,120,26,'ㅏ',_cP,_eP,'slideL')+aiOp(230,'→')+aiNote(300,64)+aiBub(302,120,32,'가',_cM,_eM,'merge')+aiHani(200,250,0.82))},
+  ]},
+  3:{act:3,pages:[
+    {cap:'대장장이 곰',say:'글자 공방에 도착! 대장장이 곰 뚝딱이 망치를 들었어요.',
+      svg:aiScene('대장장이 곰','#4a72a8','#dbe7c9',aiHelper(140,124,'🐻','대장장이 뚝딱')+'<text x="252" y="132" font-size="42" text-anchor="middle">🔨</text>'+aiHani(320,248,0.72))},
+    {cap:'땅! 새 글자',say:'자음과 모음을 모루에 올리고— 땅! 땅! 뚝딱이 두드리자 새 글자가 태어났어요.',
+      svg:aiScene('땅! 새 글자','#4a72a8','#dbe7c9',aiBub(74,116,28,'ㄱ',_cB,_eB,'slideR')+aiOp(128,'+')+aiBub(182,116,28,'ㅏ',_cP,_eP,'slideL')+aiOp(240,'→')+aiSpark(276,82)+aiSpark(340,88,'s2')+aiSpark(310,150,'s3')+aiBub(310,116,34,'가',_cM,_eM,'merge')+aiHani(200,250,0.8))},
+    {cap:'직접 만들어요',say:'ㄱ 더하기 ㅏ는 가! 이번엔 네가 글자를 만들어볼래?',
+      svg:aiScene('직접 만들어요','#4a72a8','#dbe7c9',aiBub(74,116,28,'ㄱ',_cB,_eB)+aiOp(128,'+')+aiBub(182,116,28,'ㅏ',_cP,_eP)+aiOp(240,'→')+aiBub(310,116,34,'가',_cM,_eM,'merge')+aiHani(200,250,0.82))},
+  ]},
+  4:{act:4,pages:[
+    {cap:'무거운 문',say:'길을 막은 커다란 받침의 문. 두꺼비 문지기 끄떡이 앉아 있어요.',
+      svg:aiScene('무거운 문','#3d3470','#9a86b8','<g transform="translate(118,146)"><rect x="-42" y="-64" width="84" height="128" rx="8" fill="#4a3d68"/><rect x="-32" y="-50" width="64" height="114" rx="6" fill="#2c2544"/><rect x="-3" y="-50" width="6" height="114" fill="#5a4d7a"/></g>'+aiHelper(118,120,'🐸','두꺼비 끄떡')+aiHani(320,248,0.75))},
+    {cap:'받침돌을 얹어요',say:'글자 아래 받침돌을 살포시 얹어야 문이 열려. 가 아래 이응을 얹으니— 강!',
+      svg:aiScene('받침돌을 얹어요','#3d3470','#9a86b8',aiBub(70,116,28,'가',_cB,_eB)+aiOp(122,'+')+aiBub(172,104,24,'ㅇ',_cG,_eG,'drop')+'<text x="172" y="150" font-family="Jua, sans-serif" font-size="13" fill="#ffe9c2" text-anchor="middle">받침돌</text>'+aiOp(232,'→')+aiBub(305,116,33,'강',_cM,_eM,'merge')+aiHani(200,250,0.8))},
+    {cap:'문이 열렸다',say:'끄떡이 끄덕— 문이 스르륵! 끝소리 글자를 되찾아요.',
+      svg:aiScene('문이 열렸다','#3d3470','#9a86b8',aiSpark(140,80)+aiSpark(250,78,'s2')+aiBub(190,120,36,'강',_cM,_eM,'merge')+aiHelper(320,120,'🐸','끄떡')+aiHani(90,250,0.72))},
+  ]},
+  5:{act:5,pages:[
+    {cap:'메아리 동굴',say:'소리 동굴에서 힘센 메아리가 울려요. 쌍둥이 박쥐가 매달려 있어요.',
+      svg:aiScene('메아리 동굴','#3a2f4a','#6a4a6a',aiHelper(190,122,'🦇🦇','쌍둥이 박쥐',48)+aiHani(320,248,0.75))},
+    {cap:'힘을 꾹!',say:'우린 쌍둥이! 힘을 꾹 주면 더 센 소리가 나. 가— 보다 센— 까!',
+      svg:aiScene('힘을 꾹!','#3a2f4a','#6a4a6a',aiBub(70,116,25,'ㄱ',_cB,_eB)+aiOp(118,'+')+aiBub(166,116,25,'ㄱ',_cB,_eB)+aiOp(226,'→')+aiSpark(268,84,'s2')+aiSpark(340,150,'s3')+aiBub(302,116,33,'ㄲ',_cR,_eR,'merge')+'<text class="spark" x="302" y="176" font-family="Jua, sans-serif" font-size="20" fill="#ffe27a" text-anchor="middle">까!</text>'+aiHani(200,250,0.8,'determined'))},
+    {cap:'센 소리 되찾기',say:'쌍둥이 자음은 힘을 꾹! 까! 된소리 친구를 불러볼까?',
+      svg:aiScene('센 소리 되찾기','#3a2f4a','#6a4a6a',aiBub(110,116,30,'가',_cB,_eB)+aiOp(178,'→')+aiSpark(228,84)+aiSpark(300,150,'s3')+aiBub(278,116,34,'까',_cR,_eR,'merge')+aiHani(200,250,0.82,'determined'))},
+  ]},
+  6:{act:6,pages:[
+    {cap:'별빛 뒤',say:'별빛 뒤에 모음들이 숨어 반짝여요. 작은 별빛 요정이 나타났어요.',
+      svg:aiScene('별빛 뒤','#2c2752','#8fa8d8',aiSpark(88,70)+aiSpark(300,66,'s2')+aiSpark(200,54,'s3')+aiHelper(150,130,'🧚','별빛 요정')+aiHani(315,248,0.8))},
+    {cap:'겹치면 나와요',say:'모음 둘이 겹친 자리를 비춰줄게. 아 더하기 이는— 애!',
+      svg:aiScene('겹치면 나와요','#2c2752','#8fa8d8',aiBub(74,116,28,'ㅏ',_cP,_eP,'slideR')+aiOp(128,'+')+aiBub(182,116,28,'ㅣ',_cT,_eT,'slideL')+aiOp(240,'→')+aiSpark(276,84)+aiSpark(338,146,'s3')+aiBub(310,116,34,'ㅐ',_cM,_eM,'merge')+aiHani(200,250,0.82))},
+    {cap:'숨은 모음 찾기',say:'겹쳐진 숨은 모음! 요정과 함께 찾아볼까?',
+      svg:aiScene('숨은 모음 찾기','#2c2752','#8fa8d8',aiHelper(88,122,'🧚','별빛 요정')+aiBub(208,116,28,'ㅏ',_cP,_eP)+aiOp(258,'+')+aiBub(300,116,28,'ㅣ',_cT,_eT)+aiHani(200,250,0.82))},
+  ]},
+  7:{act:7,pages:[
+    {cap:'시든 마을',say:'글자가 사라져 마을 꽃이 시들었어요. 되찾은 글자를 모아볼까요?',
+      svg:aiScene('시든 마을','#8cc2dd','#dceede','<g transform="translate(110,170)"><path d="M0,20 Q-4,2 -14,-2" fill="none" stroke="#7f9e5a" stroke-width="3"/><circle cx="-16" cy="-4" r="8" fill="#c9a0b0"/><circle cx="-16" cy="-4" r="3" fill="#e6c86a"/></g><g transform="translate(170,182)"><path d="M0,18 Q4,2 12,-1" fill="none" stroke="#7f9e5a" stroke-width="3"/><circle cx="14" cy="-3" r="7" fill="#b6a8d0"/></g>'+aiHani(300,246,0.85))},
+    {cap:'글자가 모여 단어',say:'오 그리고 이— 오이! 글자가 모이니 단어가 됐어요. 꽃이 다시 피어나요!',
+      svg:aiScene('글자가 모여 단어','#8cc2dd','#dceede',aiBub(70,116,28,'오',_cB,_eB,'slideR')+aiOp(122,'+')+aiBub(170,116,28,'이',_cP,_eP,'slideL')+aiOp(232,'→')+'<g transform="translate(305,112)"><g class="merge"><rect x="-42" y="-26" width="84" height="52" rx="16" fill="'+_cM+'"/><text y="9" font-family="Jua, sans-serif" font-size="27" fill="#fff" text-anchor="middle">오이</text></g></g>'+aiSpark(305,166,'s2')+aiHani(200,250,0.82))},
+    {cap:'단어를 지어요',say:'이제 네가 단어를 지어 마을을 살려볼래?',
+      svg:aiScene('단어를 지어요','#8cc2dd','#dceede',aiBub(90,116,28,'오',_cB,_eB)+aiOp(140,'+')+aiBub(190,116,28,'이',_cP,_eP)+aiOp(240,'→')+'<g transform="translate(310,112)"><g class="merge"><rect x="-40" y="-24" width="80" height="48" rx="14" fill="'+_cG+'"/><text y="8" font-family="Jua, sans-serif" font-size="24" fill="#fff" text-anchor="middle">?</text></g></g>'+aiHani(200,250,0.82))},
+  ]},
+  8:{act:8,pages:[
+    {cap:'우체국으로',say:'모은 글자를 안고 별빛 우체국으로! 하얀 편지가 기다려요.',
+      svg:aiScene('우체국으로','#3d3470','#d79bae','<text x="255" y="112" font-size="42" text-anchor="middle">🏤</text>'+aiLetter(120,124,1.1,false)+aiHani(310,248,0.82))},
+    {cap:'편지가 살아나요',say:'글자들이 편지 위로 사르르— 반짝! 사라졌던 글이 다시 떠올랐어요.',
+      svg:aiScene('편지가 살아나요','#3d3470','#d79bae',aiLetter(200,118,1.3,true,'glowpulse')+aiSpark(110,80)+aiSpark(300,78,'s2')+aiSpark(150,164,'s3')+aiHani(320,248,0.78))},
+    {cap:'스스로 읽어요',say:'이제 네가 스스로 읽어줄래? 그리고 하니가 이 편지를 배달할 거야. 준비됐니?',
+      svg:aiScene('스스로 읽어요','#3d3470','#d79bae',aiLetter(140,118,1.15,true)+'<text x="272" y="122" font-size="40" text-anchor="middle">✉️</text>'+aiSpark(300,80)+aiHani(300,248,0.82,'',true))},
+  ]},
 };

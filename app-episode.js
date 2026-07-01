@@ -81,11 +81,24 @@ function renderStarAlbum(){
     if(i<EPISODE_PATH.length-1)html+='<span class="stop-link"></span>';
   });
   html+='</div>';
+  html+=letterProgressHTML();
   html+=relicShelfHTML();
   el.innerHTML=html;
   if(typeof twemojify==='function')twemojify(el);
   el.querySelectorAll('.stop-go').forEach(function(s){s.addEventListener('click',function(){goToEpisode(+s.getAttribute('data-i'));});});
   try{var now=el.querySelector('.stop-now');if(now&&now.scrollIntoView)now.scrollIntoView({inline:'center',block:'nearest'});}catch(e){}
+}
+// 별빛 편지 진행: 되찾은 편지 조각(=막 클리어)만큼 편지에 반짝임이 켜진다. N/8 조각 되찾음.
+// progress.relics.length로 계산 → renderStarAlbum이 다시 그릴 때 함께 갱신된다.
+function letterProgressHTML(){
+  if(typeof CURRICULUM==='undefined')return '';
+  var total=CURRICULUM.length;var got=Math.min((progress.relics||[]).length,total);
+  var stars='';for(var i=0;i<total;i++){var on=i<got;stars+='<i class="lp-star'+(on?' on':'')+'">'+(on?'✨':'·')+'</i>';}
+  return '<div class="letter-progress" aria-label="별빛 편지 — 되찾은 조각 '+got+'/'+total+'">'
+    +'<span class="lp-letter">'+(got>=total?'💌':'✉️')+'</span>'
+    +'<span class="lp-body"><span class="lp-title">별빛 편지</span>'
+    +'<span class="lp-stars">'+stars+'</span>'
+    +'<span class="lp-count">'+got+'/'+total+' 조각 되찾음</span></span></div>';
 }
 // 보물 창고 선반: 막마다 하나씩 모으는 보물. 얻은 막은 이모지, 아직이면 ❔(잠금).
 // renderStarAlbum 안에서 같이 그려져 보물이 바뀌면 함께 다시 렌더된다.
@@ -151,13 +164,13 @@ function showGraduation(){
   var ep=curEpisode();var sent=(ep&&ep.sent)||'';
   var el=document.getElementById('recapPop');if(!el)return;
   var html='<div class="recap-card grad-card"><div class="recap-title">스스로 읽었어요! 🎓</div>'
-    +'<div class="grad-emoji">🎉 📖 ⭐</div>'
+    +'<div class="grad-emoji">✨ 💌 ✨</div>'
     +'<div class="grad-sent">'+sent+'</div>'
-    +'<div class="recap-review">하니가 정말 자랑스러워요. 이제 한글을 뗐어요!</div>'
+    +'<div class="recap-review">글자들이 다시 반짝— 별빛 편지가 살아났어요! 이제 하니가 이 편지를 배달하러 가요. ✉️🐥</div>'
     +'<button class="recap-next" id="recapNext">다음 이야기로 ➡️</button></div>';
   el.innerHTML=html;el.style.display='flex';if(typeof twemojify==='function')twemojify(el);
   try{if(typeof confetti==='function')confetti();}catch(e){}
-  try{if(typeof speakSeq==='function')setTimeout(function(){speakSeq([sent,'스스로 읽었어요','정말 잘했어요']);},400);
+  try{if(typeof speakSeq==='function')setTimeout(function(){speakSeq([sent,'스스로 읽었어요','별빛 편지가 살아났어요','하니가 편지를 배달할게요']);},400);
     else if(typeof speak==='function')speak('스스로 읽었어요');}catch(e){}
   var nb=document.getElementById('recapNext');if(nb)nb.addEventListener('click',function(){el.style.display='none';goNextLetter();});
 }
@@ -172,11 +185,11 @@ function showRelic(act){
     +'<div class="recap-title">'+act+'막 클리어! 🎉</div>'
     +'<div class="relic-emoji">'+emoji+'</div>'
     +'<div class="relic-name">'+name+'</div>'
-    +'<div class="recap-review">보물 <b>'+name+'</b>을(를) 얻었어요! 보물 창고에 모았어요. 🏺</div>'
+    +'<div class="recap-review">편지 조각 <b>'+name+'</b>을(를) 되찾았어요! 별빛 우체국 편지가 조금씩 살아나요. ✉️</div>'
     +'<button class="recap-next" id="relicNext">'+(atEnd?'여정 마치기 🎓':'다음 막으로 ➡️')+'</button></div>';
   el.innerHTML=html;el.style.display='flex';if(typeof twemojify==='function')twemojify(el);
   try{if(typeof confetti==='function')confetti();}catch(e){}
-  try{if(typeof speakSeq==='function')setTimeout(function(){speakSeq([act+'막 클리어','보물 '+name+'을 얻었어요','정말 잘했어요']);},400);
+  try{if(typeof speakSeq==='function')setTimeout(function(){speakSeq([act+'막 클리어','편지 조각 '+name+'을 되찾았어요','정말 잘했어요']);},400);
     else if(typeof speak==='function')speak('보물을 얻었어요');}catch(e){}
   var nb=document.getElementById('relicNext');if(nb)nb.addEventListener('click',function(){el.style.display='none';goNextLetter();});
 }
@@ -241,31 +254,43 @@ function showIntro(){
   renderIntroPage();
   setTimeout(speakIntro,300);
 }
-function introNext(){if(actIntroActive){finishActIntro();return;}if(introIdx<INTRO_PAGES.length-1){introIdx++;renderIntroPage();speakIntro();}else{finishIntro();}}
-function introPrev(){if(actIntroActive)return;if(introIdx>0){introIdx--;renderIntroPage();speakIntro();}}
+function introNext(){if(actIntroActive){actIntroNext();return;}if(introIdx<INTRO_PAGES.length-1){introIdx++;renderIntroPage();speakIntro();}else{finishIntro();}}
+function introPrev(){if(actIntroActive){actIntroPrev();return;}if(introIdx>0){introIdx--;renderIntroPage();speakIntro();}}
 function finishIntro(){if(actIntroActive){finishActIntro();return;}stopIntroAudio();try{lsSet('hp_intro_seen','1');}catch(e){}
   // 오프닝 그림책을 다 보면 1막 시작 그림책은 겹치지 않게 본 것으로 표시(첫 실행 중복 방지).
   try{if(typeof markActIntroSeen==='function')markActIntroSeen(1);}catch(e){}
   if(typeof go==='function')go('home');}
-// ===== 막 시작 그림책 (막마다 그 막 개념을 한 장으로, 하니 기기 음성) — #intro 화면 재사용 =====
-var actIntroActive=false;var actIntroAct=0;
+// ===== 막 시작 그림책 (막마다 3쪽 이야기, 하니 기기 음성) — #intro 화면·페이징 재사용 =====
+// 오프닝 그림책(INTRO_PAGES)과 같은 dots/prev/next 페이징을 이 막의 3쪽에 대해 돌린다.
+// 두 흐름이 섞이지 않게 renderIntroPage/introNext/introPrev/speakIntro는 actIntroActive로 분기.
+var actIntroActive=false;var actIntroAct=0;var actIntroPage=0;
+function actIntroPages(){var p=(typeof ACT_INTROS!=='undefined')?ACT_INTROS[actIntroAct]:null;return (p&&p.pages)?p.pages:[];}
 function openActIntro(act){
-  var p=(typeof ACT_INTROS!=='undefined')?ACT_INTROS[act]:null;if(!p)return;
-  actIntroActive=true;actIntroAct=act;
+  var p=(typeof ACT_INTROS!=='undefined')?ACT_INTROS[act]:null;if(!p||!p.pages||!p.pages.length)return;
+  actIntroActive=true;actIntroAct=act;actIntroPage=0;
   stopIntroAudio();
   if(typeof go==='function')go('intro');
   try{var hb=document.getElementById('homeBtn');if(hb)hb.style.display='none';}catch(e){}
+  renderActIntroPage();
+  setTimeout(speakActIntro,300);
+}
+// 현재 막의 현재 쪽을 그린다. dots는 3쪽, 마지막 쪽 next는 '시작하기 ▶'.
+function renderActIntroPage(){
+  var pages=actIntroPages();var p=pages[actIntroPage];if(!p)return;
   var art=document.getElementById('introArt');
   if(art){art.innerHTML=p.svg;art.classList.add('has-scene');}
   var cap=document.getElementById('introCap');if(cap)cap.textContent=p.cap;
-  var dots=document.getElementById('introDots');if(dots)dots.innerHTML='<i class="idot on"></i>';
-  var prev=document.getElementById('introPrev');if(prev)prev.style.visibility='hidden';
-  var next=document.getElementById('introNext');if(next){next.textContent='시작하기 ▶';if(typeof twemojify==='function')twemojify(next);}
-  setTimeout(speakActIntro,300);
+  var dots=document.getElementById('introDots');
+  if(dots)dots.innerHTML=pages.map(function(_,i){return '<i class="idot'+(i===actIntroPage?' on':'')+'"></i>';}).join('');
+  var prev=document.getElementById('introPrev');if(prev)prev.style.visibility=(actIntroPage===0)?'hidden':'visible';
+  var next=document.getElementById('introNext');if(next){next.textContent=(actIntroPage===pages.length-1)?'시작하기 ▶':'다음 ▶';if(typeof twemojify==='function')twemojify(next);}
 }
-// 이 막들은 MP3 내레이션이 없으니 기기 음성(deviceSpeak)으로 바로 읽는다. 🔊 다시 듣기도 이걸 재생.
-function speakActIntro(){var p=(typeof ACT_INTROS!=='undefined')?ACT_INTROS[actIntroAct]:null;if(!p)return;stopIntroAudio();
+// 이 막들은 MP3 내레이션이 없으니 기기 음성(deviceSpeak)으로 현재 쪽 say를 읽는다. 🔊 다시 듣기도 이걸 재생.
+function speakActIntro(){var pages=actIntroPages();var p=pages[actIntroPage];if(!p)return;stopIntroAudio();
   try{if(typeof deviceSpeak==='function')deviceSpeak(p.say);else if(typeof speak==='function')speak(p.say);}catch(e){}}
+function actIntroNext(){var pages=actIntroPages();if(actIntroPage<pages.length-1){actIntroPage++;renderActIntroPage();speakActIntro();}else{finishActIntro();}}
+function actIntroPrev(){if(actIntroPage>0){actIntroPage--;renderActIntroPage();speakActIntro();}}
+// 마지막 쪽 '시작하기' 또는 건너뛰기 → 이 막 홈/미션으로.
 function finishActIntro(){actIntroActive=false;stopIntroAudio();
   try{if(typeof markActIntroSeen==='function')markActIntroSeen(actIntroAct);}catch(e){}
   if(typeof go==='function')go('home');}

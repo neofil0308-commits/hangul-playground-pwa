@@ -717,6 +717,15 @@ img.twe{display:inline-block;height:1em;width:1em;margin:0 .04em;vertical-align:
 .relic-slot{font-style:normal;font-size:1.55rem;line-height:1;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;border-radius:12px;background:#fff;box-shadow:inset 0 0 0 2px #cfe6f7;}
 .relic-slot.got{box-shadow:inset 0 0 0 2px #ffd98a,0 0 7px rgba(255,200,90,.6);}
 .relic-slot.lock{opacity:.45;}
+/* 별빛 편지 진행: 되찾은 조각(막 클리어)만큼 편지에 반짝임이 켜진다 */
+.letter-progress{display:flex;align-items:center;gap:10px;margin-top:10px;padding-top:10px;border-top:2px dashed #bcd9f0;}
+.letter-progress .lp-letter{font-size:1.9rem;line-height:1;}
+.letter-progress .lp-body{display:flex;flex-direction:column;gap:2px;}
+.letter-progress .lp-title{font-family:'Jua',sans-serif;font-size:.9rem;color:#6a86a8;}
+.letter-progress .lp-stars{display:flex;gap:3px;font-style:normal;}
+.letter-progress .lp-star{font-style:normal;font-size:1rem;line-height:1;opacity:.35;color:#b9c6d6;}
+.letter-progress .lp-star.on{opacity:1;}
+.letter-progress .lp-count{font-family:'Jua',sans-serif;font-size:.85rem;color:#e08a3c;}
 /* 단어 동산 자모 카드 디자인 (자음=주황, 모음=청록, 입체 버튼) */
 .wb-tray .wb-card{font-family:'Jua',sans-serif;width:68px;height:84px;font-size:2.4rem;border:none;cursor:pointer;border-radius:20px;display:flex;align-items:center;justify-content:center;position:relative;padding-top:10px;transition:transform .08s,box-shadow .08s;}
 .wb-tray .wb-card::before{position:absolute;top:7px;left:0;right:0;font-size:.62rem;font-weight:700;letter-spacing:1px;opacity:.7;}
