@@ -36,7 +36,7 @@
   </section>
 
   <section id="home" class="screen active">
-    <header aria-label="하니의 한글 모험"><div class="mascot">🐥</div><div class="logo">하니의 한<b>글</b> 모험</div><div class="sub">한글 마을에 흩어진 글자 친구들을 찾아요</div></header>
+    <header aria-label="하니의 한글 모험"><div class="mascot">🐥</div><div class="logo">하니의 한<b>글</b> 모험</div><div class="sub">한글 마을에 흩어진 글자 친구들을 찾아요</div><div class="hani-hello">안녕! 오늘도 모험 갈까? 🐥</div></header>
     <div class="home-intro-bar"><button class="replay-intro" id="replayIntro">📖 이야기 다시 보기</button><button class="replay-intro replay-act-intro" id="replayActIntro">💡 오늘 배우는 것</button></div>
     <section class="star-album star-album-top" id="starAlbum" aria-label="여정 진행 상황 — 지난 글자를 누르면 다시 갈 수 있어요"></section>
     <div class="home-workbench" id="homeWorkbench" aria-label="iPad 기준 한글 모험 홈">
@@ -45,6 +45,7 @@
       <div class="episode-banner" id="episodeBanner" aria-live="polite"></div>
       <h3>오늘의 모험 🎯</h3>
       <div class="mbar"><i id="mbarFill"></i></div>
+      <button class="adventure-start" id="adventureStartBtn" type="button" onclick="document.getElementById('mrowLetter').click()">모험 시작하기 ▶</button>
       <button class="mrow" id="mrowLetter"><span class="mk" id="mkL">ㄱ</span><span class="mtx">글자 숲 <b id="mtL">ㄱ</b><small>숨어 있는 글자 친구를 만나요</small></span><span class="mck" id="mcL">○</span></button>
       <button class="mrow" id="mrowWord"><span class="mk" id="mkW">🦒</span><span class="mtx">단어 동산 <b id="mtW">기린</b><small>글자 친구가 좋아하는 단어를 찾아요</small></span><span class="mck" id="mcW">○</span></button>
       <button class="mrow" id="mrowPlay"><span class="mk">🔊</span><span class="mtx">소리 동굴 <b>듣고 찾기</b><small>소리를 듣고 문을 열어요</small></span><span class="mck" id="mcP">○</span></button>
