@@ -554,9 +554,9 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .intro-nav{display:flex;gap:12px;justify-content:center;align-items:center;}
 .intro-prev,.intro-next{font-family:'Jua',sans-serif;border:none;cursor:pointer;border-radius:26px;}
 .intro-prev{font-size:1.4rem;color:var(--ink);background:#fff;width:60px;height:56px;box-shadow:0 5px 0 #e6cdb0;}
-.intro-next{font-size:1.35rem;color:#fff;background:var(--con);padding:0 30px;height:56px;box-shadow:0 5px 0 var(--con-d);}
+.intro-next{font-size:1.35rem;color:#fff;background:var(--pri);padding:0 30px;height:56px;box-shadow:0 5px 0 var(--pri-d);}
 .intro-prev:active,.intro-next:active{transform:translateY(4px);}
-.intro-next:active{box-shadow:0 1px 0 var(--con-d);}
+.intro-next:active{box-shadow:0 1px 0 var(--pri-d);}
 .intro-skip{margin-top:14px;background:none;border:none;color:#b7a384;font-family:'Jua',sans-serif;font-size:.95rem;cursor:pointer;text-decoration:underline;}
 /* 홈의 '이야기 다시 보기' */
 .home-intro-bar{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:-4px 0 12px;}
