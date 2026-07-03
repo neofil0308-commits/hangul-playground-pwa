@@ -246,19 +246,13 @@ header .sub{font-family:'Gowun Dodum',sans-serif;font-weight:400;font-size:1.05r
 .ld-back:active{transform:translateY(3px);box-shadow:0 1px 0 #f4b59c;}
 .ld-wrap{display:grid;grid-template-columns:1fr;gap:16px;}
 .ld-left{background:var(--card);border-radius:30px;padding:26px 20px;text-align:center;box-shadow:0 8px 0 #f4b59c,0 12px 18px rgba(150,80,40,.16);display:flex;flex-direction:column;align-items:center;justify-content:center;}
-/* 별빛 그림책: 큰 글자를 부드러운 둥근 색 타일로(자음 파랑 기본) */
-.ld-glyph{--jt:#7FB5E8;--jt2:#a9d0f2;--jtd:#3E6EA8;--jsh:40,70,120;
-  font-size:5.4rem;line-height:1;color:#fff;font-family:'Jua',sans-serif;
-  display:inline-flex;align-items:center;justify-content:center;width:1.5em;height:1.5em;
-  border-radius:34px;position:relative;margin-bottom:4px;
-  background:linear-gradient(180deg,var(--jt2),var(--jt) 66%);
-  box-shadow:0 9px 0 var(--jtd),0 15px 20px rgba(var(--jsh),.24),inset 0 4px 7px rgba(255,255,255,.55),inset 0 -6px 10px rgba(0,0,0,.10);
-  text-shadow:0 3px 0 rgba(0,0,0,.12);}
-.ld-glyph::after{content:'';position:absolute;left:16%;right:16%;top:9%;height:30%;border-radius:50%;
-  background:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,0));pointer-events:none;}
+/* 별빛 그림책 Phase2a: 큰 글자를 자모 캐릭터 SVG(얼굴+흰 글리프) 컨테이너로. */
+.ld-glyph{width:150px;height:150px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:2px;
+  filter:drop-shadow(0 10px 14px rgba(82,116,151,.24));}
+.ld-glyph svg,.ld-glyph .jamo-char{width:100%;height:100%;display:block;overflow:visible;}
 .ld-name{font-size:1.4rem;margin-top:8px;color:#8a715a;}
-.ld-sound{margin-top:18px;font-family:'Jua',sans-serif;font-size:1.15rem;color:#fff;background:var(--con);border:none;border-radius:30px;padding:13px 30px;box-shadow:0 5px 0 var(--con-d);cursor:pointer;}
-.ld-sound:active{transform:translateY(4px);box-shadow:0 1px 0 var(--con-d);}
+.ld-sound{margin-top:18px;font-family:'Jua',sans-serif;font-size:1.15rem;color:#fff;background:#5E8C7A;border:none;border-radius:30px;padding:13px 30px;box-shadow:0 5px 0 #46695B;cursor:pointer;}
+.ld-sound:active{transform:translateY(4px);box-shadow:0 1px 0 #46695B;}
 .ld-right{display:flex;flex-direction:column;gap:16px;}
 .ld-panel{background:var(--card);border-radius:30px;padding:16px 16px 18px;box-shadow:0 8px 0 #ffd0e1,0 12px 18px rgba(180,60,110,.14);}
 .ld-panel h4{margin:2px 0 8px;text-align:center;font-size:1.05rem;color:#8a715a;}
@@ -272,14 +266,13 @@ header .sub{font-family:'Gowun Dodum',sans-serif;font-weight:400;font-size:1.05r
 #mtSvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
 #mtCanvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
 .mt-tools{margin-bottom:0;}
-.ld-words{display:flex;flex-direction:column;gap:10px;}
-.ld-word{display:flex;align-items:center;gap:14px;background:#fff;border:none;border-radius:20px;padding:11px 16px;font-family:'Jua',sans-serif;font-size:1.3rem;color:var(--ink);box-shadow:0 4px 0 #cfe7d3;cursor:pointer;text-align:left;}
-.ld-word:active{transform:translateY(3px);box-shadow:0 1px 0 #cfe7d3;}
-.ld-word .em{font-size:2rem;}
-.ld-word .spk{margin-left:auto;font-size:1rem;opacity:.5;}
-#letterDetail.vow .ld-glyph{--jt:#F3899F;--jt2:#f8b3c1;--jtd:#C25C74;--jsh:180,60,110;color:#fff;}
+.ld-words{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:12px;}
+.ld-word{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--cream);border:none;border-radius:20px;padding:14px 10px 12px;font-family:'Jua',sans-serif;font-size:1.15rem;color:var(--ink);box-shadow:0 4px 0 #e6dcc4;cursor:pointer;text-align:center;}
+.ld-word:active{transform:translateY(3px);box-shadow:0 1px 0 #e6dcc4;}
+.ld-word .em{font-size:2.6rem;line-height:1;}
+.ld-word .spk{font-size:.8rem;opacity:.5;}
+#letterDetail.vow .ld-glyph{filter:drop-shadow(0 10px 14px rgba(188,117,145,.24));}
 #letterDetail.vow .ld-left{box-shadow:0 8px 0 #9fdcd8,0 12px 18px rgba(20,120,110,.16);}
-#letterDetail.vow .ld-sound{background:var(--vow);box-shadow:0 5px 0 var(--vow-d);}
 #letterDetail.vow .ld-back{color:var(--vow-d);box-shadow:0 4px 0 #9fdcd8;}
 @media (min-width:760px){
   .wrap{max-width:1040px;padding:26px 30px 54px;}
@@ -311,10 +304,11 @@ header .sub{font-family:'Gowun Dodum',sans-serif;font-weight:400;font-size:1.05r
   .m-syls .jsyl{font-size:2.4rem;min-width:82px;height:82px;}
   .sticker-slot .big{font-size:3.4rem;}
   .ld-wrap{grid-template-columns:1.05fr 1.25fr;align-items:start;}
-  .ld-glyph{font-size:7.4rem;} .ld-name{font-size:1.8rem;} .ld-sound{font-size:1.4rem;padding:15px 36px;}
+  .ld-glyph{width:220px;height:220px;} .ld-name{font-size:1.8rem;} .ld-sound{font-size:1.4rem;padding:15px 36px;}
   .mt-stage{max-width:360px;} .mt-guide{font-size:14rem;}
   .ld-panel h4{font-size:1.3rem;}
-  .ld-word{font-size:1.6rem;padding:14px 20px;} .ld-word .em{font-size:2.5rem;}
+  .ld-words{grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:14px;}
+  .ld-word{font-size:1.35rem;padding:16px 12px 14px;} .ld-word .em{font-size:3rem;}
   .pick3{gap:16px;} .pcard{padding:18px 12px;} .pcard h4{font-size:1.3rem;}
   .pick3 .chip{width:66px;height:66px;font-size:1.75rem;border-radius:18px;} .chips.col{max-height:460px;gap:10px;}
 }
@@ -790,7 +784,10 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .wb-tray .wb-card.jrole-v:active{box-shadow:0 1px 0 #C25C74;}
 .wb-tray .wb-card.used{opacity:.28;pointer-events:none;}
 /* 글자 숲(letterDetail) 재구성: 위 낱말 / 아래 받아쓰기 */
-.lf-head{display:flex;align-items:center;justify-content:center;gap:14px;margin:0 0 4px;flex-wrap:wrap;}
+/* 별빛 그림책 Phase2a: 왼쪽 캐릭터 히어로(세로 스택 + 은은한 초록 틴트). */
+.lf-head{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;margin:0;
+  background:linear-gradient(158deg,#eef5e6,#fbf6e9 62%);border-radius:26px;padding:22px 18px 24px;
+  box-shadow:0 6px 0 #e3d7bf,0 10px 20px rgba(120,120,80,.10);}
 /* 가로화면(iPad) 2단: 왼쪽=글자머리+낱말, 오른쪽=받아쓰기 */
 .lf-wrap{max-width:1000px;margin:0 auto;display:flex;flex-direction:row;align-items:flex-start;gap:18px;padding-bottom:24px;}
 .lf-col{display:flex;flex-direction:column;gap:14px;min-width:0;flex:1 1 0;}
@@ -804,3 +801,8 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .lf-chip{font-family:'Jua',sans-serif;font-size:1.5rem;min-width:50px;height:50px;border:none;cursor:pointer;border-radius:14px;background:#fbe6da;color:var(--bat-d);box-shadow:0 3px 0 #f0c4ac;}
 .lf-chip.on{background:var(--trace);color:#fff;box-shadow:0 3px 0 var(--trace-d);}
 .lf-chip:active{transform:translateY(2px);}
+/* 별빛 그림책 Phase2a: 받아쓰기 버튼을 부드러운 새 팔레트로(밝은 원색 대체) */
+.mt-tools .tbtn.stroke{background:#8FB6D6;box-shadow:0 4px 0 #6890B0;}
+.mt-tools .tbtn.stroke.off{background:#cfc4b2;box-shadow:0 4px 0 #ab9d8c;}
+.mt-tools .tbtn.clear{background:#C9B79E;box-shadow:0 4px 0 #A6947B;}
+.mt-tools #lfHear{background:#6FA88E;box-shadow:0 4px 0 #4F8270;}

@@ -333,6 +333,22 @@ function aiHani(x,y,s,cls,sing){s=(s==null?1:s);cls=cls||'';
 }
 // 별빛 그림책: 헤더/이야기 얼굴용 독립 SVG 래퍼(장면과 같은 병아리). 가볍게 유지.
 function aiHaniSVG(cls){return '<svg class="hani-svg" viewBox="-24 -30 48 62" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="병아리 하니">'+aiHani(0,0,1,cls||'')+'</svg>';}
+// 별빛 그림책 Phase2a: 글자 숲의 큰 자모 캐릭터 — 둥근 사각 타일 + 귀여운 얼굴 + 흰 글리프.
+// isVowel=true면 모음(로즈 #D98BA6), 아니면 자음(블루 #6E9AC2). 컨테이너 크기에 맞춰 스케일.
+function jamoCharSVG(ch,isVowel){
+  var main=isVowel?'#D98BA6':'#6E9AC2';   // 타일 본색
+  var shad=isVowel?'#BC7591':'#527497';   // 아래 그림자(더 진한 톤)
+  var g=String(ch==null?'':ch).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return '<svg class="jamo-char" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="자모 '+g+'">'
+    +'<rect x="9" y="14" width="82" height="82" rx="30" fill="'+shad+'"/>'                          // 부드러운 아래 그림자
+    +'<rect x="9" y="9" width="82" height="82" rx="30" fill="'+main+'"/>'                            // 둥근 사각 타일
+    +'<rect x="21" y="16" width="58" height="24" rx="12" fill="#ffffff" opacity="0.16"/>'            // 윗 광택
+    +'<text x="50" y="57" text-anchor="middle" dominant-baseline="middle" font-family="Jua, sans-serif" font-size="46" fill="#ffffff">'+g+'</text>'  // 흰 글리프(가운데)
+    +'<circle cx="37" cy="38" r="3.6" fill="#33404a"/><circle cx="63" cy="38" r="3.6" fill="#33404a"/>'  // 두 눈
+    +'<circle cx="38" cy="37" r="1" fill="#ffffff"/><circle cx="64" cy="37" r="1" fill="#ffffff"/>'      // 눈 반짝
+    +'<ellipse cx="27" cy="51" rx="6.4" ry="4.2" fill="#ff9ec2" opacity="0.5"/><ellipse cx="73" cy="51" rx="6.4" ry="4.2" fill="#ff9ec2" opacity="0.5"/>'  // 발그레 볼
+    +'</svg>';
+}
 function aiScene(label,sky0,sky1,inner){
   return '<svg class="scene" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+label+'">'
     +'<defs><clipPath id="rc"><rect x="0" y="0" width="400" height="280" rx="26"/></clipPath>'

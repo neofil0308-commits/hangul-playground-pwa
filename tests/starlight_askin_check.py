@@ -52,8 +52,8 @@ def test_jamo_tile_applied_to_prominent_jamo():
     assert ".lopt-jamo .lglyph" in CSS
     assert ".wb-tray .wb-card.jrole-c{background:linear-gradient(180deg,#a9d0f2,#7FB5E8" in CSS
     assert ".wb-tray .wb-card.jrole-v{background:linear-gradient(180deg,#f8b3c1,#F3899F" in CSS
-    # 큰 글자 타일: 흰 글리프 + 둥근 타일.
-    assert ".ld-glyph{" in CSS and "border-radius:34px" in CSS
+    # 큰 글자(글자 숲)는 Phase2a에서 자모 캐릭터 SVG 컨테이너로 바뀜(letterforest 체크에서 잠금).
+    assert ".ld-glyph{" in CSS and ".ld-glyph .jamo-char" in CSS
 
 
 def test_listen_and_find_cards_tag_jamo_role():
@@ -73,5 +73,5 @@ def test_hani_chick_refined_and_reusable_svg():
 
 
 # ---- 서비스워커 캐시 ----
-def test_service_worker_cache_v51():
-    assert "hangul-playground-v51" in SW
+def test_service_worker_cache_v52():
+    assert "hangul-playground-v52" in SW
