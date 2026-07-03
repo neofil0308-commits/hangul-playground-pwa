@@ -22,15 +22,17 @@
 
 <div class="wrap">
   <section id="intro" class="screen">
-    <div class="intro-book">
-      <div class="intro-art" id="introArt" aria-hidden="true"></div>
-      <p class="intro-cap" id="introCap"></p>
-      <button class="intro-hear" id="introHear">🔊 다시 듣기</button>
-      <div class="intro-progress" id="introProgress" aria-hidden="true"><i></i></div>
-      <div class="intro-dots" id="introDots"></div>
-      <div class="intro-nav">
-        <button class="intro-prev" id="introPrev">◀</button>
+    <div class="intro-cinema">
+      <div class="cinema-stage">
+        <div class="intro-art" id="introArt" aria-hidden="true"></div>
+        <p class="intro-cap" id="introCap"></p>
+        <button class="cine-arrow" id="introPrev" aria-label="이전 장면">◀</button>
+      </div>
+      <div class="cinema-bar">
         <button class="intro-auto" id="introAuto" aria-label="자동 넘김 멈추기">⏸</button>
+        <button class="intro-hear" id="introHear" aria-label="다시 듣기">🔊</button>
+        <div class="intro-progress" id="introProgress" aria-hidden="true"><i></i></div>
+        <div class="intro-dots" id="introDots"></div>
         <button class="intro-next" id="introNext">다음 ▶</button>
       </div>
       <button class="intro-skip" id="introSkip">건너뛰기</button>
@@ -116,16 +118,12 @@
   <section id="letterDetail" class="screen">
     <button class="ld-back" id="ldBack">⬅ 글자 친구들</button>
     <div class="lf-wrap">
-      <div class="lf-col lf-left">
-        <div class="lf-head"><div class="ld-glyph" id="ldGlyph">ㄱ</div><div class="ld-name" id="ldName">기역</div><button class="ld-sound" id="ldSound">🔊 소리 듣기</button></div>
-        <div class="lf-panel lf-write-panel"><h4>✏️ 받아쓰기 <b class="lf-word-now" id="lfWordNow">글자</b></h4>
+      <div class="lf-head"><div class="ld-glyph" id="ldGlyph">ㄱ</div><div class="ld-name" id="ldName">기역</div><button class="ld-sound" id="ldSound">🔊 소리 듣기</button></div>
+      <div class="lf-panel lf-words-panel"><h4>이 글자 낱말 — 눌러서 듣고 써봐요 🔊✏️</h4><div class="ld-words" id="ldWords"></div></div>
+      <div class="lf-panel lf-write-panel"><h4>✏️ 받아쓰기 <b class="lf-word-now" id="lfWordNow">글자</b></h4>
         <div class="lf-chips" id="lfChips"></div>
         <div class="mt-stage" id="mtStage"></div>
         <div class="trace-tools mt-tools"><button class="tbtn stroke" id="mtStroke">🔢 획순</button><button class="tbtn clear" id="mtClear">🧽 지우기</button><button class="tbtn" id="lfHear">🔊 듣기</button></div>
-      </div>
-      </div>
-      <div class="lf-col lf-right">
-        <div class="lf-panel lf-words-panel"><h4>이 글자 낱말 — 눌러서 듣고 써봐요 🔊✏️</h4><div class="ld-words" id="ldWords"></div></div>
       </div>
     </div></section>
 

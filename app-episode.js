@@ -266,8 +266,12 @@ function renderIntroPage(){
   if(art){
     if(p.svg){art.innerHTML=p.svg;art.classList.add('has-scene');}
     else{art.innerHTML=p.art.map(function(e,i){return '<span class="ia ia'+i+'">'+e+'</span>';}).join('');art.classList.remove('has-scene');if(typeof twemojify==='function')twemojify(art);}
+    // 영상 연출: 컷 전환(enter) + 켄번즈 방향 교대(kb-b)
+    art.classList.toggle('kb-b',introIdx%2===1);
+    art.classList.remove('enter');void art.offsetWidth;art.classList.add('enter');
   }
-  var cap=document.getElementById('introCap');if(cap)cap.textContent=p.cap;
+  var cap=document.getElementById('introCap');
+  if(cap){cap.textContent=p.cap;cap.classList.remove('enter');void cap.offsetWidth;cap.classList.add('enter');}
   var dots=document.getElementById('introDots');
   if(dots)dots.innerHTML=INTRO_PAGES.map(function(_,i){return '<i class="idot'+(i===introIdx?' on':'')+'"></i>';}).join('');
   var prev=document.getElementById('introPrev');if(prev)prev.style.visibility=(introIdx===0)?'hidden':'visible';
@@ -327,8 +331,11 @@ function openActIntro(act){
 function renderActIntroPage(){
   var pages=actIntroPages();var p=pages[actIntroPage];if(!p)return;
   var art=document.getElementById('introArt');
-  if(art){art.innerHTML=p.svg;art.classList.add('has-scene');}
-  var cap=document.getElementById('introCap');if(cap)cap.textContent=p.cap;
+  if(art){art.innerHTML=p.svg;art.classList.add('has-scene');
+    art.classList.toggle('kb-b',actIntroPage%2===1);
+    art.classList.remove('enter');void art.offsetWidth;art.classList.add('enter');}
+  var cap=document.getElementById('introCap');
+  if(cap){cap.textContent=p.cap;cap.classList.remove('enter');void cap.offsetWidth;cap.classList.add('enter');}
   var dots=document.getElementById('introDots');
   if(dots)dots.innerHTML=pages.map(function(_,i){return '<i class="idot'+(i===actIntroPage?' on':'')+'"></i>';}).join('');
   var prev=document.getElementById('introPrev');if(prev)prev.style.visibility=(actIntroPage===0)?'hidden':'visible';
