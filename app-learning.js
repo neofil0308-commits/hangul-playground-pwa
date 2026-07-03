@@ -16,9 +16,9 @@ var lfWord='';
 function studyWord(word,emoji){
   lfWord=word;
   var wn=document.getElementById('lfWordNow');if(wn)wn.textContent=word;
-  var chips=document.getElementById('lfChips');
-  if(chips){chips.innerHTML='';[...word].forEach(function(syl,i){var b=document.createElement('button');b.className='lf-chip'+(i===0?' on':'');b.textContent=syl;b.addEventListener('click',function(){document.querySelectorAll('#lfChips .lf-chip').forEach(function(x){x.classList.remove('on');});b.classList.add('on');mtSelect(syl);});chips.appendChild(b);});}
-  if(word.length)mtSelect(word[0]);
+  // 단어 전체를 음절 칸으로 한 번에 펼쳐 쓰기(칸 전환 칩은 더 이상 필요 없음).
+  var chips=document.getElementById('lfChips');if(chips)chips.innerHTML='';
+  mtWord(word);
   speak(word);
 }
 function openLetterDetail(it){curLetter=it;markLetterSeen(it.ch);if(typeof todayLetter!=='undefined'&&todayLetter&&it.ch===todayLetter.ch)completeMission('letter');const isVow=lettersTab==='vow';const isFinal=!!it.final;letterDetail.classList.toggle('vow',isVow);ldGlyph.innerHTML=jamoCharSVG(it.ch,isVow);ldName.textContent=isFinal?('끝소리 '+it.ch+' · 받침'):(isVow?('소리: '+it.sound):it.name);ldWords.innerHTML='';var ldList=isFinal?((it.words&&it.words.length?it.words:((typeof FINAL_WORDS!=='undefined'&&FINAL_WORDS[it.ch])||[]))):(LETTER_WORDS[it.ch]||[]);ldList.forEach(w=>{const b=document.createElement('button');b.className='ld-word';b.innerHTML='<span class="em">'+w[1]+'</span>'+w[0]+'<span class="spk">🔊✏️</span>';b.addEventListener('click',()=>studyWord(w[0],w[1]));ldWords.appendChild(b);});twemojify(ldWords);mtSelect(it.ch);lfWord=it.ch;var lwn=document.getElementById('lfWordNow');if(lwn)lwn.textContent=it.ch;var lch=document.getElementById('lfChips');if(lch)lch.innerHTML='';go('letterDetail');}

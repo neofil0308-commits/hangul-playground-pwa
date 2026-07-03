@@ -45,8 +45,8 @@ def test_index_calls_writing_initializer_after_learning_before_episode():
 def test_writing_file_keeps_canvas_and_audio_behavior_tokens():
     writing = WRITING.read_text(encoding="utf-8")
     for token in [
-        "mtCanvas.setPointerCapture",
-        "mtCtx.lineWidth=14",
+        "function mtWord",
+        "rec.ctx.lineWidth=14",
         "mtRenderStrokes()",
         "compose(selInit,selMed,selJong)",
         "speak(compose(selInit,selMed,selJong))",
@@ -62,4 +62,4 @@ def test_writing_file_keeps_canvas_and_audio_behavior_tokens():
 
 def test_service_worker_precaches_external_writing_file_with_new_cache_version():
     assert "./app-writing.js" in SW
-    assert "hangul-playground-v55" in SW
+    assert "hangul-playground-v56" in SW

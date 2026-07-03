@@ -1,14 +1,18 @@
 // Writing, tracing, syllable-building screens for 하니의 한글 모험.
 // Loaded before the main inline app script; run initWritingScreens() after helpers exist.
 
-/* 미니 따라쓰기 (상세 화면) */
-const mtStage=document.getElementById('mtStage'),mtGuide=document.getElementById('mtGuide'),mtCanvas=document.getElementById('mtCanvas'),mtCtx=mtCanvas.getContext('2d'),mtSvg=document.getElementById('mtSvg');
-let mtStrokeOn=true,mtChar='ㄱ',mtDrawing=false,mlx,mly;
-function mtSize(){const r=mtStage.getBoundingClientRect();if(r.width===0)return;const dpr=window.devicePixelRatio||1;mtCanvas.width=r.width*dpr;mtCanvas.height=r.height*dpr;mtCtx.setTransform(dpr,0,0,dpr,0,0);mtCtx.lineCap='round';mtCtx.lineJoin='round';mtCtx.lineWidth=14;mtCtx.strokeStyle='#222';}
-function mtClearCanvas(){mtCtx.save();mtCtx.setTransform(1,0,0,1,0,0);mtCtx.clearRect(0,0,mtCanvas.width,mtCanvas.height);mtCtx.restore();}
-function mtRenderStrokes(){var on=mtStrokeOn&&!!strokesFor(mtChar);mtSvg.innerHTML=on?strokeSVGMarkup(mtChar):'';if(mtGuide)mtGuide.style.opacity=on?'0':'0.5';}
-function mtSelect(ch){mtChar=ch;mtGuide.textContent=ch;mtSize();mtClearCanvas();mtRenderStrokes();}
-function mtpos(e){const r=mtCanvas.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}
+/* 미니 받아쓰기 (상세 화면) — 단어는 음절 칸을 가로로 나란히, 낱글자는 한 칸에 */
+const mtStage=document.getElementById('mtStage');
+let mtStrokeOn=true,mtChars=['ㄱ'],mtCells=[];
+function mtCellPos(rec,e){const r=rec.canvas.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}
+function mtAttachDraw(rec){let drawing=false,lx,ly;rec.canvas.addEventListener('pointerdown',e=>{drawing=true;const p=mtCellPos(rec,e);lx=p.x;ly=p.y;try{rec.canvas.setPointerCapture(e.pointerId);}catch(_){}});rec.canvas.addEventListener('pointermove',e=>{if(!drawing)return;e.preventDefault();const p=mtCellPos(rec,e);rec.ctx.strokeStyle='#4A3524';rec.ctx.beginPath();rec.ctx.moveTo(lx,ly);rec.ctx.lineTo(p.x,p.y);rec.ctx.stroke();lx=p.x;ly=p.y;});rec.canvas.addEventListener('pointerup',()=>drawing=false);rec.canvas.addEventListener('pointercancel',()=>drawing=false);}
+function mtSizeCell(rec){const r=rec.canvas.getBoundingClientRect();if(r.width===0)return;const dpr=window.devicePixelRatio||1;rec.canvas.width=r.width*dpr;rec.canvas.height=r.height*dpr;rec.ctx.setTransform(dpr,0,0,dpr,0,0);rec.ctx.lineCap='round';rec.ctx.lineJoin='round';rec.ctx.lineWidth=14;rec.ctx.strokeStyle='#4A3524';}
+function mtSize(){mtCells.forEach(mtSizeCell);}
+function mtClearCanvas(){mtCells.forEach(rec=>{rec.ctx.save();rec.ctx.setTransform(1,0,0,1,0,0);rec.ctx.clearRect(0,0,rec.canvas.width,rec.canvas.height);rec.ctx.restore();});}
+function mtRenderStrokes(){mtCells.forEach(rec=>{var on=mtStrokeOn&&!!strokesFor(rec.ch);rec.svg.innerHTML=on?strokeSVGMarkup(rec.ch):'';if(rec.guide)rec.guide.style.opacity=on?'0':'0.5';});}
+function mtBuild(chars){mtChars=chars.slice();mtCells=[];if(!mtStage)return;mtStage.innerHTML='';mtStage.classList.toggle('mt-multi',chars.length>1);chars.forEach(function(ch){const cell=document.createElement('div');cell.className='mt-cell';cell.innerHTML='<div class="mt-grid"></div><div class="mt-guide">'+ch+'</div><svg viewBox="0 0 100 100"></svg><canvas></canvas>';mtStage.appendChild(cell);const rec={ch:ch,cell:cell,guide:cell.querySelector('.mt-guide'),svg:cell.querySelector('svg'),canvas:cell.querySelector('canvas')};rec.ctx=rec.canvas.getContext('2d');mtAttachDraw(rec);mtCells.push(rec);});mtSize();mtClearCanvas();mtRenderStrokes();}
+function mtSelect(ch){mtBuild([ch]);}
+function mtWord(word){mtBuild([...word].filter(function(c){return c!==' ';}));}
 
 
 /* 글자 만들기 (+ 받침 통합) */
@@ -64,9 +68,7 @@ function buildTraceChips(mode){traceChips.innerHTML='';let list=mode==='자음'?
 function loadCustomTrace(list){document.querySelectorAll('#traceModes button').forEach(x=>x.classList.remove('on'));traceChips.innerHTML='';list.forEach((ch,i)=>traceChips.appendChild(makeTraceChip(ch,i===0)));selectTrace(list[0],true);}
 
 function initMiniTrace(){
-  mtCanvas.addEventListener('pointerdown',e=>{mtDrawing=true;const p=mtpos(e);mlx=p.x;mly=p.y;try{mtCanvas.setPointerCapture(e.pointerId);}catch(_){}});
-  mtCanvas.addEventListener('pointermove',e=>{if(!mtDrawing)return;e.preventDefault();const p=mtpos(e);mtCtx.beginPath();mtCtx.moveTo(mlx,mly);mtCtx.lineTo(p.x,p.y);mtCtx.stroke();mlx=p.x;mly=p.y;});
-  mtCanvas.addEventListener('pointerup',()=>mtDrawing=false);mtCanvas.addEventListener('pointercancel',()=>mtDrawing=false);
+  // 그리기는 mtBuild가 만든 각 셀(mtAttachDraw)에서 처리 — 여기선 공용 버튼만 배선.
   document.getElementById('mtClear').addEventListener('click',mtClearCanvas);
   const mtStrokeBtn=document.getElementById('mtStroke');
   mtStrokeBtn.addEventListener('click',()=>{mtStrokeOn=!mtStrokeOn;mtStrokeBtn.classList.toggle('off',!mtStrokeOn);mtRenderStrokes();});
