@@ -98,23 +98,34 @@ function _xfStroke(st,box){
   if(st.circle){var c=st.circle,sx=(x1-x0)/100,sy=(y1-y0)/100;return {circle:[tx(c[0]),ty(c[1]),Math.round(c[2]*Math.min(sx,sy)*10)/10]};}
   return st.map(function(p){return [tx(p[0]),ty(p[1])];});
 }
+// 혼합모음(가로부+세로부): ㅘ=ㅗ+ㅏ 처럼 분해해 가로부는 왼쪽아래, 세로부(ㅏㅐㅓㅔㅣ)는 오른쪽 세로로 배치.
+// (ㅘ를 한 덩어리로 납작한 아래칸에 넣으면 세로가 꽉 찬 ㅏ가 압축돼 찌그러진다.)
+var _MIXED_V={'ㅘ':['ㅗ','ㅏ'],'ㅙ':['ㅗ','ㅐ'],'ㅚ':['ㅗ','ㅣ'],'ㅝ':['ㅜ','ㅓ'],'ㅞ':['ㅜ','ㅔ'],'ㅟ':['ㅜ','ㅣ'],'ㅢ':['ㅡ','ㅣ']};
 function composedStrokes(ch){
   if(typeof ch!=='string'||ch.length!==1)return null;
   var code=ch.codePointAt(0);
   if(code<0xAC00||code>0xD7A3)return null;
   var s=code-0xAC00;
   var cho=CHO[Math.floor(s/588)], jung=JUNG[Math.floor((s%588)/28)], jong=JONG[s%28];
+  var out=[];
+  function add(jamo,box){var arr=STROKES[jamo];if(!arr)return;arr.forEach(function(st){out.push(_xfStroke(st,box));});}
+  // 혼합모음: 가로부(ㅗ/ㅜ/ㅡ) + 세로부(ㅏ/ㅐ/ㅓ/ㅔ/ㅣ)를 개별 자모 칸에 배치.
+  var mv=_MIXED_V[jung];
+  if(mv){
+    if(!STROKES[cho]||!STROKES[mv[0]]||!STROKES[mv[1]]||(jong&&!STROKES[jong]))return null;
+    if(jong){ add(cho,[6,3,52,33]); add(mv[0],[6,35,58,60]); add(mv[1],[58,3,95,62]); add(jong,[12,66,90,97]); }
+    else    { add(cho,[6,5,50,46]); add(mv[0],[6,50,60,94]); add(mv[1],[56,5,96,94]); }
+    return out.length?out:null;
+  }
   // 구성 자모 중 하나라도 STROKES가 없으면 부분(자음만) 오버레이 대신 null 반환.
   if(!STROKES[cho]||!STROKES[jung]||(jong&&!STROKES[jong]))return null;
-  // 가로형(ㅗ/ㅜ/ㅡ 계열) + 아래에 깔리는 복합모음(ㅘㅙㅝㅞ)은 위/아래 칸 분할. ㅚㅟㅢ 등 혼합형은 좌/우 유지(허용).
-  var horiz='ㅗㅛㅜㅠㅡㅘㅙㅝㅞ'.indexOf(jung)>=0;
+  // 순수 가로형(ㅗㅛㅜㅠㅡ)은 위/아래 칸 분할, 세로형은 좌/우 분할.
+  var horiz='ㅗㅛㅜㅠㅡ'.indexOf(jung)>=0;
   var boxes=horiz
     ? (jong?{cho:[18,3,82,40],jung:[8,40,92,67],jong:[15,67,90,97]}
            :{cho:[15,6,85,52],jung:[6,54,94,92]})
     : (jong?{cho:[5,5,52,60],jung:[54,3,95,62],jong:[10,63,90,97]}
            :{cho:[6,8,55,92],jung:[56,5,95,95]});
-  var out=[];
-  function add(jamo,box){var arr=STROKES[jamo];if(!arr)return;arr.forEach(function(st){out.push(_xfStroke(st,box));});}
   add(cho,boxes.cho); add(jung,boxes.jung); if(jong)add(jong,boxes.jong);
   return out.length?out:null;
 }
