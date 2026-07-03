@@ -115,8 +115,8 @@ function composedStrokes(ch){
   if(mv){
     if(!STROKES[cho]||!STROKES[mv[0]]||!STROKES[mv[1]]||(jong&&!STROKES[jong]))return null;
     // 초성 좌상 · 가로부(ㅗ/ㅜ/ㅡ) 좌하 · 세로부(ㅏ/ㅐ/ㅓ/ㅔ/ㅣ) 우측 세로.
-    if(jong){ add(cho,[2,1,50,33]); add(mv[0],[2,32,54,63]); add(mv[1],[50,1,97,64]); add(jong,[8,66,92,99]); }
-    else    { add(cho,[2,3,54,50]); add(mv[0],[2,47,56,96]); add(mv[1],[52,3,97,96]); }
+    if(jong){ add(cho,[14,2,58,34]); add(mv[0],[10,34,58,63]); add(mv[1],[40,2,84,64]); add(jong,[8,66,92,99]); }
+    else    { add(cho,[16,10,64,54]); add(mv[0],[12,44,64,86]); add(mv[1],[40,10,86,90]); }
     return out.length?out:null;
   }
   // 구성 자모 중 하나라도 STROKES가 없으면 부분(자음만) 오버레이 대신 null 반환.
@@ -126,8 +126,8 @@ function composedStrokes(ch){
   var boxes=horiz
     ? (jong?{cho:[13,0,87,38],jung:[3,39,97,65],jong:[11,66,89,99]}
            :{cho:[11,2,89,52],jung:[3,53,97,95]})
-    : (jong?{cho:[3,3,53,47],jung:[52,2,96,63],jong:[9,64,91,99]}
-           :{cho:[3,5,57,95],jung:[54,3,97,97]});
+    : (jong?{cho:[3,3,53,47],jung:[42,2,88,62],jong:[9,64,91,99]}
+           :{cho:[3,5,55,95],jung:[42,3,89,97]});
   add(cho,boxes.cho); add(jung,boxes.jung); if(jong)add(jong,boxes.jong);
   return out.length?out:null;
 }

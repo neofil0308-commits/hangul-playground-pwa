@@ -9,7 +9,8 @@ function mtAttachDraw(rec){let drawing=false,lx,ly;rec.canvas.addEventListener('
 function mtSizeCell(rec){const r=rec.canvas.getBoundingClientRect();if(r.width===0)return;const dpr=window.devicePixelRatio||1;rec.canvas.width=r.width*dpr;rec.canvas.height=r.height*dpr;rec.ctx.setTransform(dpr,0,0,dpr,0,0);rec.ctx.lineCap='round';rec.ctx.lineJoin='round';rec.ctx.lineWidth=14;rec.ctx.strokeStyle='#4A3524';}
 function mtSize(){mtCells.forEach(mtSizeCell);}
 function mtClearCanvas(){mtCells.forEach(rec=>{rec.ctx.save();rec.ctx.setTransform(1,0,0,1,0,0);rec.ctx.clearRect(0,0,rec.canvas.width,rec.canvas.height);rec.ctx.restore();});}
-function mtRenderStrokes(){mtCells.forEach(rec=>{var on=mtStrokeOn&&!!strokesFor(rec.ch);rec.svg.innerHTML=on?strokeSVGMarkup(rec.ch):'';if(rec.guide)rec.guide.style.opacity=on?'0':'0.5';});}
+// 획순을 켜도 통글자 가이드는 계속 보이게 둔다(정확한 글자꼴 위에 획순 화살표를 얹음).
+function mtRenderStrokes(){mtCells.forEach(rec=>{var on=mtStrokeOn&&!!strokesFor(rec.ch);rec.svg.innerHTML=on?strokeSVGMarkup(rec.ch):'';if(rec.guide)rec.guide.style.opacity=on?'0.55':'0.5';});}
 function mtBuild(chars){mtChars=chars.slice();mtCells=[];if(!mtStage)return;mtStage.innerHTML='';mtStage.classList.toggle('mt-multi',chars.length>1);chars.forEach(function(ch){const cell=document.createElement('div');cell.className='mt-cell';cell.innerHTML='<div class="mt-grid"></div><div class="mt-guide">'+ch+'</div><svg viewBox="0 0 100 100"></svg><canvas></canvas>';mtStage.appendChild(cell);const rec={ch:ch,cell:cell,guide:cell.querySelector('.mt-guide'),svg:cell.querySelector('svg'),canvas:cell.querySelector('canvas')};rec.ctx=rec.canvas.getContext('2d');mtAttachDraw(rec);mtCells.push(rec);});mtSize();mtClearCanvas();mtRenderStrokes();}
 function mtSelect(ch){mtBuild([ch]);}
 function mtWord(word){mtBuild([...word].filter(function(c){return c!==' ';}));}
@@ -48,13 +49,15 @@ const traceStage=document.getElementById('traceStage'),traceGuide=document.getEl
 let strokeOn=false;
 function sizeTrace(){const r=traceStage.getBoundingClientRect();if(r.width===0)return;const dpr=window.devicePixelRatio||1;canvas.width=r.width*dpr;canvas.height=r.height*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.lineCap='round';ctx.lineJoin='round';ctx.lineWidth=16;ctx.strokeStyle='#222';}
 function clearTrace(){ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,canvas.width,canvas.height);ctx.restore();}
-function strokeSVGMarkup(ch){const data=strokesFor(ch);if(!data)return '';let s='<defs><marker id="ah" markerWidth="5" markerHeight="5" refX="2.2" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="#ff9ec2"/></marker></defs>';data.forEach((st)=>{if(st.circle){const c=st.circle;s+='<circle cx="'+c[0]+'" cy="'+c[1]+'" r="'+c[2]+'" fill="none" stroke="#efdfe7" stroke-width="9"/>';}else{const pts=st.map(p=>p.join(',')).join(' ');s+='<polyline points="'+pts+'" fill="none" stroke="#efdfe7" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>';}});
+// 통글자 가이드(실제 글자꼴)는 그대로 두고, 그 위에 획순(방향 화살표+번호)만 얹는다.
+// (예전엔 자모를 합성해 글자를 통째로 다시 그렸는데 비율이 안 맞아 뺐다 — 밑그림 없음.)
+function strokeSVGMarkup(ch){const data=strokesFor(ch);if(!data)return '';let s='<defs><marker id="ah" markerWidth="5" markerHeight="5" refX="2.2" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="#ff9ec2"/></marker></defs>';
   // 번호 배지: 시작점 정확히 위가 아니라 획 안쪽(2번째 점 방향 18%)에 놓고, 같은 좌표에서 겹치면 획 방향으로 밀어 분리(ㅁㄹㄷㅌ 등).
   var placed=[],R=7;
   function clamp(v){return Math.max(R,Math.min(100-R,v));}
   function placeBadge(bx,by,dx,dy){var len=Math.sqrt(dx*dx+dy*dy)||1;var ux=dx/len,uy=dy/len;for(var g=0;g<8;g++){var hit=false;for(var i=0;i<placed.length;i++){var ddx=bx-placed[i][0],ddy=by-placed[i][1];if(ddx*ddx+ddy*ddy<(2*R)*(2*R)){hit=true;break;}}if(!hit)break;bx+=ux*10;by+=uy*10;}bx=clamp(bx);by=clamp(by);placed.push([bx,by]);return [bx,by];}
   data.forEach((st,idx)=>{let bx,by,dx,dy;if(st.circle){const c=st.circle;s+='<circle cx="'+c[0]+'" cy="'+c[1]+'" r="'+c[2]+'" fill="none" stroke="#ff9ec2" stroke-width="3.2"/>';bx=c[0];by=c[1]-c[2];dx=0;dy=c[2];}else{const pts=st.map(p=>p.join(',')).join(' ');s+='<polyline points="'+pts+'" fill="none" stroke="#ff9ec2" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#ah)"/>';var p0=st[0],p1=st[1]||st[0];bx=p0[0]+(p1[0]-p0[0])*0.18;by=p0[1]+(p1[1]-p0[1])*0.18;dx=p1[0]-p0[0];dy=p1[1]-p0[1];}var bp=placeBadge(bx,by,dx,dy);bx=bp[0];by=bp[1];s+='<circle cx="'+bx+'" cy="'+by+'" r="7" fill="#ff7fb0"/><text x="'+bx+'" y="'+(by+3.2)+'" text-anchor="middle" font-size="9" fill="#fff" font-family="Jua">'+(idx+1)+'</text>';});return s;}
-function renderStrokes(ch){var on=strokeOn&&!!strokesFor(ch);strokeSvg.innerHTML=on?strokeSVGMarkup(ch):'';if(typeof traceGuide!=='undefined'&&traceGuide)traceGuide.style.opacity=on?'0':'0.5';}
+function renderStrokes(ch){var on=strokeOn&&!!strokesFor(ch);strokeSvg.innerHTML=on?strokeSVGMarkup(ch):'';if(typeof traceGuide!=='undefined'&&traceGuide)traceGuide.style.opacity=on?'0.55':'0.5';}
 let drawing=false,lx,ly;
 function tpos(e){const r=canvas.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}
 
