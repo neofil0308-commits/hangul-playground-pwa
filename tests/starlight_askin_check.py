@@ -48,11 +48,14 @@ def test_jamo_tile_uses_semantic_colors():
 
 
 def test_jamo_tile_applied_to_prominent_jamo():
-    # 큰 글자(글자 숲) / 소리·찾기 자모 보기 / 조립 트레이.
+    # Phase2b: 큰 글자(글자 숲)·소리 동굴/글자 찾기 자모 보기·조립 트레이는
+    # 모두 자모 캐릭터 SVG(jamoCharSVG → <svg class="jamo-char">)를 담는 투명 컨테이너로 통일.
     assert ".lopt-jamo .lglyph" in CSS
-    assert ".wb-tray .wb-card.jrole-c{background:linear-gradient(180deg,#a9d0f2,#7FB5E8" in CSS
-    assert ".wb-tray .wb-card.jrole-v{background:linear-gradient(180deg,#f8b3c1,#F3899F" in CSS
-    # 큰 글자(글자 숲)는 Phase2a에서 자모 캐릭터 SVG 컨테이너로 바뀜(letterforest 체크에서 잠금).
+    assert ".lopt.lopt-jamo .lglyph .jamo-char" in CSS
+    assert ".wb-tray .wb-card .jamo-char" in CSS
+    # 옛 Phase2a CSS 그라디언트 타일은 SVG 캐릭터로 대체되어 사라짐.
+    assert "background:linear-gradient(180deg,#a9d0f2,#7FB5E8" not in CSS
+    # 큰 글자(글자 숲)는 자모 캐릭터 SVG 컨테이너(letterforest 체크에서도 잠금).
     assert ".ld-glyph{" in CSS and ".ld-glyph .jamo-char" in CSS
 
 
@@ -60,6 +63,25 @@ def test_listen_and_find_cards_tag_jamo_role():
     # 자모 보기 카드는 색 지정을 위해 jrole/lopt-jamo 클래스를 단다(단어 이모지 카드는 제외).
     assert "lopt lopt-jamo jrole-" in LEARN
     assert "lopt lopt-jamo jrole-" in LISTEN
+
+
+def test_prominent_jamo_rendered_with_jamocharsvg_phase2b():
+    # 조립 트레이(글자 공방·단어 동산)·글자 찾기 카드 = jamoCharSVG 캐릭터.
+    assert "b.innerHTML=jamoCharSVG(j,isV)" in LEARN
+    assert "jamoCharSVG(ch,fdKind(ch)==='v')" in LEARN
+    # 소리 동굴 letter 모드 카드 = jamoCharSVG.
+    assert "jamoCharSVG(o.glyph,isV)" in LISTEN
+    # 낡은 원시 글리프 주입(텍스트 노드/이모지)이 남아있지 않아야 한다.
+    assert "b.textContent=j;" not in LEARN
+
+
+def test_listen_find_screens_warmed_to_cream_palette():
+    # 소리 동굴/글자 찾기 상단 패널이 옛 하늘색이 아닌 따뜻한 크림으로.
+    assert ".listen-wrap .listen-top{flex:0 0 320px" in CSS
+    assert "background:linear-gradient(180deg,#fffaee,#f5ead2)" in CSS
+    # '다시 듣기' 메인 CTA는 도톰한 오렌지(홈과 통일).
+    assert ".bigplay{" in CSS
+    assert "background:var(--pri);box-shadow:0 6px 0 var(--pri-d)" in CSS
 
 
 # ---- 3) 하니 병아리 ----
@@ -74,4 +96,4 @@ def test_hani_chick_refined_and_reusable_svg():
 
 # ---- 서비스워커 캐시 ----
 def test_service_worker_cache_v52():
-    assert "hangul-playground-v53" in SW
+    assert "hangul-playground-v54" in SW

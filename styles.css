@@ -324,16 +324,13 @@ header .sub{font-family:'Gowun Dodum',sans-serif;font-weight:400;font-size:1.05r
 .jamo-tile.jamo-vow{--jt:#F3899F;--jt2:#f8b3c1;--jtd:#C25C74;--jsh:180,60,110;}
 .jamo-tile::after{content:'';position:absolute;left:15%;right:15%;top:9%;height:30%;border-radius:50%;
   background:linear-gradient(180deg,rgba(255,255,255,.58),rgba(255,255,255,0));pointer-events:none;}
-/* 소리 동굴/글자 찾기: 자모 보기 글리프를 색 타일로(단어 보기의 이모지는 그대로 둠) */
-.lopt.lopt-jamo .lglyph{--jt:#7FB5E8;--jt2:#a9d0f2;--jtd:#3E6EA8;--jsh:40,70,120;
-  font-size:3.4rem;width:1.35em;height:1.35em;border-radius:22px;color:#fff;position:relative;
-  display:inline-flex;align-items:center;justify-content:center;
-  background:linear-gradient(180deg,var(--jt2),var(--jt) 66%);
-  box-shadow:0 6px 0 var(--jtd),0 9px 12px rgba(var(--jsh),.2),inset 0 3px 5px rgba(255,255,255,.55),inset 0 -4px 8px rgba(0,0,0,.1);
-  text-shadow:0 2px 0 rgba(0,0,0,.12);}
-.lopt.lopt-jamo.jrole-v .lglyph{--jt:#F3899F;--jt2:#f8b3c1;--jtd:#C25C74;--jsh:180,60,110;}
-.lopt.lopt-jamo .lglyph::after{content:'';position:absolute;left:15%;right:15%;top:9%;height:30%;border-radius:50%;
-  background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0));pointer-events:none;}
+/* 별빛 그림책 Phase2b: 소리 동굴/글자 찾기 자모 보기 = 자모 캐릭터(jamoCharSVG) 타일.
+   글자 숲(#ldGlyph)과 통일 — 버튼 속 .lglyph는 SVG를 담는 투명 컨테이너로만 둔다.
+   (단어 보기의 이모지 카드는 .lopt-jamo가 없어 아래 규칙에 영향받지 않는다.) */
+.lopt.lopt-jamo .lglyph{width:118px;height:118px;max-width:100%;margin:0 auto;font-size:0;
+  display:inline-flex;align-items:center;justify-content:center;line-height:1;}
+.lopt.lopt-jamo .lglyph svg,.lopt.lopt-jamo .lglyph .jamo-char{width:100%;height:100%;display:block;overflow:visible;pointer-events:none;
+  filter:drop-shadow(0 6px 8px rgba(70,90,120,.18));}
 /* 헤더 마스코트 / 이야기 얼굴: 병아리 SVG를 글자 크기(em)에 맞춰 표시 */
 header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:auto;display:block;overflow:visible;}
 .m-listen{background:var(--listen);box-shadow:0 6px 0 var(--listen-d);}
@@ -421,17 +418,19 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .map-more .menu{margin-top:12px;}
 @media (min-width:760px){.home-workbench{grid-template-columns:minmax(280px,.85fr) minmax(0,1.35fr);gap:22px;}.mission,.adventure-map{margin-bottom:0;}.mission{position:sticky;top:22px;}.map-grid{grid-template-columns:repeat(2,minmax(190px,1fr));gap:14px;}.map-node{min-height:104px;padding:15px;}.quest-route{padding:12px;gap:10px;}.route-step{font-size:1.05rem;padding:11px 13px;}}
 @media (display-mode:standalone){.wrap{padding-top:calc(18px + env(safe-area-inset-top));padding-bottom:calc(40px + env(safe-area-inset-bottom));}.homebtn{top:calc(12px + env(safe-area-inset-top));}body{overscroll-behavior:none;}}
-.bigplay{font-family:'Jua',sans-serif;border:none;cursor:pointer;color:#fff;background:var(--listen);box-shadow:0 6px 0 var(--listen-d);border-radius:30px;font-size:1.4rem;padding:16px 28px;margin:4px 0;}
-.bigplay:active{transform:translateY(4px);box-shadow:0 2px 0 var(--listen-d);}
+/* 별빛 그림책 Phase2b: '다시 듣기' 메인 CTA = 도톰한 오렌지 버튼(홈과 통일) */
+.bigplay{font-family:'Jua',sans-serif;border:none;cursor:pointer;color:#fff;background:var(--pri);box-shadow:0 6px 0 var(--pri-d);border-radius:30px;font-size:1.4rem;padding:16px 28px;margin:4px 0;}
+.bigplay:active{transform:translateY(4px);box-shadow:0 2px 0 var(--pri-d);}
 .cat-pills.lmode button{color:var(--listen-d);box-shadow:0 4px 0 #bfeaf0;}
 .cat-pills.lmode button.on{background:var(--listen);color:#fff;box-shadow:0 4px 0 var(--listen-d);}
 .listen-top{display:flex;flex-direction:column;align-items:center;}
 /* ===== 듣고 찾기: 가로 와이드 2존(왼쪽 소리 동굴 패널 / 오른쪽 큰 보기 카드) ===== */
 .listen-wrap{display:flex;flex-direction:row;align-items:stretch;justify-content:center;gap:22px;max-width:1060px;margin:0 auto;min-height:72vh;}
-.listen-wrap .listen-top{flex:0 0 320px;justify-content:space-evenly;gap:8px;background:linear-gradient(180deg,#e7f3ff,#cfe6fb);border-radius:28px;padding:18px 16px 20px;box-shadow:inset 0 0 0 3px #c2def5;}
+/* 별빛 그림책 Phase2b: 소리 동굴/글자 찾기 상단 = 따뜻한 크림 패널(옛 하늘색 대체) */
+.listen-wrap .listen-top{flex:0 0 320px;justify-content:space-evenly;gap:8px;background:linear-gradient(180deg,#fffaee,#f5ead2);border-radius:28px;padding:18px 16px 20px;box-shadow:inset 0 0 0 3px #efdcbb;}
 .lc-hani{font-size:3rem;line-height:1;}
-.lc-letter{font-family:'Jua',sans-serif;font-size:5.2rem;line-height:1;color:var(--listen-d);text-shadow:0 3px 0 #fff;}
-.lc-q{font-family:'Jua',sans-serif;font-size:1.25rem;color:#3a6ea5;text-align:center;line-height:1.3;}
+.lc-letter{font-family:'Jua',sans-serif;font-size:5.2rem;line-height:1;color:var(--pri-d);text-shadow:0 3px 0 #fff;}
+.lc-q{font-family:'Jua',sans-serif;font-size:1.25rem;color:#8a715a;text-align:center;line-height:1.3;}
 .listen-wrap .bigplay{font-size:1.6rem;padding:18px 34px;}
 .lc-progress{display:flex;gap:6px;}
 .lc-bell{font-size:1.5rem;filter:grayscale(1);opacity:.35;transition:.2s;}
@@ -441,9 +440,9 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .listen-right{flex:1.05 1 0;min-width:0;display:flex;flex-direction:column;}
 .listen-wrap .listen-opts{display:grid;margin:0;max-width:none;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;align-content:center;flex:1;}
 @media (max-width:760px){.listen-wrap{flex-direction:column;gap:10px;min-height:0;}.listen-wrap .listen-top{flex:none;width:100%;}}
-.lopt{position:relative;background:#fffdf8;border:none;cursor:pointer;border-radius:22px;padding:22px 12px;font-family:'Jua',sans-serif;color:var(--ink);box-shadow:0 6px 0 #cdeef2,0 9px 14px rgba(40,120,120,.14);transition:transform .08s;}
+.lopt{position:relative;background:var(--cream2);border:none;cursor:pointer;border-radius:22px;padding:22px 12px;font-family:'Jua',sans-serif;color:var(--ink);box-shadow:0 6px 0 #e6d8bd,0 9px 14px rgba(120,80,40,.14);transition:transform .08s;}
 .lopt:active{transform:translateY(3px);}
-.lopt .lglyph{font-size:4rem;line-height:1;color:var(--listen-d);}
+.lopt .lglyph{font-size:4rem;line-height:1;color:var(--pri-d);}
 .lopt .lwd{font-size:1.4rem;margin-top:8px;}
 .lopt.good{background:#d6f5dd;box-shadow:0 6px 0 #9ad9aa;}
 .lopt.pop{animation:wbpop .32s ease;}
@@ -680,8 +679,7 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .wb-tray-label{font-family:'Jua',sans-serif;color:#b0794a;font-size:1.05rem;text-align:center;line-height:1.35;}
 .wb-tray-label small{color:#c9a583;font-size:.82rem;}
 #wordBuild .wb-tray{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:14px;align-content:center;flex:1;}
-#wordBuild .wb-tray .wb-card{width:auto;height:104px;font-size:3rem;border-radius:22px;padding-top:14px;}
-#wordBuild .wb-tray .wb-card::before{top:9px;font-size:.7rem;}
+#wordBuild .wb-tray .wb-card{width:auto;height:116px;}
 /* 조립판/빈칸 크게 */
 #wordBuild .wb-target{display:flex;gap:22px;flex-wrap:wrap;justify-content:center;min-height:96px;border-radius:20px;padding:6px;transition:background .12s,box-shadow .12s;margin-top:40px;row-gap:48px;}
 /* 여러 음절이 줄바꿈될 때 떠있는 수식 라벨(.wb-syl-head top:-36px)이 윗줄/단어와 겹치지 않게 위 여백·줄간격 확보 */
@@ -712,8 +710,9 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .wb-slot{width:48px;height:58px;border-radius:14px;background:#f3ecdd;border:3px dashed #d8c4a4;display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--ink);}
 .wb-slot.filled{background:#eaf6ec;border-style:solid;border-color:var(--word);color:var(--word-d);}
 .wb-tools{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
-.wb-tool{font-family:'Jua',sans-serif;font-size:1.05rem;color:#fff;background:var(--listen);border:none;border-radius:22px;padding:9px 18px;box-shadow:0 4px 0 var(--listen-d);cursor:pointer;}
-.wb-tool:active{transform:translateY(3px);box-shadow:0 1px 0 var(--listen-d);}
+/* 별빛 그림책 Phase2b: 단어 동산/글자 공방 도구 버튼 = 부드러운 초록(써보기는 인라인 핑크 유지) */
+.wb-tool{font-family:'Jua',sans-serif;font-size:1.05rem;color:#fff;background:var(--word);border:none;border-radius:22px;padding:9px 18px;box-shadow:0 4px 0 var(--word-d);cursor:pointer;}
+.wb-tool:active{transform:translateY(3px);box-shadow:0 1px 0 var(--word-d);}
 .wb-feedback{font-family:'Gaegu',cursive;font-weight:700;font-size:1.15rem;color:#8a715a;min-height:1.4em;}
 .wb-tray{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
 .wb-card{width:60px;height:70px;font-size:2.1rem;border:none;cursor:pointer;border-radius:16px;}
@@ -771,17 +770,13 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .letter-progress .lp-star{font-style:normal;font-size:1rem;line-height:1;opacity:.35;color:#b9c6d6;}
 .letter-progress .lp-star.on{opacity:1;}
 .letter-progress .lp-count{font-family:'Jua',sans-serif;font-size:.85rem;color:#e08a3c;}
-/* 단어 동산 자모 카드 = 자모 타일(자음=파랑, 모음=분홍, 흰 글리프 + 윗광택 + 입체 그림자) */
-.wb-tray .wb-card{font-family:'Jua',sans-serif;width:68px;height:84px;font-size:2.4rem;border:none;cursor:pointer;border-radius:20px;display:flex;align-items:center;justify-content:center;position:relative;padding-top:10px;transition:transform .08s,box-shadow .08s;text-shadow:0 2px 0 rgba(0,0,0,.12);}
-.wb-tray .wb-card::before{position:absolute;top:7px;left:0;right:0;font-size:.62rem;font-weight:700;letter-spacing:1px;opacity:.85;z-index:1;}
-.wb-tray .wb-card::after{content:'';position:absolute;left:16%;right:16%;top:15%;height:26%;border-radius:50%;background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(255,255,255,0));pointer-events:none;}
-.wb-tray .wb-card.jrole-c{background:linear-gradient(180deg,#a9d0f2,#7FB5E8 66%);color:#fff;box-shadow:0 6px 0 #3E6EA8,0 10px 14px rgba(40,70,120,.2),inset 0 3px 5px rgba(255,255,255,.5),inset 0 -4px 8px rgba(0,0,0,.1);}
-.wb-tray .wb-card.jrole-c::before{content:'자음';color:rgba(255,255,255,.9);}
-.wb-tray .wb-card.jrole-v{background:linear-gradient(180deg,#f8b3c1,#F3899F 66%);color:#fff;box-shadow:0 6px 0 #C25C74,0 10px 14px rgba(180,60,110,.2),inset 0 3px 5px rgba(255,255,255,.5),inset 0 -4px 8px rgba(0,0,0,.1);}
-.wb-tray .wb-card.jrole-v::before{content:'모음';color:rgba(255,255,255,.9);}
+/* 별빛 그림책 Phase2b: 조립 트레이 카드(글자 공방·단어 동산) = 자모 캐릭터(jamoCharSVG).
+   버튼은 투명 컨테이너로 두고, 둥근 색 타일+귀여운 얼굴+흰 글리프 SVG가 그대로 보인다.
+   자음=블루(#6E9AC2), 모음=로즈(#D98BA6) — 색은 SVG가 직접 칠하므로 CSS 배경은 없앤다. */
+.wb-tray .wb-card{font-family:'Jua',sans-serif;width:84px;height:96px;border:none;cursor:pointer;background:none;box-shadow:none;padding:0;display:flex;align-items:center;justify-content:center;position:relative;transition:transform .08s;}
+.wb-tray .wb-card svg,.wb-tray .wb-card .jamo-char{width:100%;height:100%;display:block;overflow:visible;pointer-events:none;filter:drop-shadow(0 5px 6px rgba(70,90,120,.16));}
+.wb-tray .wb-card.jrole-v svg,.wb-tray .wb-card.jrole-v .jamo-char{filter:drop-shadow(0 5px 6px rgba(180,90,120,.18));}
 .wb-tray .wb-card:active{transform:translateY(5px);}
-.wb-tray .wb-card.jrole-c:active{box-shadow:0 1px 0 #3E6EA8;}
-.wb-tray .wb-card.jrole-v:active{box-shadow:0 1px 0 #C25C74;}
 .wb-tray .wb-card.used{opacity:.28;pointer-events:none;}
 /* 글자 숲(letterDetail) 재구성: 위 낱말 / 아래 받아쓰기 */
 /* 별빛 그림책 Phase2a: 왼쪽 캐릭터 히어로(세로 스택 + 은은한 초록 틴트). */

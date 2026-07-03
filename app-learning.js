@@ -77,7 +77,7 @@ function openWordBuild(word,emoji){
   var distractN=Math.min(7,Math.max(4,9-need.length)); // 총 8~10장
   while(distract.length<distractN&&tries<120){tries++;var r=pool[Math.floor(Math.random()*pool.length)];if(need.indexOf(r)<0&&distract.indexOf(r)<0)distract.push(r);}
   var trayEl=document.getElementById('wbTray');trayEl.innerHTML='';
-  shuffle(need.concat(distract)).forEach(function(j){var b=document.createElement('button');b.className='wb-card jchip jrole-'+(CHO.indexOf(j)>=0?'c':'v');b.textContent=j;b.addEventListener('pointerdown',function(e){wbDragStart(e,b,j);});trayEl.appendChild(b);});
+  shuffle(need.concat(distract)).forEach(function(j){var isV=CHO.indexOf(j)<0;var b=document.createElement('button');b.className='wb-card jchip jrole-'+(isV?'v':'c');b.innerHTML=jamoCharSVG(j,isV);b.addEventListener('pointerdown',function(e){wbDragStart(e,b,j);});trayEl.appendChild(b);});
   document.getElementById('wbFeedback').textContent='카드를 왼쪽으로 끌어다 놓거나 눌러서 순서대로 만들어요';
   go('wordBuild');
   setTimeout(function(){speak(word);},450); // 열 때는 단어만 짧게(설명은 '풀어듣기' 버튼)
@@ -171,7 +171,7 @@ function openCombine(){
   if(pool.length<3)pool=CHO.slice(0,9).concat(JUNG.slice(0,6));
   var tries=0;while(distract.length<2&&tries<200){tries++;var r=pool[Math.floor(Math.random()*pool.length)];if(need.indexOf(r)<0&&distract.indexOf(r)<0)distract.push(r);}
   var trayEl=document.getElementById('cbTray');trayEl.innerHTML='';
-  shuffle(need.concat(distract)).forEach(function(j){var b=document.createElement('button');b.className='wb-card jchip jrole-'+(CHO.indexOf(j)>=0?'c':'v');b.textContent=j;b.addEventListener('pointerdown',function(e){cbDragStart(e,b,j);});trayEl.appendChild(b);});
+  shuffle(need.concat(distract)).forEach(function(j){var isV=CHO.indexOf(j)<0;var b=document.createElement('button');b.className='wb-card jchip jrole-'+(isV?'v':'c');b.innerHTML=jamoCharSVG(j,isV);b.addEventListener('pointerdown',function(e){cbDragStart(e,b,j);});trayEl.appendChild(b);});
   var fb=document.getElementById('cbFeedback');if(fb)fb.textContent=(cbExpected[0]||'')+'부터 끌어다 놓아요 👈';
   go('combine');
   setTimeout(combinePrompt,450);
@@ -329,7 +329,7 @@ function openFind(){
   var grid=document.getElementById('fdGrid');if(grid)grid.innerHTML='';
   cards.forEach(function(ch){
     var b=document.createElement('button');b.className='lopt lopt-jamo jrole-'+(fdKind(ch)||'c');
-    b.innerHTML='<div class="lglyph">'+ch+'</div>';
+    b.innerHTML='<div class="lglyph">'+jamoCharSVG(ch,fdKind(ch)==='v')+'</div>';
     b.addEventListener('click',function(){fdTap(b,ch);});
     if(grid)grid.appendChild(b);
   });

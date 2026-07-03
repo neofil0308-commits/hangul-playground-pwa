@@ -27,7 +27,7 @@ function newListenQuestion(){
     var others=shuffle((typeof ALL_LETTERS!=='undefined'?ALL_LETTERS:[]).filter(function(x){return x.ch!==ch;})).slice(0,Math.max(1,listenN-1)).map(function(x){return{glyph:x.ch,say:x.name||x.sound};});
     var opts=shuffle([{glyph:ch,say:todaySay()}].concat(others));
     listenTarget={glyph:ch,say:todaySay(),isLetter:true};
-    opts.forEach(function(o){var b=document.createElement('button');b.className='lopt lopt-jamo jrole-'+((typeof JUNG!=='undefined'&&JUNG.indexOf(o.glyph)>=0)?'v':'c');b.innerHTML='<div class="lglyph">'+o.glyph+'</div>';b.addEventListener('click',function(){checkListen(b,o);});if(box)box.appendChild(b);});
+    opts.forEach(function(o){var isV=(typeof JUNG!=='undefined'&&JUNG.indexOf(o.glyph)>=0);var b=document.createElement('button');b.className='lopt lopt-jamo jrole-'+(isV?'v':'c');b.innerHTML='<div class="lglyph">'+jamoCharSVG(o.glyph,isV)+'</div>';b.addEventListener('click',function(){checkListen(b,o);});if(box)box.appendChild(b);});
     var lq=document.getElementById('listenQ');if(lq)lq.textContent='같은 소리의 글자를 찾아요';
     if(box)twemojify(box);setTimeout(function(){speak(todaySay());},250);return;
   }
