@@ -25,6 +25,8 @@ def test_writing_logic_lives_in_external_writing_file():
         "function composedText",
         "function startWriting",
         "function strokeSVGMarkup",
+        "function glyphInkBox",
+        "function calibrateStrokes",
         "function selectTrace",
         "function buildTraceChips",
         "function loadCustomTrace",
@@ -62,4 +64,4 @@ def test_writing_file_keeps_canvas_and_audio_behavior_tokens():
 
 def test_service_worker_precaches_external_writing_file_with_new_cache_version():
     assert "./app-writing.js" in SW
-    assert "hangul-playground-v60" in SW
+    assert "hangul-playground-v61" in SW

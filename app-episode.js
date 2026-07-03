@@ -220,6 +220,46 @@ function goNextLetter(){
 }
 // ===== 인트로 그림책 (모험 시작 이야기, 하니 음성) =====
 var introIdx=0;var introAudio=null;
+// ----- 영상처럼 자동 넘김 -----
+// 내레이션이 끝나면 1.2초 여운 뒤 다음 쪽으로. 마지막 쪽은 자동으로 나가지 않고
+// 시작 버튼만 반짝여서 아이가 직접 출발하게 한다. ⏸/▶ 버튼으로 자동 넘김을 끄고 켤 수 있다.
+var introAutoOn=true,introAutoTimer=null,introSafetyTimer=null,narrToken=0;
+function cancelIntroAuto(){
+  if(introAutoTimer){clearTimeout(introAutoTimer);introAutoTimer=null;}
+  if(introSafetyTimer){clearTimeout(introSafetyTimer);introSafetyTimer=null;}
+}
+function introPageCount(){return actIntroActive?actIntroPages().length:INTRO_PAGES.length;}
+function introPageIdx(){return actIntroActive?actIntroPage:introIdx;}
+// 내레이션 한 쪽이 끝난 순간(onended/onend 또는 안전 타이머). token으로 옛 내레이션의 뒤늦은 콜백을 무시.
+function narrationDone(tk){
+  if(tk!==narrToken)return;
+  if(!introAutoOn)return;
+  cancelIntroAuto();
+  if(introPageIdx()>=introPageCount()-1){pulseIntroNext();return;}
+  introAutoTimer=setTimeout(function(){introAutoTimer=null;if(introAutoOn)introNext();},1200);
+}
+// onended가 안 오는 환경(재생 차단·TTS 취소 꼬임) 대비 — 글자 수 기반 넉넉한 안전 타이머.
+function armNarrationSafety(text){
+  var tk=narrToken;
+  if(introSafetyTimer)clearTimeout(introSafetyTimer);
+  var ms=Math.max(3000,(text?String(text).length:20)*150+2000);
+  introSafetyTimer=setTimeout(function(){introSafetyTimer=null;narrationDone(tk);},ms);
+}
+function pulseIntroNext(){var n=document.getElementById('introNext');if(n)n.classList.add('pulse');}
+function clearIntroPulse(){var n=document.getElementById('introNext');if(n)n.classList.remove('pulse');}
+// 영상 진행바: (현재 쪽+1)/전체 쪽 비율만큼 채운다.
+function renderIntroProgress(){
+  var bar=document.getElementById('introProgress');if(!bar)return;
+  var f=bar.firstElementChild;if(!f)return;
+  f.style.width=Math.round(((introPageIdx()+1)/Math.max(1,introPageCount()))*100)+'%';
+}
+function setIntroAutoUI(on){ // 상태·버튼 표시만 갱신(내레이션은 건드리지 않음)
+  introAutoOn=on;
+  var b=document.getElementById('introAuto');
+  if(b){b.textContent=on?'⏸':'▶';b.classList.toggle('off',!on);b.setAttribute('aria-label',on?'자동 넘김 멈추기':'자동 넘김 이어가기');if(typeof twemojify==='function')twemojify(b);}
+  if(!on)cancelIntroAuto();
+}
+function setIntroAuto(on){setIntroAutoUI(on);if(on)speakIntro();} // 다시 켜면 지금 쪽부터 읽고 이어서 진행
 function renderIntroPage(){
   var p=INTRO_PAGES[introIdx];if(!p)return;
   var art=document.getElementById('introArt');
@@ -232,6 +272,7 @@ function renderIntroPage(){
   if(dots)dots.innerHTML=INTRO_PAGES.map(function(_,i){return '<i class="idot'+(i===introIdx?' on':'')+'"></i>';}).join('');
   var prev=document.getElementById('introPrev');if(prev)prev.style.visibility=(introIdx===0)?'hidden':'visible';
   var next=document.getElementById('introNext');if(next){next.textContent=(introIdx===INTRO_PAGES.length-1)?'모험 떠나기 🗺️':'다음 ▶';if(typeof twemojify==='function')twemojify(next);}
+  clearIntroPulse();renderIntroProgress();
 }
 // 따뜻한 신경망 음성(edge-tts) MP3로 내레이션. 없거나 막히면 기기 TTS로 폴백.
 function stopIntroAudio(){try{if(introAudio){introAudio.pause();introAudio=null;}}catch(e){}try{if('speechSynthesis' in window)speechSynthesis.cancel();}catch(e){}}
@@ -239,16 +280,23 @@ function speakIntro(){
   if(actIntroActive){speakActIntro();return;}
   var p=INTRO_PAGES[introIdx];if(!p)return;
   stopIntroAudio();
+  cancelIntroAuto();
+  var tk=++narrToken;
   var a=new Audio();var fell=false;
-  function fallback(){if(fell)return;fell=true;try{if(typeof speak==='function')speak(p.say);}catch(e){}}
+  function fallback(){if(fell)return;fell=true;
+    try{if(typeof speakOne==='function')speakOne(p.say,function(){narrationDone(tk);});
+    else if(typeof speak==='function')speak(p.say);}catch(e){}}
   a.onerror=fallback;
+  a.onended=function(){narrationDone(tk);};
   try{a.volume=Math.max(0,Math.min(1,(typeof volVoice!=='undefined'?volVoice:1)));}catch(e){}
   a.src='audio/narr/intro'+(introIdx+1)+'.mp3';
   var pr=a.play();if(pr&&pr.catch)pr.catch(fallback);
   introAudio=a;
+  armNarrationSafety(p.say);
 }
 function showIntro(){
   introIdx=0;
+  setIntroAutoUI(true);
   if(typeof go==='function')go('intro');
   try{var hb=document.getElementById('homeBtn');if(hb)hb.style.display='none';}catch(e){}
   renderIntroPage();
@@ -256,7 +304,7 @@ function showIntro(){
 }
 function introNext(){if(actIntroActive){actIntroNext();return;}if(introIdx<INTRO_PAGES.length-1){introIdx++;renderIntroPage();speakIntro();}else{finishIntro();}}
 function introPrev(){if(actIntroActive){actIntroPrev();return;}if(introIdx>0){introIdx--;renderIntroPage();speakIntro();}}
-function finishIntro(){if(actIntroActive){finishActIntro();return;}stopIntroAudio();try{lsSet('hp_intro_seen','1');}catch(e){}
+function finishIntro(){if(actIntroActive){finishActIntro();return;}stopIntroAudio();cancelIntroAuto();try{lsSet('hp_intro_seen','1');}catch(e){}
   // 오프닝 그림책을 다 보면 1막 시작 그림책은 겹치지 않게 본 것으로 표시(첫 실행 중복 방지).
   try{if(typeof markActIntroSeen==='function')markActIntroSeen(1);}catch(e){}
   if(typeof go==='function')go('home');}
@@ -268,6 +316,7 @@ function actIntroPages(){var p=(typeof ACT_INTROS!=='undefined')?ACT_INTROS[actI
 function openActIntro(act){
   var p=(typeof ACT_INTROS!=='undefined')?ACT_INTROS[act]:null;if(!p||!p.pages||!p.pages.length)return;
   actIntroActive=true;actIntroAct=act;actIntroPage=0;
+  setIntroAutoUI(true);
   stopIntroAudio();
   if(typeof go==='function')go('intro');
   try{var hb=document.getElementById('homeBtn');if(hb)hb.style.display='none';}catch(e){}
@@ -284,14 +333,19 @@ function renderActIntroPage(){
   if(dots)dots.innerHTML=pages.map(function(_,i){return '<i class="idot'+(i===actIntroPage?' on':'')+'"></i>';}).join('');
   var prev=document.getElementById('introPrev');if(prev)prev.style.visibility=(actIntroPage===0)?'hidden':'visible';
   var next=document.getElementById('introNext');if(next){next.textContent=(actIntroPage===pages.length-1)?'시작하기 ▶':'다음 ▶';if(typeof twemojify==='function')twemojify(next);}
+  clearIntroPulse();renderIntroProgress();
 }
 // 이 막들은 MP3 내레이션이 없으니 기기 음성(deviceSpeak)으로 현재 쪽 say를 읽는다. 🔊 다시 듣기도 이걸 재생.
 function speakActIntro(){var pages=actIntroPages();var p=pages[actIntroPage];if(!p)return;stopIntroAudio();
-  try{if(typeof deviceSpeak==='function')deviceSpeak(p.say);else if(typeof speak==='function')speak(p.say);}catch(e){}}
+  cancelIntroAuto();
+  var tk=++narrToken;
+  try{if(typeof deviceSpeak==='function')deviceSpeak(p.say,function(){narrationDone(tk);});
+  else if(typeof speak==='function')speak(p.say);}catch(e){}
+  armNarrationSafety(p.say);}
 function actIntroNext(){var pages=actIntroPages();if(actIntroPage<pages.length-1){actIntroPage++;renderActIntroPage();speakActIntro();}else{finishActIntro();}}
 function actIntroPrev(){if(actIntroPage>0){actIntroPage--;renderActIntroPage();speakActIntro();}}
 // 마지막 쪽 '시작하기' 또는 건너뛰기 → 이 막 홈/미션으로.
-function finishActIntro(){actIntroActive=false;stopIntroAudio();
+function finishActIntro(){actIntroActive=false;stopIntroAudio();cancelIntroAuto();
   try{if(typeof markActIntroSeen==='function')markActIntroSeen(actIntroAct);}catch(e){}
   if(typeof go==='function')go('home');}
 // 트리거: 새 막에 처음 들어선 순간 1회만 자동 노출. 오프닝 그림책이 우선(첫 실행 중복 방지).
@@ -313,6 +367,7 @@ function maybeShowActIntro(){
 function initIntro(){
   var n=document.getElementById('introNext');if(n)n.addEventListener('click',introNext);
   var p=document.getElementById('introPrev');if(p)p.addEventListener('click',introPrev);
+  var au=document.getElementById('introAuto');if(au)au.addEventListener('click',function(){setIntroAuto(!introAutoOn);});
   var h=document.getElementById('introHear');if(h)h.addEventListener('click',speakIntro);
   var art=document.getElementById('introArt');if(art)art.addEventListener('click',speakIntro);
   var s=document.getElementById('introSkip');if(s)s.addEventListener('click',finishIntro);

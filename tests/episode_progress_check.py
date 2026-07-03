@@ -104,6 +104,25 @@ def test_intro_storybook_exists_and_is_narrated():
         assert token in HTML, token
 
 
+def test_intro_auto_advances_like_a_video():
+    ep = EPISODE.read_text(encoding="utf-8")
+    # 내레이션이 끝나면 자동으로 다음 쪽(영상처럼), 마지막 쪽은 자동으로 나가지 않고 CTA만 반짝
+    for token in [
+        "function narrationDone",
+        "function armNarrationSafety",
+        "function setIntroAuto",
+        "function pulseIntroNext",
+        "function renderIntroProgress",
+    ]:
+        assert token in ep, token
+    # 오프닝(MP3 onended)과 막 인트로(deviceSpeak cb) 둘 다 끝 신호에 연결
+    assert "a.onended=function(){narrationDone(tk);}" in ep
+    assert "deviceSpeak(p.say,function(){narrationDone(tk);})" in ep
+    # 진행바 + 일시정지 토글 DOM
+    for token in ['id="introProgress"', 'id="introAuto"']:
+        assert token in HTML, token
+
+
 def test_index_loads_episode_module_after_writing_before_main():
     writing_tag = '<script src="app-writing.js"></script>'
     episode_tag = '<script src="app-episode.js"></script>'
@@ -131,7 +150,7 @@ def test_index_has_episode_and_album_dom_and_hooks():
 
 def test_service_worker_precaches_episode_module_with_bumped_cache():
     assert "./app-episode.js" in SW
-    assert "hangul-playground-v60" in SW
+    assert "hangul-playground-v61" in SW
 
 
 def test_stage_b_combine_act_is_playable():
