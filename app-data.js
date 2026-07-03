@@ -110,11 +110,13 @@ function composedStrokes(ch){
   var out=[];
   function add(jamo,box){var arr=STROKES[jamo];if(!arr)return;arr.forEach(function(st){out.push(_xfStroke(st,box));});}
   // 혼합모음: 가로부(ㅗ/ㅜ/ㅡ) + 세로부(ㅏ/ㅐ/ㅓ/ㅔ/ㅣ)를 개별 자모 칸에 배치.
+  // 박스는 자모 STROKES가 자체 여백을 갖기에 목표 영역보다 약간 크게(살짝 겹치게) 잡아 글자꼴처럼 꽉 차게 한다.
   var mv=_MIXED_V[jung];
   if(mv){
     if(!STROKES[cho]||!STROKES[mv[0]]||!STROKES[mv[1]]||(jong&&!STROKES[jong]))return null;
-    if(jong){ add(cho,[6,3,52,33]); add(mv[0],[6,35,58,60]); add(mv[1],[58,3,95,62]); add(jong,[12,66,90,97]); }
-    else    { add(cho,[6,5,50,46]); add(mv[0],[6,50,60,94]); add(mv[1],[56,5,96,94]); }
+    // 초성 좌상 · 가로부(ㅗ/ㅜ/ㅡ) 좌하 · 세로부(ㅏ/ㅐ/ㅓ/ㅔ/ㅣ) 우측 세로.
+    if(jong){ add(cho,[2,1,50,33]); add(mv[0],[2,32,54,63]); add(mv[1],[50,1,97,64]); add(jong,[8,66,92,99]); }
+    else    { add(cho,[2,3,54,50]); add(mv[0],[2,47,56,96]); add(mv[1],[52,3,97,96]); }
     return out.length?out:null;
   }
   // 구성 자모 중 하나라도 STROKES가 없으면 부분(자음만) 오버레이 대신 null 반환.
@@ -122,10 +124,10 @@ function composedStrokes(ch){
   // 순수 가로형(ㅗㅛㅜㅠㅡ)은 위/아래 칸 분할, 세로형은 좌/우 분할.
   var horiz='ㅗㅛㅜㅠㅡ'.indexOf(jung)>=0;
   var boxes=horiz
-    ? (jong?{cho:[18,3,82,40],jung:[8,40,92,67],jong:[15,67,90,97]}
-           :{cho:[15,6,85,52],jung:[6,54,94,92]})
-    : (jong?{cho:[5,5,52,60],jung:[54,3,95,62],jong:[10,63,90,97]}
-           :{cho:[6,8,55,92],jung:[56,5,95,95]});
+    ? (jong?{cho:[13,0,87,38],jung:[3,39,97,65],jong:[11,66,89,99]}
+           :{cho:[11,2,89,52],jung:[3,53,97,95]})
+    : (jong?{cho:[3,3,53,47],jung:[52,2,96,63],jong:[9,64,91,99]}
+           :{cho:[3,5,57,95],jung:[54,3,97,97]});
   add(cho,boxes.cho); add(jung,boxes.jung); if(jong)add(jong,boxes.jong);
   return out.length?out:null;
 }
