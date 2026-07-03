@@ -1,6 +1,6 @@
 # 한글 놀이터 작업일지
 
-> 마지막 업데이트: 2026-06-17 (가로 와이드 UI·차등 피드백·획순·문서 정리)
+> 마지막 업데이트: 2026-06-30 (NVIDIA Build 오브젝트-only 한글 카드 조립 PoC)
 >
 > 📌 개발 목적·방향은 [`README.md`](README.md), 구조·내용(현재 플로우 vs 잔재 화면)은 [`ARCHITECTURE.md`](ARCHITECTURE.md) 참고.
 
@@ -70,12 +70,34 @@
 - [x] 보조 화면/설정/부모 리포트 또는 에피소드형 스토리 확장 중 다음 우선순위 결정 → 에피소드형 스토리 확장(한글 떼기 커리큘럼) 선택
 - [x] 하니 스토리를 여러 날 이어지는 에피소드/저장 진행도로 확장 (1막 모음·2막 자음 글자형 에피소드 + 별빛 앨범 + 빠른 성취 맛보기)
 - [x] 7막 단어 마을(단어 읽기) — 단어 동산(`wordBuild`)으로 사실상 구현(드래그 조립·구조도·차등 피드백)
+- [x] **NVIDIA Build 이미지 카드 asset 파이프라인 PoC** — `.env` 보안 규칙, `tools/generate_nvidia_cards.py`, `assets/generated-cards/cards.json`/placeholder SVG 3종, service worker precache(v36), 회귀 테스트 추가. 실호출 가능한 모델(`qwen-image`, `qwen-image-edit`, `flux.1-dev` 등)을 확인하고 local `.env` 기반으로만 호출하도록 정리.
+- [x] **NVIDIA 오브젝트-only 한글 카드 조립 PoC** — 전체 카드를 모델에 맡기는 방식은 구도/글자/핵심 오브젝트 안정성이 낮아 폐기. NVIDIA는 흰 배경 단일 오브젝트만 생성하고, 로컬 Pillow 합성으로 카드 배경·상단 오브젝트 영역·하단 한글 패널을 결정론적으로 조립하는 구조로 전환. 샘플 3종(`ㅏ`, `오이`, `하니`) 재생성 및 시각 QA 완료.
 - [ ] **(우선) 잔재 화면 정리** — 초기 놀이터 화면(`letters/syl/word/match/quiz/trace/sent/sentWrite`)이 모험 플로우와 공존. `ARCHITECTURE.md` §3 기준으로 (a) syl→3막·sent→8막 재설계 편입, (b) word/trace/match/quiz/letters 중복 제거 또는 부모용 격리 결정.
 - [ ] 비글자형 막 엔진 편입: 3막 글자 공방(자모 결합), 8막 이야기 책(문장 읽기) — 현재 데이터만 정의됨
 - [ ] (옵션) 듣고 찾기 #4: 정답 단어 속 글자 반짝(예 "오리"에서 ㅗ 강조)
 - [ ] iPad 실기기에서 홈 화면 설치, standalone 실행, 오디오 재생, service worker 캐시 확인
 
 ## 작업 이력
+
+### 2026-06-30 (Telegram) — NVIDIA Build 오브젝트-only 한글 카드 조립 PoC
+
+- 전체 카드 생성을 NVIDIA에 맡긴 1차 품질 샘플을 시각 QA한 결과, 프롬프트 대비 핵심 오브젝트 누락·그림/글자 연결감 부족·하단 패널 과대 문제가 확인됨. “전체 카드 생성 → 하단 패널 덮기” 방식은 폐기.
+- `tools/generate_nvidia_quality_samples.py`를 오브젝트-first 구조로 재작성: NVIDIA에는 `isolated object on a plain white background`, `single object only`, `no card layout`, `no Korean letters` 조건으로 오브젝트만 요청하고, 로컬에서 카드 배경/프레임/그림자/하단 한글 패널을 합성.
+- Pillow 기반 합성 함수 추가: `extract_object_from_plain_background`, `paste_object_centered`, `draw_learning_card_background`, `OBJECT_AREA`, `TEXT_PANEL`. 모델 출력에서 흰 배경을 마스크로 제거한 뒤 상단 오브젝트 영역에 중앙 배치하고, 한글은 Windows 한글 폰트로 정확히 렌더링.
+- `tests/nvidia_asset_pipeline_check.py`에 오브젝트-only 프롬프트/합성 구조 정적 검증 2개 추가. RED 확인 후 구현했고, 관련 테스트 6개 통과.
+- 실제 NVIDIA Build 호출로 샘플 3종 재생성: `sample-letter-a.jpg`, `sample-word-oi.jpg`, `sample-hani.jpg`. `flux.1-dev`는 중간에 HTTP 500이 발생해 개별 재시도/모델 전환이 필요했고, `qwen-image`로 3종 생성 완료. API 키는 출력하지 않음.
+- 결과 판단: 이전 방식보다 훨씬 적합. 오브젝트와 한글이 분리되어 안정적이고, `오이`/`하니`는 학습 카드로 자연스러움. 다만 `ㅏ` 같은 자모 카드는 오브젝트보다 획순·기준선·입모양 중심의 별도 자모 템플릿이 더 적합할 수 있음.
+- 산출물: `assets/generated-cards/quality-samples/quality-samples.json` 및 JPEG 샘플 3종. 파이프라인 표기는 `nvidia-isolated-object-local-card-composition`.
+- 검증: `python -m pytest -q tests/*_check.py` → 82개 통과.
+
+### 2026-06-30 (Telegram) — NVIDIA Build 이미지 카드 asset 파이프라인 PoC
+
+- Hanguel에 외부 생성 이미지를 바로 코드 의존으로 묶지 않고, 정적 asset 교체형 파이프라인으로 먼저 붙임.
+- `.gitignore`에 `.env`/`.env.*` 차단과 `.env.example` 예외를 추가해 API 키가 git에 들어가지 않도록 함.
+- `tools/generate_nvidia_cards.py` 추가: local `.env`의 `NVIDIA_API_KEY`/`NVIDIA_IMAGE_ENDPOINT`를 읽고, `--dry-run`은 placeholder SVG, `--live`는 NVIDIA Build/NIM 이미지 endpoint 호출. 키는 출력하지 않음.
+- `assets/generated-cards/cards.json`과 placeholder SVG 3종(`hani-postbox`, `letter-a`, `word-oi`)을 생성하고 service worker cache를 `hangul-playground-v36`으로 올려 precache에 포함.
+- `tests/nvidia_asset_pipeline_check.py` 추가 및 기존 cache-version 테스트 v36 보정.
+- 검증: 신규 테스트 3개, 전체 정적 테스트 79개 통과. JS `node --check`, Python `py_compile`, 브라우저에서 cards.json/SVG fetch 및 콘솔 오류 없음 확인. 실제 API 호출은 아직 키가 없어 안전 실패 확인.
 
 ### 2026-06-17 (Telegram) — 가로 와이드 UI 통일 · 차등 피드백 · 획순 보강 · 문서 정리
 

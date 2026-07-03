@@ -1,0 +1,31 @@
+{
+  "cards": [
+    {
+      "id": "sample-letter-a",
+      "text": "ㅏ",
+      "label": "모음 ㅏ",
+      "object_name": "yellow chick with a small sunbeam",
+      "image": "assets/generated-cards/quality-samples/sample-letter-a.jpg",
+      "model": "qwen-image",
+      "pipeline": "nvidia-isolated-object-local-card-composition"
+    },
+    {
+      "id": "sample-word-oi",
+      "text": "오이",
+      "label": "오이",
+      "object_name": "cute cucumber character",
+      "image": "assets/generated-cards/quality-samples/sample-word-oi.jpg",
+      "model": "qwen-image",
+      "pipeline": "nvidia-isolated-object-local-card-composition"
+    },
+    {
+      "id": "sample-hani",
+      "text": "하니",
+      "label": "하니",
+      "object_name": "Hani yellow chick beside red star mailbox",
+      "image": "assets/generated-cards/quality-samples/sample-hani.jpg",
+      "model": "qwen-image",
+      "pipeline": "nvidia-isolated-object-local-card-composition"
+    }
+  ]
+}

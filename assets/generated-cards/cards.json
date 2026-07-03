@@ -1,0 +1,33 @@
+{
+  "source": "nvidia-build-pipeline",
+  "note": "Placeholder SVGs are safe static defaults; live NVIDIA generations can overwrite image files locally.",
+  "cards": [
+    {
+      "id": "hani-postbox",
+      "korean_text": "하니",
+      "label": "별빛 우체국의 하니",
+      "image": "assets/generated-cards/hani-postbox.png",
+      "prompt": "Warm hand-drawn Korean picture-book learning card for a 4-year-old child. A small yellow chick mascot named Hani stands beside a cozy red star-mailbox in Hangul village. Include one large clean Korean word '하니' on a wooden sign. Soft paper texture, rounded shapes, no photorealism, child-safe, iPad landscape app asset.",
+      "provider": "nvidia-build",
+      "model": "flux.1-dev"
+    },
+    {
+      "id": "letter-a",
+      "korean_text": "ㅏ",
+      "label": "모음 ㅏ 카드",
+      "image": "assets/generated-cards/letter-a.png",
+      "prompt": "Korean Hangul learning flashcard for preschool. Center one large accurate Korean vowel 'ㅏ' as friendly rounded lettering, with a tiny sunbeam and Hani chick nearby. Minimal background, warm hand-drawn picture-book style, high contrast, no extra text.",
+      "provider": "nvidia-build",
+      "model": "flux.1-dev"
+    },
+    {
+      "id": "word-oi",
+      "korean_text": "오이",
+      "label": "오이 단어 카드",
+      "image": "assets/generated-cards/word-oi.png",
+      "prompt": "Korean word learning card for preschool. Show a cute cucumber and one large clean Korean word '오이'. Hand-drawn picture-book style, soft colors, simple composition, readable Hangul, no other text.",
+      "provider": "nvidia-build",
+      "model": "flux.1-dev"
+    }
+  ]
+}

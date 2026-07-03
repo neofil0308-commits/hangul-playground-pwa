@@ -6,3 +6,12 @@ Thumbs.db
 audio/.normalized_v1
 
 _*.png
+
+# Local secrets — never commit real provider keys
+.env
+.env.*
+!.env.example
+
+# 로컬 전용 — 대용량 디자인 시안·세션 설정
+design reference/
+.claude/
