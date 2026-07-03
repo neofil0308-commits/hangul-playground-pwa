@@ -74,4 +74,4 @@ def test_hani_chick_refined_and_reusable_svg():
 
 # ---- 서비스워커 캐시 ----
 def test_service_worker_cache_v52():
-    assert "hangul-playground-v52" in SW
+    assert "hangul-playground-v53" in SW
