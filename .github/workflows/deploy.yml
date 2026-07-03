@@ -1,0 +1,41 @@
+name: Deploy static site to Pages
+
+# 정적 PWA를 GitHub Actions로 직접 배포한다.
+# (레거시 "브랜치에서 배포"의 Jekyll 파이프라인이 "Deployment failed, try again later"를
+#  간헐적으로 반복해서, 안정적인 Actions 배포 경로로 전환)
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 여러 커밋을 연달아 푸시해도 배포가 서로 충돌하지 않도록 직렬화한다.
+# (cancel-in-progress:false → 진행 중 배포는 끝까지 두고, 다음 배포는 큐에서 대기)
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # 저장소 루트 전체를 정적 자산으로 업로드(빌드 단계 없음). .nojekyll로 Jekyll 처리 생략.
+          path: '.'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
