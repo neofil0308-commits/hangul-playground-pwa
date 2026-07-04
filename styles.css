@@ -336,7 +336,7 @@ header .sub{font-family:'Gowun Dodum',sans-serif;font-weight:400;font-size:1.05r
 /* 헤더 마스코트 / 이야기 얼굴: 병아리 SVG를 글자 크기(em)에 맞춰 표시 */
 header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:auto;display:block;overflow:visible;}
 .m-listen{background:var(--listen);box-shadow:0 6px 0 var(--listen-d);}
-#lscore{font-family:'Jua',sans-serif;font-size:1.15rem;color:var(--listen-d);margin-top:2px;}
+#lscore{font-family:'Jua',sans-serif;font-size:1.15rem;color:var(--gold);margin-top:2px;}
 .mission{background:var(--cream2);border-radius:26px;padding:16px 16px 14px;margin:0 0 18px;box-shadow:0 7px 0 #E9D3B0,0 12px 20px rgba(120,80,40,.14);}
 .mission h3{margin:0 0 2px;font-size:1.2rem;text-align:center;color:var(--pri-d);}
 .story-hero{display:flex;gap:12px;align-items:center;background:var(--cream);border-radius:22px;padding:12px 14px;margin-bottom:12px;box-shadow:inset 0 0 0 2px rgba(232,154,78,.18);}
@@ -427,18 +427,27 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .cat-pills.lmode button.on{background:var(--listen);color:#fff;box-shadow:0 4px 0 var(--listen-d);}
 .listen-top{display:flex;flex-direction:column;align-items:center;}
 /* ===== 듣고 찾기: 가로 와이드 2존(왼쪽 소리 동굴 패널 / 오른쪽 큰 보기 카드) ===== */
-.listen-wrap{display:flex;flex-direction:row;align-items:stretch;justify-content:center;gap:22px;max-width:1060px;margin:0 auto;min-height:72vh;}
-/* 별빛 그림책 Phase2b: 소리 동굴/글자 찾기 상단 = 따뜻한 크림 패널(옛 하늘색 대체) */
-.listen-wrap .listen-top{flex:0 0 320px;justify-content:space-evenly;gap:8px;background:linear-gradient(180deg,#fffaee,#f5ead2);border-radius:28px;padding:18px 16px 20px;box-shadow:inset 0 0 0 3px #efdcbb;}
-.lc-hani{font-size:3rem;line-height:1;}
-.lc-letter{font-family:'Jua',sans-serif;font-size:5.2rem;line-height:1;color:var(--pri-d);text-shadow:0 3px 0 #fff;}
-.lc-q{font-family:'Jua',sans-serif;font-size:1.25rem;color:#8a715a;text-align:center;line-height:1.3;}
+/* 별빛 그림책 시안: 소리 동굴/글자 찾기 = 밤하늘 보라 '동굴' 풀패널 + 골드 별빛 */
+.listen-wrap{display:flex;flex-direction:row;align-items:stretch;justify-content:center;gap:22px;max-width:1060px;margin:0 auto;min-height:72vh;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(245,205,130,.55) 0 2px, transparent 3px),
+    radial-gradient(circle at 78% 14%, rgba(255,251,235,.45) 0 2px, transparent 3px),
+    radial-gradient(circle at 62% 76%, rgba(245,205,130,.35) 0 2px, transparent 3px),
+    radial-gradient(circle at 34% 58%, rgba(255,251,235,.28) 0 1.5px, transparent 2.5px),
+    linear-gradient(180deg,var(--night1) 0%,var(--night2) 62%,var(--night3) 100%);
+  border-radius:32px;padding:22px;box-shadow:0 10px 0 var(--night-shadow),0 18px 34px rgba(60,50,90,.35);}
+.listen-wrap .listen-top{flex:0 0 320px;justify-content:space-evenly;gap:8px;background:rgba(255,250,238,.08);border-radius:24px;padding:18px 16px 20px;box-shadow:inset 0 0 0 2px rgba(245,205,130,.3);}
+.lc-hani{font-size:2.2rem;line-height:1;width:64px;height:64px;display:flex;align-items:center;justify-content:center;border-radius:50%;
+  background:radial-gradient(circle at 40% 32%,#FBE7B5,#F2C87C);box-shadow:0 0 0 3px rgba(245,205,130,.55),0 4px 10px rgba(43,36,64,.45);}
+.lc-letter{font-family:'Jua',sans-serif;font-size:5.2rem;line-height:1;color:var(--gold);text-shadow:0 3px 0 rgba(43,36,64,.55);}
+.lc-q{font-family:'Jua',sans-serif;font-size:1.2rem;color:#F7EBD3;text-align:center;line-height:1.3;background:rgba(255,255,255,.13);padding:9px 16px;border-radius:18px;}
 .listen-wrap .bigplay{font-size:1.6rem;padding:18px 34px;}
 .lc-progress{display:flex;gap:6px;}
 .lc-bell{font-size:1.5rem;filter:grayscale(1);opacity:.35;transition:.2s;}
 .lc-bell.on{filter:none;opacity:1;transform:scale(1.12);}
 .lc-modes{display:flex;flex-direction:column;gap:6px;align-items:center;margin-top:2px;}
-.lc-score{font-family:'Jua',sans-serif;font-size:1.1rem;color:var(--listen-d);}
+.lc-score{font-family:'Jua',sans-serif;font-size:1.1rem;color:var(--gold);background:rgba(255,255,255,.12);padding:4px 16px;border-radius:999px;}
+.listen-wrap .feedback{color:#F7EBD3;}
 .listen-right{flex:1.05 1 0;min-width:0;display:flex;flex-direction:column;}
 .listen-wrap .listen-opts{display:grid;margin:0;max-width:none;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;align-content:center;flex:1;}
 @media (max-width:760px){.listen-wrap{flex-direction:column;gap:10px;min-height:0;}.listen-wrap .listen-top{flex:none;width:100%;}}
@@ -567,13 +576,16 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .intro-art.kb-b .scene{animation-name:kenburnsB;transform-origin:42% 58%;}
 @keyframes kenburnsA{from{transform:scale(1)}to{transform:scale(1.075) translateX(-1.2%)}}
 @keyframes kenburnsB{from{transform:scale(1.065) translateX(1.2%)}to{transform:scale(1)}}
-/* 자막: 장면 위 영상 자막 스타일 */
-.intro-cap{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);max-width:88%;margin:0;z-index:2;
-  font-family:'Gaegu',cursive;font-weight:700;font-size:1.55rem;line-height:1.35;color:var(--cream);
-  background:rgba(30,24,48,.78);padding:10px 24px;border-radius:16px;pointer-events:none;
-  box-shadow:0 4px 14px rgba(0,0,0,.3);}
+/* 자막: 별빛 그림책 시안의 크림 스토리 카드 (막 배지 + 이야기 전문 + 키워드 하이라이트) */
+.intro-cap{position:absolute;left:18px;bottom:16px;transform:none;max-width:min(58%,520px);margin:0;z-index:2;text-align:left;
+  font-family:'Gowun Dodum',sans-serif;font-weight:400;font-size:1.06rem;line-height:1.62;color:var(--ink);
+  background:linear-gradient(180deg,#FFFAEE,#FBF2DF);padding:14px 20px 15px;border-radius:20px;pointer-events:none;
+  box-shadow:0 10px 26px rgba(20,16,33,.45);}
+.intro-cap .cap-badge{display:inline-flex;align-items:center;gap:6px;font-family:'Jua',sans-serif;font-size:.92rem;color:var(--pri-d);background:#FBE9CC;padding:3px 12px;border-radius:999px;margin-bottom:7px;}
+.intro-cap .cap-body{display:block;}
+.intro-cap b{color:var(--pri-d);font-weight:700;}
 .intro-cap.enter{animation:capIn .9s ease both;}
-@keyframes capIn{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes capIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 /* 이전 장면 화살표: 무대 왼쪽에 살짝 */
 .cine-arrow{position:absolute;left:12px;top:50%;transform:translateY(-50%);z-index:3;width:48px;height:48px;
   border:none;border-radius:50%;background:rgba(30,24,48,.55);color:var(--cream);font-size:1.15rem;cursor:pointer;}
@@ -694,19 +706,32 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 /* 듣고찾기: 오답 시 정답 단어 강조(반복학습) */
 .lopt.reveal{outline:4px solid var(--quiz);outline-offset:2px;animation:pulse 0.7s ease-in-out 2;}
 .lopt .lwd{margin-top:2px;font-size:.95rem;color:var(--ink);}
-/* 글자 마무리 정리(recap) 팝업 */
-.recap-pop{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;background:rgba(60,40,90,.4);padding:20px;}
-.recap-card{background:#fffdf6;border-radius:30px;padding:24px 22px;max-width:340px;width:100%;text-align:center;box-shadow:0 16px 44px rgba(90,60,30,.35);border:4px solid var(--quiz);}
-.recap-title{font-size:1.3rem;color:var(--ink);}
-.recap-title b{font-size:1.7rem;color:var(--con-d);}
-.recap-big{font-size:4.2rem;color:var(--con-d);line-height:1.1;margin:4px 0;text-shadow:0 3px 0 #ffe1ab;}
+/* 글자 마무리 정리(recap) 팝업 — 별빛 그림책 시안 '참 잘했어요!' 골든 라이트레이 풀스크린 */
+.recap-pop{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;padding:20px;
+  background:
+    repeating-conic-gradient(from 8deg at 50% 42%, rgba(255,244,214,0) 0 24deg, rgba(255,236,190,.6) 24deg 34deg),
+    radial-gradient(circle at 50% 42%, #FDF3D7 0%, #F8E6BC 55%, #EFD49E 100%);}
+.recap-pop::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.9;
+  background:
+    radial-gradient(circle at 22% 18%, #E86A5E 0 5px, transparent 6px),
+    radial-gradient(circle at 74% 12%, #5E93D8 0 4px, transparent 5px),
+    radial-gradient(circle at 12% 72%, #F5CD82 0 5px, transparent 6px),
+    radial-gradient(circle at 86% 62%, #E88BB0 0 5px, transparent 6px),
+    radial-gradient(circle at 64% 86%, #7FC98E 0 4px, transparent 5px);}
+.recap-card{position:relative;background:none;border-radius:30px;padding:24px 22px;max-width:560px;width:100%;text-align:center;box-shadow:none;border:none;}
+.recap-title{font-size:2rem;color:var(--pri-d);text-shadow:0 2px 0 rgba(255,251,235,.8);}
+.recap-title b{font-size:2.4rem;color:var(--pri-d);}
+.recap-big{width:164px;height:164px;margin:16px auto 10px;display:flex;align-items:center;justify-content:center;font-size:4.4rem;color:#fff;line-height:1;border-radius:50%;
+  background:radial-gradient(circle at 38% 32%, #FBE7B5, #F2C87C 70%, #E8B25C);
+  box-shadow:0 0 0 10px rgba(255,240,200,.55),0 0 46px rgba(245,205,130,.9),0 12px 24px rgba(200,150,60,.35);
+  text-shadow:0 3px 0 rgba(198,119,46,.45);}
 .recap-words{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:8px 0 6px;}
 .recap-words .recap-w{display:flex;flex-direction:column;align-items:center;font-size:.95rem;color:#7a6248;}
 .recap-words .recap-w i{font-size:2rem;font-style:normal;}
-.recap-review{margin:10px 0 4px;font-size:1rem;color:#8a7250;background:#f3ecdd;border-radius:16px;padding:8px 12px;}
+.recap-review{margin:10px 0 4px;font-size:1rem;color:#8a7250;background:rgba(255,255,255,.55);border-radius:16px;padding:8px 12px;}
 .recap-review b{font-size:1.3rem;color:var(--vow-d);}
-.recap-next{margin-top:14px;font-family:'Jua',sans-serif;font-size:1.2rem;color:#fff;background:var(--quiz);border:none;border-radius:26px;padding:13px 26px;box-shadow:0 6px 0 var(--quiz-d);cursor:pointer;}
-.recap-next:active{transform:translateY(5px);box-shadow:0 1px 0 var(--quiz-d);}
+.recap-next{margin-top:16px;font-family:'Jua',sans-serif;font-size:1.35rem;color:#fff;background:linear-gradient(180deg,#F2A95C,var(--pri));border:none;border-radius:999px;padding:15px 34px;box-shadow:0 6px 0 var(--pri-d),0 10px 18px rgba(198,119,46,.35);cursor:pointer;}
+.recap-next:active{transform:translateY(5px);box-shadow:0 1px 0 var(--pri-d);}
 /* ===== 단어 동산: 가로 와이드 2존(왼쪽 세로 스택 / 오른쪽 큰 카드) ===== */
 #wordBuild .wb-wrap{max-width:1060px;margin:0 auto;display:flex;flex-direction:row;align-items:stretch;justify-content:center;gap:22px;padding:6px 14px 20px;min-height:76vh;}
 .wb-col{display:flex;flex-direction:column;min-width:0;}
@@ -811,6 +836,9 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .letter-progress .lp-star{font-style:normal;font-size:1rem;line-height:1;opacity:.35;color:#b9c6d6;}
 .letter-progress .lp-star.on{opacity:1;}
 .letter-progress .lp-count{font-family:'Jua',sans-serif;font-size:.85rem;color:#e08a3c;}
+/* 별빛 그림책 시안 '편지 살리기': 골드 진행바 */
+.letter-progress .lp-bar{display:block;width:100%;min-width:150px;height:10px;border-radius:999px;background:rgba(255,255,255,.18);overflow:hidden;margin:3px 0 1px;}
+.letter-progress .lp-fill{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#F5CD82,#E8A94E);box-shadow:0 0 8px rgba(245,205,130,.8);transition:width .4s ease;}
 /* 별빛 그림책 Phase2b: 조립 트레이 카드(글자 공방·단어 동산) = 자모 캐릭터(jamoCharSVG).
    버튼은 투명 컨테이너로 두고, 둥근 색 타일+귀여운 얼굴+흰 글리프 SVG가 그대로 보인다.
    자음=블루(#6E9AC2), 모음=로즈(#D98BA6) — 색은 SVG가 직접 칠하므로 CSS 배경은 없앤다. */

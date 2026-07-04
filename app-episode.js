@@ -97,6 +97,7 @@ function letterProgressHTML(){
   return '<div class="letter-progress" aria-label="별빛 편지 — 되찾은 조각 '+got+'/'+total+'">'
     +'<span class="lp-letter">'+(got>=total?'💌':'✉️')+'</span>'
     +'<span class="lp-body"><span class="lp-title">별빛 편지</span>'
+    +'<span class="lp-bar"><i class="lp-fill" style="width:'+Math.round(got/total*100)+'%"></i></span>'
     +'<span class="lp-stars">'+stars+'</span>'
     +'<span class="lp-count">'+got+'/'+total+' 조각 되찾음</span></span></div>';
 }
@@ -260,6 +261,12 @@ function setIntroAutoUI(on){ // 상태·버튼 표시만 갱신(내레이션은 
   if(!on)cancelIntroAuto();
 }
 function setIntroAuto(on){setIntroAutoUI(on);if(on)speakIntro();} // 다시 켜면 지금 쪽부터 읽고 이어서 진행
+// 시안 스토리 카드 자막: 막 배지(📖 제N막 · 장소) + 본문(hl 키워드는 주황 강조).
+function capCardHTML(badge,text,hl){
+  var body=String(text||'');
+  if(hl){var i=body.indexOf(hl);if(i>=0)body=body.slice(0,i)+'<b>'+hl+'</b>'+body.slice(i+hl.length);}
+  return (badge?'<span class="cap-badge">📖 '+badge+'</span>':'')+'<span class="cap-body">'+body+'</span>';
+}
 function renderIntroPage(){
   var p=INTRO_PAGES[introIdx];if(!p)return;
   var art=document.getElementById('introArt');
@@ -271,7 +278,7 @@ function renderIntroPage(){
     art.classList.remove('enter');void art.offsetWidth;art.classList.add('enter');
   }
   var cap=document.getElementById('introCap');
-  if(cap){cap.textContent=p.cap;cap.classList.remove('enter');void cap.offsetWidth;cap.classList.add('enter');}
+  if(cap){cap.innerHTML=capCardHTML('서장 · 별빛 우체국',p.say||p.cap,p.hl);if(typeof twemojify==='function')twemojify(cap);cap.classList.remove('enter');void cap.offsetWidth;cap.classList.add('enter');}
   var dots=document.getElementById('introDots');
   if(dots)dots.innerHTML=INTRO_PAGES.map(function(_,i){return '<i class="idot'+(i===introIdx?' on':'')+'"></i>';}).join('');
   var prev=document.getElementById('introPrev');if(prev)prev.style.visibility=(introIdx===0)?'hidden':'visible';
@@ -335,7 +342,9 @@ function renderActIntroPage(){
     art.classList.toggle('kb-b',actIntroPage%2===1);
     art.classList.remove('enter');void art.offsetWidth;art.classList.add('enter');}
   var cap=document.getElementById('introCap');
-  if(cap){cap.textContent=p.cap;cap.classList.remove('enter');void cap.offsetWidth;cap.classList.add('enter');}
+  if(cap){var a=(typeof actCurriculum==='function')?actCurriculum(actIntroAct):null;
+    var badge='제 '+actIntroAct+' 막'+(a&&a.place?' · '+a.place:'');
+    cap.innerHTML=capCardHTML(badge,p.say||p.cap,p.hl);if(typeof twemojify==='function')twemojify(cap);cap.classList.remove('enter');void cap.offsetWidth;cap.classList.add('enter');}
   var dots=document.getElementById('introDots');
   if(dots)dots.innerHTML=pages.map(function(_,i){return '<i class="idot'+(i===actIntroPage?' on':'')+'"></i>';}).join('');
   var prev=document.getElementById('introPrev');if(prev)prev.style.visibility=(actIntroPage===0)?'hidden':'visible';

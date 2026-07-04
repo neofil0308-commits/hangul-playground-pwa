@@ -75,10 +75,12 @@ def test_prominent_jamo_rendered_with_jamocharsvg_phase2b():
     assert "b.textContent=j;" not in LEARN
 
 
-def test_listen_find_screens_warmed_to_cream_palette():
-    # 소리 동굴/글자 찾기 상단 패널이 옛 하늘색이 아닌 따뜻한 크림으로.
+def test_listen_find_screens_night_cave_panel():
+    # 별빛 그림책 시안: 소리 동굴/글자 찾기 = 밤하늘 보라 '동굴' 풀패널 + 골드 별빛.
     assert ".listen-wrap .listen-top{flex:0 0 320px" in CSS
-    assert "background:linear-gradient(180deg,#fffaee,#f5ead2)" in CSS
+    assert "linear-gradient(180deg,var(--night1) 0%,var(--night2) 62%,var(--night3) 100%)" in CSS
+    # 상단 패널은 밤 패널 위 반투명 카드.
+    assert "background:rgba(255,250,238,.08)" in CSS
     # '다시 듣기' 메인 CTA는 도톰한 오렌지(홈과 통일).
     assert ".bigplay{" in CSS
     assert "background:var(--pri);box-shadow:0 6px 0 var(--pri-d)" in CSS
@@ -96,4 +98,4 @@ def test_hani_chick_refined_and_reusable_svg():
 
 # ---- 서비스워커 캐시 ----
 def test_service_worker_cache_v52():
-    assert "hangul-playground-v62" in SW
+    assert "hangul-playground-v63" in SW
