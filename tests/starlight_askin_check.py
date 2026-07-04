@@ -86,16 +86,17 @@ def test_listen_find_screens_night_cave_panel():
     assert "background:var(--pri);box-shadow:0 6px 0 var(--pri-d)" in CSS
 
 
-# ---- 3) 하니 병아리 ----
+# ---- 3) 하니 병아리 (design reference 'Hani' 컴포넌트 원본 이식) ----
 def test_hani_chick_refined_and_reusable_svg():
     assert "function aiHaniSVG" in DATA
-    # 더 둥근 병아리: 큰 머리 색 + 발그레 볼.
-    assert "#ffdd63" in DATA  # 큰 머리
-    assert "#ff9eb0" in DATA  # 볼 blush
+    assert "function aiHaniCore" in DATA
+    # 시안 원본 팔레트: 몸 #F7C24C + 발그레 볼 #F49E9A.
+    assert "#F7C24C" in DATA  # 몸
+    assert "#F49E9A" in DATA  # 볼 blush
     # 헤더/이야기 얼굴을 병아리 SVG로 교체.
     assert "aiHaniSVG()" in HTML
 
 
 # ---- 서비스워커 캐시 ----
 def test_service_worker_cache_v52():
-    assert "hangul-playground-v64" in SW
+    assert "hangul-playground-v65" in SW

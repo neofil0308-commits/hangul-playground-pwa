@@ -49,12 +49,20 @@ const MENU=[
   {id:'listen',ic:'🔊',label:'듣고 찾기',cls:'m-listen'},{id:'sticker',ic:'🏅',label:'내 스티커',cls:'m-sticker'},{id:'set',ic:'⚙️',label:'설정',cls:'m-set'},
 ];
 // 한글 마을 지도: 오늘의 모험 장소만 노출. 글자 숲/단어 동산은 자유찾기 화면 대신 오늘의 모험으로 바로 진입(action).
+// mx/my = 시안 별자리 지도의 노드 위치(%). 경로 좌표와 함께 design reference에서 이식.
 const MAP_PLACES=[
-  {id:'letters',target:'letters',ic:'🌳',place:'글자 숲',hint:'오늘의 글자 친구를 만나요',quest:'letter',action:'letter'},
-  {id:'word',target:'word',ic:'🌼',place:'단어 동산',hint:'오늘의 단어 꽃을 찾아요',quest:'word',action:'word'},
-  {id:'listen',target:'listen',ic:'🔊',place:'소리 동굴',hint:'하니 목소리를 따라 찾아요',quest:'play'},
-  {id:'sticker',target:'sticker',ic:'🏅',place:'스티커 집',hint:'모험 보상을 모아봐요'},
+  {id:'letters',target:'letters',ic:'🌳',place:'글자 숲',hint:'오늘의 글자 친구를 만나요',quest:'letter',action:'letter',mx:34.7,my:82.6},
+  {id:'word',target:'word',ic:'🌼',place:'단어 동산',hint:'오늘의 단어 꽃을 찾아요',quest:'word',action:'word',mx:50.8,my:56.1},
+  {id:'listen',target:'listen',ic:'🔊',place:'소리 동굴',hint:'하니 목소리를 따라 찾아요',quest:'play',mx:67.7,my:35.6},
+  {id:'sticker',target:'sticker',ic:'🏅',place:'스티커 집',hint:'모험 보상을 모아봐요',mx:57.3,my:18.9},
 ];
+// 별자리 지도 코인 일러스트(시안 '글자 숲' 원본 + 같은 결의 장소 3종).
+const MAP_ART={
+  letters:'<svg viewBox="0 0 100 100"><rect width="100" height="100" fill="#EAF0DC"/><circle cx="74" cy="26" r="12" fill="#F4D488" opacity="0.85"/><ellipse cx="50" cy="90" rx="62" ry="22" fill="#BBD39B"/><rect x="29" y="52" width="7" height="27" rx="3" fill="#9A7048"/><circle cx="32" cy="46" r="16" fill="#8FB87A"/><circle cx="45" cy="53" r="11" fill="#7FAE6C"/><rect x="62" y="58" width="6" height="21" rx="3" fill="#9A7048"/><circle cx="65" cy="52" r="12" fill="#9DBE86"/></svg>',
+  word:'<svg viewBox="0 0 100 100"><rect width="100" height="100" fill="#F3EDD9"/><circle cx="26" cy="24" r="11" fill="#F4D488" opacity="0.85"/><ellipse cx="50" cy="88" rx="62" ry="26" fill="#C6DCA0"/><path d="M35 74 Q37 60 34 52" stroke="#7F9E5A" stroke-width="3.4" fill="none" stroke-linecap="round"/><circle cx="33" cy="47" r="9" fill="#EF9AA0"/><circle cx="33" cy="47" r="3.4" fill="#F4D488"/><path d="M63 78 Q65 66 68 60" stroke="#7F9E5A" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="69" cy="55" r="7.5" fill="#B79BC4"/><circle cx="69" cy="55" r="2.8" fill="#FFF4D8"/></svg>',
+  listen:'<svg viewBox="0 0 100 100"><rect width="100" height="100" fill="#E6E1F0"/><ellipse cx="50" cy="92" rx="62" ry="20" fill="#B0A6C6"/><ellipse cx="50" cy="60" rx="36" ry="32" fill="#7A6C99"/><ellipse cx="50" cy="58" rx="29" ry="26" fill="#6E5F8E"/><ellipse cx="50" cy="72" rx="17" ry="22" fill="#352E52"/><text x="67" y="34" font-family="Jua, sans-serif" font-size="15" fill="#F4D488">♪</text></svg>',
+  sticker:'<svg viewBox="0 0 100 100"><rect width="100" height="100" fill="#F7EAD3"/><ellipse cx="50" cy="92" rx="62" ry="20" fill="#E3CBA0"/><rect x="28" y="46" width="44" height="34" rx="5" fill="#F2D9A6"/><path d="M22 48 L50 26 L78 48 Z" fill="#D9906A"/><rect x="44" y="60" width="12" height="20" rx="3" fill="#B07848"/><path d="M50 34 l2.4 5.2 5.7.6 -4.2 3.9 1.1 5.6 -5 -2.7 -5 2.7 1.1 -5.6 -4.2 -3.9 5.7 -.6 Z" fill="#F4C879"/></svg>',
+};
 const CHO=['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
 const JUNG=['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
 const JONG=['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
@@ -331,43 +339,79 @@ function aiBub(x,y,r,ch,fill,eye,cls){cls=cls||'';
   return '<g transform="translate('+x+','+y+')">'+(cls?'<g class="'+cls+'">'+body+'</g>':body)+'</g>';
 }
 function aiOp(x,ch){return '<text x="'+x+'" y="122" font-family="Jua, sans-serif" font-size="30" fill="#fff" text-anchor="middle" opacity="0.9">'+ch+'</text>';}
-function aiHani(x,y,s,cls,sing){s=(s==null?1:s);cls=cls||'';
-  // 별빛 그림책: 더 둥글고 포동포동한 아기 병아리 — 큰 머리, 통통한 몸, 발그레 볼, 방긋 얼굴.
-  var mouth=sing
-    ?'<ellipse cx="0" cy="-3" rx="3.4" ry="4.4" fill="#f0703f"/>'                       // 노래(입 벌림)
-    :'<path d="M-3.4,-8 Q0,-4.2 3.4,-8 Q0,-5.4 -3.4,-8 Z" fill="#ffa23c"/>';            // 방긋 부리
-  return '<g transform="translate('+x+','+y+') scale('+s+')"><g class="hani '+cls+'">'
-    +'<ellipse cx="0" cy="24" rx="17" ry="4.6" fill="#000" fill-opacity="0.12"/>'          // 바닥 그림자
-    +'<ellipse cx="0" cy="8" rx="17" ry="16.5" fill="#ffd75a"/>'                           // 통통한 몸
-    +'<ellipse cx="0" cy="8" rx="17" ry="16.5" fill="#fff" fill-opacity="0.16"/>'          // 윗 하이라이트(부드러움)
-    +'<ellipse cx="0" cy="13" rx="10.5" ry="11" fill="#fff6d8" fill-opacity="0.7"/>'       // 포근한 크림 배(별빛 그림책)
-    +'<ellipse cx="-16" cy="9" rx="5.2" ry="9.5" fill="#ffc62e"/><ellipse cx="16" cy="9" rx="5.2" ry="9.5" fill="#ffc62e"/>'  // 날개
-    +'<circle cx="0" cy="-11" r="14" fill="#ffdd63"/>'                                     // 큰 머리
-    +'<circle cx="-4.5" cy="-15" r="5" fill="#fff" fill-opacity="0.35"/>'                  // 머리 광택
-    +'<circle cx="-5.4" cy="-12" r="2.5" fill="#3a2a1a"/><circle cx="5.4" cy="-12" r="2.5" fill="#3a2a1a"/>'  // 눈
-    +'<circle cx="-4.6" cy="-13" r="0.9" fill="#fff"/><circle cx="6.2" cy="-13" r="0.9" fill="#fff"/>'        // 눈 반짝
-    +mouth
-    +'<ellipse cx="-9.5" cy="-6.5" rx="3.2" ry="2.3" fill="#ff9eb0" opacity="0.75"/><ellipse cx="9.5" cy="-6.5" rx="3.2" ry="2.3" fill="#ff9eb0" opacity="0.75"/>'  // 발그레 볼
-    +'<path d="M-3,-25 q3,-5.5 5.5,-1 M3,-25 q3,-4.5 4.5,0" fill="none" stroke="#ffb02e" stroke-width="2.3" stroke-linecap="round"/>'  // 머리 깃털
-    +'<path d="M-6,25 l-3.2,5.4 M6,25 l3.2,5.4" stroke="#ffa23c" stroke-width="3" stroke-linecap="round"/>'  // 발
-    +'</g></g>';
+// 시안 원본 하니(design reference 'Hani' 컴포넌트, viewBox 0 0 100 100)를 그대로 이식.
+// 표정 토글: 날개(기본↓/응원↑) · 눈(뜸/웃음/감음) · 부리(닫힘/열림) · 반짝 · zzz.
+function aiHaniCore(opts){opts=opts||{};
+  var wingsUp=!!opts.wingsUp,eyes=opts.eyes||'open',beakOpen=!!opts.beakOpen;
+  var b='';
+  // 발 (세 발가락)
+  b+='<path d="M43 86 l-4 9 M43 86 l0 9 M43 86 l4 9" stroke="#EE8B2C" stroke-width="3.2" fill="none" stroke-linecap="round"/>'
+    +'<path d="M57 86 l-4 9 M57 86 l0 9 M57 86 l4 9" stroke="#EE8B2C" stroke-width="3.2" fill="none" stroke-linecap="round"/>'
+  // 머리 깃털 3가닥
+    +'<path d="M50 25 C48 15 49 11 50 9 C52 12 52 18 53 24 Z" fill="#F0A833"/>'
+    +'<path d="M44 26 C41 18 40 14 40 12 C44 15 46 21 48 25 Z" fill="#F0A833"/>'
+    +'<path d="M56 26 C59 18 60 14 60 12 C56 15 54 21 52 25 Z" fill="#F0A833"/>';
+  // 날개
+  b+=wingsUp
+    ?'<ellipse cx="17" cy="42" rx="7" ry="12" fill="#F3B63E" transform="rotate(-38 17 42)"/><ellipse cx="83" cy="42" rx="7" ry="12" fill="#F3B63E" transform="rotate(38 83 42)"/>'
+    :'<ellipse cx="22" cy="57" rx="8.5" ry="13" fill="#F3B63E"/><ellipse cx="78" cy="57" rx="7" ry="11" fill="#F0AE39" opacity="0.9"/>';
+  // 몸통 + 배 음영 + 하이라이트 + 외곽선
+  b+='<ellipse cx="50" cy="55" rx="33" ry="34" fill="#F7C24C"/>'
+    +'<ellipse cx="53" cy="66" rx="26" ry="21" fill="#E89A34" opacity="0.30"/>'
+    +'<ellipse cx="40" cy="42" rx="18" ry="16" fill="#FFE9A8" opacity="0.75"/>'
+    +'<ellipse cx="50" cy="55" rx="33" ry="34" fill="none" stroke="#E7A238" stroke-width="1.4" opacity="0.6"/>'
+  // 발그레 볼
+    +'<ellipse cx="34" cy="61" rx="5" ry="3.3" fill="#F49E9A" opacity="0.65"/>'
+    +'<ellipse cx="66" cy="61" rx="5" ry="3.3" fill="#F49E9A" opacity="0.65"/>';
+  // 눈
+  if(eyes==='happy')b+='<path d="M36 54 Q42 46 48 54" stroke="#3B2A1E" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M52 54 Q58 46 64 54" stroke="#3B2A1E" stroke-width="3" fill="none" stroke-linecap="round"/>';
+  else if(eyes==='sleep')b+='<path d="M36 52 Q42 57 48 52" stroke="#3B2A1E" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M52 52 Q58 57 64 52" stroke="#3B2A1E" stroke-width="2.6" fill="none" stroke-linecap="round"/>';
+  else b+='<ellipse cx="42" cy="52" rx="6" ry="7" fill="#3B2A1E"/><ellipse cx="58" cy="52" rx="6" ry="7" fill="#3B2A1E"/>'
+    +'<circle cx="40" cy="49" r="2" fill="#ffffff"/><circle cx="56" cy="49" r="2" fill="#ffffff"/>'
+    +'<circle cx="43.5" cy="54.5" r="1" fill="#ffffff" opacity="0.6"/><circle cx="59.5" cy="54.5" r="1" fill="#ffffff" opacity="0.6"/>';
+  // 부리
+  b+=beakOpen
+    ?'<ellipse cx="50" cy="64" rx="6" ry="5.5" fill="#EF8B2A"/><path d="M44.5 62 L55.5 62 L50 58 Z" fill="#F6A23C"/><ellipse cx="50" cy="66" rx="2.6" ry="2.2" fill="#C96A1E"/>'
+    :'<path d="M45.5 60 L54.5 60 L50 57 Z" fill="#F6A23C"/><path d="M45.5 60 L54.5 60 L50 66 Z" fill="#EF8B2A"/>';
+  if(opts.sparkles)b+='<path d="M14 30 l1.6 3.6 3.6 1.6 -3.6 1.6 -1.6 3.6 -1.6 -3.6 -3.6 -1.6 3.6 -1.6 Z" fill="#F5C24A"/><path d="M86 34 l1.2 2.7 2.7 1.2 -2.7 1.2 -1.2 2.7 -1.2 -2.7 -2.7 -1.2 2.7 -1.2 Z" fill="#F5C24A"/>';
+  if(opts.zzz)b+='<text x="76" y="30" font-family="Jua, sans-serif" font-size="13" fill="#9DB2C4">z</text><text x="84" y="22" font-family="Jua, sans-serif" font-size="9" fill="#B7C7D5">z</text>';
+  return b;
 }
-// 별빛 그림책: 헤더/이야기 얼굴용 독립 SVG 래퍼(장면과 같은 병아리). 가볍게 유지.
-function aiHaniSVG(cls){return '<svg class="hani-svg" viewBox="-24 -30 48 62" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="병아리 하니">'+aiHani(0,0,1,cls||'')+'</svg>';}
-// 별빛 그림책 Phase2a: 글자 숲의 큰 자모 캐릭터 — 둥근 사각 타일 + 귀여운 얼굴 + 흰 글리프.
-// isVowel=true면 모음(로즈 #D98BA6), 아니면 자음(블루 #6E9AC2). 컨테이너 크기에 맞춰 스케일.
+// 장면용 하니: cls에 determined(응원)/joy(기쁨)/sleep(졸림)/dash·search(이동 애니), sing=부리 열림.
+function aiHani(x,y,s,cls,sing){s=(s==null?1:s);cls=cls||'';
+  var cheer=cls.indexOf('determined')>=0;
+  var core=aiHaniCore({wingsUp:cheer,eyes:cls.indexOf('joy')>=0?'happy':(cls.indexOf('sleep')>=0?'sleep':'open'),
+    beakOpen:!!sing||cheer||cls.indexOf('joy')>=0,sparkles:cheer,zzz:cls.indexOf('sleep')>=0});
+  return '<g transform="translate('+x+','+y+') scale('+s+')"><g class="hani '+cls+'">'
+    +'<g transform="translate(-31,-32.2) scale(0.62)">'
+    +'<ellipse cx="50" cy="97" rx="27" ry="5.5" fill="#000" fill-opacity="0.12"/>'
+    +core+'</g></g></g>';
+}
+// 헤더/이야기 얼굴용 코인 아바타(시안 원본): 크림 코인 배경 + 하니.
+function aiHaniSVG(cls){
+  return '<svg class="hani-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="병아리 하니">'
+    +'<circle cx="50" cy="50" r="50" fill="#FBEAC0"/><circle cx="43" cy="41" r="40" fill="#FFF4D8" opacity="0.55"/>'
+    +'<g class="hani '+(cls||'')+'">'+aiHaniCore({beakOpen:cls==='sing'})+'</g></svg>';
+}
+// 시안 원본 자모 캐릭터(design reference 'Jamo' 컴포넌트, viewBox 0 0 100 100)를 그대로 이식.
+// 밝은 앞머리 블롭 + 그 위 큰 눈 + 옆 볼 + 아래 안쪽 그림자 + 흰 글리프(하단 2/3 중앙).
 function jamoCharSVG(ch,isVowel){
-  var main=isVowel?'#D98BA6':'#6E9AC2';   // 타일 본색
-  var shad=isVowel?'#BC7591':'#527497';   // 아래 그림자(더 진한 톤)
+  var c=isVowel
+    ?{base:'#E39FAD',dark:'#BD7686',hi:'#F6CBD3',blush:'#EF9AA0',eye:'#6E3B47'}   // 모음 로즈
+    :{base:'#6E9AC2',dark:'#456F98',hi:'#B6D0E6',blush:'#F2A8A2',eye:'#26405C'};  // 자음 블루
   var g=String(ch==null?'':ch).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   return '<svg class="jamo-char" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="자모 '+g+'">'
-    +'<rect x="9" y="14" width="82" height="82" rx="30" fill="'+shad+'"/>'                          // 부드러운 아래 그림자
-    +'<rect x="9" y="9" width="82" height="82" rx="30" fill="'+main+'"/>'                            // 둥근 사각 타일
-    +'<rect x="21" y="16" width="58" height="24" rx="12" fill="#ffffff" opacity="0.16"/>'            // 윗 광택
-    +'<text x="50" y="57" text-anchor="middle" dominant-baseline="middle" font-family="Jua, sans-serif" font-size="46" fill="#ffffff">'+g+'</text>'  // 흰 글리프(가운데)
-    +'<circle cx="37" cy="38" r="3.6" fill="#33404a"/><circle cx="63" cy="38" r="3.6" fill="#33404a"/>'  // 두 눈
-    +'<circle cx="38" cy="37" r="1" fill="#ffffff"/><circle cx="64" cy="37" r="1" fill="#ffffff"/>'      // 눈 반짝
-    +'<ellipse cx="27" cy="51" rx="6.4" ry="4.2" fill="#ff9ec2" opacity="0.5"/><ellipse cx="73" cy="51" rx="6.4" ry="4.2" fill="#ff9ec2" opacity="0.5"/>'  // 발그레 볼
+    +'<rect x="9" y="9" width="82" height="82" rx="30" ry="30" fill="'+c.base+'"/>'
+    +'<path d="M50 91 h29 a12 12 0 0 0 12 -12 v-22 a44 44 0 0 1 -82 22 v0 a12 12 0 0 0 12 12 Z" fill="'+c.dark+'" opacity="0.30"/>'
+    +'<ellipse cx="36" cy="29" rx="19" ry="12" fill="'+c.hi+'" opacity="0.5"/>'
+    +'<rect x="9" y="9" width="82" height="82" rx="30" ry="30" fill="none" stroke="'+c.dark+'" stroke-width="1.6" opacity="0.55"/>'
+    +'<ellipse cx="26" cy="38" rx="5.2" ry="3.4" fill="'+c.blush+'" opacity="0.7"/>'
+    +'<ellipse cx="74" cy="38" rx="5.2" ry="3.4" fill="'+c.blush+'" opacity="0.7"/>'
+    +'<ellipse cx="39" cy="28" rx="4.6" ry="5.6" fill="'+c.eye+'"/>'
+    +'<ellipse cx="61" cy="28" rx="4.6" ry="5.6" fill="'+c.eye+'"/>'
+    +'<circle cx="37.6" cy="25.8" r="1.6" fill="#ffffff"/><circle cx="59.6" cy="25.8" r="1.6" fill="#ffffff"/>'
+    +'<text x="50" y="64" text-anchor="middle" dominant-baseline="central" font-family="Jua, sans-serif" font-size="44" fill="rgba(0,0,0,0.18)" transform="translate(0,2)">'+g+'</text>'
+    +'<text x="50" y="64" text-anchor="middle" dominant-baseline="central" font-family="Jua, sans-serif" font-size="44" fill="#ffffff">'+g+'</text>'
     +'</svg>';
 }
 function aiScene(label,sky0,sky1,inner){

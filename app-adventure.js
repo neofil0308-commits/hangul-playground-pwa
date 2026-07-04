@@ -2,15 +2,31 @@
 // Depends on app-data.js/app-state.js and UI helpers from the main app script.
 
 const mapGrid=document.getElementById('mapGrid');
+// 별자리 지도(시안 원본): 밤하늘에 점선 별자리 경로 + 장소 노드.
+// 완료=금빛 별, 현재=장소 일러스트 코인, 미래=반투명 원. 경로·좌표·스타일 모두 design reference 이식.
 function buildAdventureMap(){
   if(!mapGrid)return;
   mapGrid.innerHTML='';
+  var deco=document.createElement('div');
+  deco.className='map-sky';
+  deco.innerHTML=
+    '<svg class="map-const" viewBox="0 0 620 660" preserveAspectRatio="none"><path d="M95,600 L215,545 L150,430 L315,370 L255,255 L420,235 L355,125 L505,75" fill="none" stroke="#F5D488" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 16" opacity="0.85"/></svg>'
+    +'<i class="map-tw" style="left:10%;top:9%">✦</i><i class="map-tw t2" style="right:13%;top:20%">✦</i><i class="map-tw t3" style="left:19%;top:33%">✦</i><i class="map-tw t2" style="right:20%;bottom:19%">✦</i>'
+    +'<span class="map-dot" style="left:24.2%;top:65.2%;width:34px;height:34px"></span>'
+    +'<span class="map-dot" style="left:41.1%;top:38.6%;width:30px;height:30px"></span>'
+    +'<span class="map-startstar" style="left:15.3%;top:90.9%"><svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><path d="M12 2.5l2.7 5.9 6.4.7-4.8 4.3 1.3 6.3L12 16.9 6.1 19.7l1.3-6.3L2.6 9.1l6.4-.7z"/></svg></span>'
+    +'<span class="map-post" style="left:81.5%;top:11.4%"><i class="map-post-circle"><svg width="30" height="26" viewBox="0 0 28 24" fill="none" stroke="#F5D488" stroke-width="1.8"><rect x="2" y="4" width="24" height="16" rx="2.5"/><path d="M2.5 6l11.5 8L25.5 6"/></svg></i><i class="map-post-name">별빛 우체국</i></span>';
+  mapGrid.appendChild(deco);
   MAP_PLACES.forEach(function(p){
     var b=document.createElement('button');
     b.className='map-node';
     b.dataset.target=p.target;
     b.dataset.quest=p.quest||'';
-    b.innerHTML='<span class="map-ic">'+p.ic+'</span><span class="map-copy"><b>'+p.place+'</b><small>'+p.hint+'</small></span>';
+    if(!p.quest)b.classList.add('map-free'); // 퀘스트 없는 장소(스티커 집)는 늘 일러스트 코인
+    b.style.left=p.mx+'%';b.style.top=p.my+'%';
+    b.innerHTML='<span class="map-coin"><span class="map-art">'+((typeof MAP_ART!=='undefined'&&MAP_ART[p.id])||'')+'</span>'
+      +'<span class="map-star"><svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M12 2.5l2.7 5.9 6.4.7-4.8 4.3 1.3 6.3L12 16.9 6.1 19.7l1.3-6.3L2.6 9.1l6.4-.7z"/></svg></span></span>'
+      +'<span class="map-name">'+p.place+'</span>';
     b.addEventListener('click',function(){
       if(p.action==='letter')openTodayLetter();
       else if(p.action==='word')openWordBuild(todayWord[0],todayWord[1]);
