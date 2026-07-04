@@ -64,4 +64,4 @@ def test_writing_file_keeps_canvas_and_audio_behavior_tokens():
 
 def test_service_worker_precaches_external_writing_file_with_new_cache_version():
     assert "./app-writing.js" in SW
-    assert "hangul-playground-v63" in SW
+    assert "hangul-playground-v64" in SW

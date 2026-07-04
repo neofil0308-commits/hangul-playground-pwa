@@ -579,17 +579,18 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 /* 자막: 별빛 그림책 시안의 크림 스토리 카드 (막 배지 + 이야기 전문 + 키워드 하이라이트) */
 .intro-cap{position:absolute;left:18px;bottom:16px;transform:none;max-width:min(58%,520px);margin:0;z-index:2;text-align:left;
   font-family:'Gowun Dodum',sans-serif;font-weight:400;font-size:1.06rem;line-height:1.62;color:var(--ink);
-  background:linear-gradient(180deg,#FFFAEE,#FBF2DF);padding:14px 20px 15px;border-radius:20px;pointer-events:none;
-  box-shadow:0 10px 26px rgba(20,16,33,.45);}
-.intro-cap .cap-badge{display:inline-flex;align-items:center;gap:6px;font-family:'Jua',sans-serif;font-size:.92rem;color:var(--pri-d);background:#FBE9CC;padding:3px 12px;border-radius:999px;margin-bottom:7px;}
+  background:linear-gradient(180deg,rgba(255,250,238,.86),rgba(251,242,223,.84));padding:14px 20px 15px;border-radius:20px;pointer-events:none;
+  box-shadow:0 10px 26px rgba(20,16,33,.35);}
+.intro-cap .cap-badge{display:inline-flex;align-items:center;gap:6px;font-family:'Jua',sans-serif;font-size:.92rem;color:var(--pri-d);background:rgba(251,233,204,.92);padding:3px 12px;border-radius:999px;margin-bottom:7px;}
 .intro-cap .cap-body{display:block;}
 .intro-cap b{color:var(--pri-d);font-weight:700;}
 .intro-cap.enter{animation:capIn .9s ease both;}
 @keyframes capIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-/* 이전 장면 화살표: 무대 왼쪽에 살짝 */
-.cine-arrow{position:absolute;left:12px;top:50%;transform:translateY(-50%);z-index:3;width:48px;height:48px;
-  border:none;border-radius:50%;background:rgba(30,24,48,.55);color:var(--cream);font-size:1.15rem;cursor:pointer;}
-.cine-arrow:active{background:rgba(30,24,48,.85);}
+/* 이전 버튼: 플레이어 바에서 '다음' 옆, 크림 보조 알약 */
+.intro-prev{flex:0 0 auto;font-family:'Jua',sans-serif;border:none;cursor:pointer;border-radius:26px;
+  font-size:1.15rem;color:var(--cream);background:rgba(251,242,223,.14);padding:0 20px;height:52px;
+  box-shadow:inset 0 0 0 2px rgba(251,242,223,.28);}
+.intro-prev:active{background:rgba(251,242,223,.3);}
 /* 플레이어 바: ⏸ · 🔊 · 진행바 · 쪽점 · 다음/모험 떠나기 */
 .cinema-bar{display:flex;align-items:center;gap:10px;margin-top:12px;padding:2px 6px 6px;}
 .intro-auto,.intro-hear{flex:0 0 auto;width:50px;height:50px;border:none;border-radius:50%;cursor:pointer;

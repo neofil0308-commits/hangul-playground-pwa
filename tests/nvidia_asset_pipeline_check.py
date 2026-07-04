@@ -65,7 +65,7 @@ def test_generated_card_manifest_is_static_app_asset():
     assert "hani-postbox" in manifest
     assert "korean_text" in manifest
     assert "./assets/generated-cards/cards.json" in sw
-    assert "hangul-playground-v63" in sw
+    assert "hangul-playground-v64" in sw
 
 
 def test_quality_sample_prompts_request_isolated_objects_not_full_cards():
