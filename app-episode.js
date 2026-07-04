@@ -322,11 +322,11 @@ function finishIntro(){if(actIntroActive){finishActIntro();return;}stopIntroAudi
 // ===== 막 시작 그림책 (막마다 3쪽 이야기, 하니 기기 음성) — #intro 화면·페이징 재사용 =====
 // 오프닝 그림책(INTRO_PAGES)과 같은 dots/prev/next 페이징을 이 막의 3쪽에 대해 돌린다.
 // 두 흐름이 섞이지 않게 renderIntroPage/introNext/introPrev/speakIntro는 actIntroActive로 분기.
-var actIntroActive=false;var actIntroAct=0;var actIntroPage=0;
+var actIntroActive=false;var actIntroAct=0;var actIntroPage=0;var actIntroPreview=false;
 function actIntroPages(){var p=(typeof ACT_INTROS!=='undefined')?ACT_INTROS[actIntroAct]:null;return (p&&p.pages)?p.pages:[];}
-function openActIntro(act){
+function openActIntro(act,preview){
   var p=(typeof ACT_INTROS!=='undefined')?ACT_INTROS[act]:null;if(!p||!p.pages||!p.pages.length)return;
-  actIntroActive=true;actIntroAct=act;actIntroPage=0;
+  actIntroActive=true;actIntroAct=act;actIntroPage=0;actIntroPreview=!!preview;
   setIntroAutoUI(true);
   stopIntroAudio();
   if(typeof go==='function')go('intro');
@@ -362,7 +362,9 @@ function actIntroNext(){var pages=actIntroPages();if(actIntroPage<pages.length-1
 function actIntroPrev(){if(actIntroPage>0){actIntroPage--;renderActIntroPage();speakActIntro();}}
 // 마지막 쪽 '시작하기' 또는 건너뛰기 → 이 막 홈/미션으로.
 function finishActIntro(){actIntroActive=false;stopIntroAudio();cancelIntroAuto();
-  try{if(typeof markActIntroSeen==='function')markActIntroSeen(actIntroAct);}catch(e){}
+  // 미리보기(?intro=N 딥링크)로 연 인트로는 아이의 '첫 자동 인트로'를 소진하지 않도록 seen 표시를 건너뛴다.
+  if(!actIntroPreview){try{if(typeof markActIntroSeen==='function')markActIntroSeen(actIntroAct);}catch(e){}}
+  actIntroPreview=false;
   if(typeof go==='function')go('home');}
 // 트리거: 새 막에 처음 들어선 순간 1회만 자동 노출. 오프닝 그림책이 우선(첫 실행 중복 방지).
 function maybeShowActIntro(){

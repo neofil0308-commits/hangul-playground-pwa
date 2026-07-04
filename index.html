@@ -452,6 +452,11 @@ if(ej!==null&&ej!==''){ti=parseInt(ej,10);}
 else if(aj!==null&&aj!==''){var an=parseInt(aj,10);for(var i=0;i<EPISODE_PATH.length;i++){if(EPISODE_PATH[i].act===an){ti=i;break;}}}
 if(ti>=0&&!isNaN(ti)){progress.idx=Math.max(0,Math.min(ti,EPISODE_PATH.length-1));saveProgress();}
 }catch(e){}})();
+/* 막 인트로 '영상' 바로보기: ?intro=N → 그 막 시작 그림책(영상)만 재생. 진행도·아이 진행(seen)은 건드리지 않는 미리보기. */
+(function(){try{var q=new URLSearchParams(location.search);var iv=q.get('intro');if(iv===null||iv==='')return;
+  var an=parseInt(iv,10);if(isNaN(an)||typeof ACT_INTROS==='undefined'||!ACT_INTROS[an])return;
+  setTimeout(function(){if(typeof openActIntro==='function')openActIntro(an,true);},150);
+}catch(e){}})();
 loadMission();renderMission();
 
 /* ===== 효과음 + 배경음악 (Web Audio) ===== */
