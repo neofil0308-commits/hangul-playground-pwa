@@ -414,8 +414,91 @@ function jamoCharSVG(ch,isVowel){
     +'<text x="50" y="64" text-anchor="middle" dominant-baseline="central" font-family="Jua, sans-serif" font-size="44" fill="#ffffff">'+g+'</text>'
     +'</svg>';
 }
-function aiScene(label,sky0,sky1,inner){
-  // 시안 '막 시작 그림책' 구도: 넓은 밤하늘 + 우상단 달(헤일로) + 잔별 + 낮은 어두운 지평선. 테두리 없음.
+// ===== 막 배경(환경) — 장소에 맞는 배경. 라벨→환경 매핑으로 24개 장면에 자동 적용 =====
+// night(기본): 밤하늘+달+별 / forest: 숲 / forge: 대장간 / gate: 돌문·성벽 / cave: 소리 동굴 / garden: 낮 동산 / post: 밤 마을+우체국
+var SCENE_ENV={
+  '텅 빈 편지':'forest','반딧불이 깜빡이':'forest','모음을 불러요':'forest',
+  '조용한 숲':'forest','숲지기 도토리':'forest','손을 잡으니 가!':'forest',
+  '대장장이 곰':'forge','땅! 새 글자':'forge','직접 만들어요':'forge',
+  '무거운 문':'gate','받침돌을 얹어요':'gate','문이 열렸다':'gate',
+  '메아리 동굴':'cave','힘을 꾹!':'cave','센 소리 되찾기':'cave',
+  '별빛 뒤':'forest','겹치면 나와요':'forest','숨은 모음 찾기':'forest',
+  '시든 마을':'garden','글자가 모여 단어':'garden','단어를 지어요':'garden',
+  '우체국으로':'post','편지가 살아나요':'post','스스로 읽어요':'post'
+};
+function _pine(x,base,h,c){var t=function(m){return (h*m).toFixed(0);};
+  return '<g transform="translate('+x+','+base+')"><rect x="-4" y="-6" width="8" height="12" fill="#3A2A20"/>'
+    +'<g fill="'+c+'"><path d="M0,-'+t(1)+' L'+t(0.42)+',-'+t(0.52)+' L-'+t(0.42)+',-'+t(0.52)+' Z"/>'
+    +'<path d="M0,-'+t(0.74)+' L'+t(0.5)+',-'+t(0.3)+' L-'+t(0.5)+',-'+t(0.3)+' Z"/>'
+    +'<path d="M0,-'+t(0.46)+' L'+t(0.56)+',-2 L-'+t(0.56)+',-2 Z"/></g></g>';}
+function _stalac(x,y,len){return '<path d="M'+(x-9)+','+y+' L'+(x+9)+','+y+' L'+x+','+(y+len)+' Z" fill="#2C2740"/>';}
+function _stalag(x,base,h){return '<path d="M'+(x-11)+','+base+' L'+(x+11)+','+base+' L'+x+','+(base-h)+' Z" fill="#332C46"/>';}
+function _crystal(x,y,c){return '<g class="tw" transform="translate('+x+','+y+')"><path d="M0,-12 L5,-2 L3,8 L-3,8 L-5,-2 Z" fill="'+c+'" opacity="0.85"/><path d="M0,-12 L5,-2 L0,-2 Z" fill="#fff" opacity="0.45"/></g>';}
+function _torch(x,y){return '<ellipse cx="'+x+'" cy="'+y+'" rx="34" ry="42" fill="url(#etorch)"/><g transform="translate('+x+','+y+')"><rect x="-3" y="0" width="6" height="30" rx="2" fill="#4A3A2C"/><path class="tw" d="M-7,2 Q-10,-14 -2,-22 Q0,-12 3,-20 Q9,-10 7,2 Z" fill="#FFB23E"/><path class="tw t2" d="M-3,0 Q-4,-12 2,-18 Q6,-10 4,0 Z" fill="#FFE07A"/></g>';}
+function _flower(x,y,c){return '<g transform="translate('+x+','+y+')"><line x1="0" y1="0" x2="0" y2="-16" stroke="#5F9A44" stroke-width="2.4"/><g fill="'+c+'"><circle cx="0" cy="-20" r="4"/><circle cx="-5" cy="-18" r="4"/><circle cx="5" cy="-18" r="4"/><circle cx="-3" cy="-24" r="4"/><circle cx="3" cy="-24" r="4"/></g><circle cx="0" cy="-21" r="2.4" fill="#FFE27A"/></g>';}
+function _grid(rows,rh,cw,stroke){var s='<g stroke="'+stroke+'" stroke-width="1.6" opacity="0.5">';for(var r=0;r<rows;r++){var y=r*rh;s+='<line x1="0" y1="'+y+'" x2="400" y2="'+y+'"/>';var off=(r%2)*(cw/2);for(var x=off;x<400;x+=cw){s+='<line x1="'+x+'" y1="'+y+'" x2="'+x+'" y2="'+(y+rh)+'"/>';}}return s+'</g>';}
+function aiEnvBg(env){
+  if(env==='forest')return ''
+    +'<circle cx="336" cy="52" r="40" fill="url(#ahalo)"/><circle cx="336" cy="52" r="20" fill="url(#amoon)"/>'
+    +'<g fill="#fff" opacity="0.85"><circle class="tw" cx="70" cy="34" r="1.8"/><circle class="tw t2" cx="200" cy="24" r="1.5"/><circle class="tw t3" cx="270" cy="44" r="1.6"/></g>'
+    +'<path d="M0,208 Q200,194 400,208 L400,280 L0,280 Z" fill="#2F4A38"/>'
+    +'<path d="M0,236 Q200,224 400,238 L400,280 L0,280 Z" fill="#26402F"/>'
+    +_pine(32,208,54,'#20402E')+_pine(74,214,40,'#274A36')+_pine(368,208,54,'#20402E')+_pine(330,216,38,'#274A36')
+    +'<g fill="#F5CD82"><circle class="tw" cx="120" cy="150" r="2"/><circle class="tw t3" cx="286" cy="140" r="1.8"/><circle class="tw t2" cx="250" cy="182" r="1.6"/></g>';
+  if(env==='cave')return ''
+    +'<defs><radialGradient id="ecglow" cx="0.5" cy="0.6" r="0.6"><stop offset="0" stop-color="#5FA9A0" stop-opacity="0.4"/><stop offset="1" stop-color="#5FA9A0" stop-opacity="0"/></radialGradient></defs>'
+    +'<rect x="0" y="0" width="400" height="280" fill="#1E1A2E"/>'
+    +'<path d="M0,0 L400,0 L400,54 Q300,92 200,60 Q100,34 0,70 Z" fill="#2A2440"/>'
+    +_stalac(70,58,42)+_stalac(120,64,26)+_stalac(250,58,24)+_stalac(300,62,46)+_stalac(342,64,22)
+    +'<path d="M0,0 L46,0 Q28,140 58,280 L0,280 Z" fill="#241F36" opacity="0.9"/>'
+    +'<path d="M400,0 L354,0 Q372,150 342,280 L400,280 Z" fill="#241F36" opacity="0.9"/>'
+    +'<ellipse cx="200" cy="205" rx="155" ry="72" fill="url(#ecglow)"/>'
+    +'<path d="M0,214 Q120,196 210,210 Q320,224 400,206 L400,280 L0,280 Z" fill="#2A2438"/>'
+    +'<path d="M0,242 Q200,228 400,244 L400,280 L0,280 Z" fill="#201B2E"/>'
+    +_stalag(92,214,26)+_stalag(320,210,30)
+    +_crystal(58,196,'#6FD0C8')+_crystal(348,190,'#8FB0E8')+_crystal(150,214,'#C9A0E8');
+  if(env==='forge')return ''
+    +'<defs><radialGradient id="efire" cx="0.5" cy="0.62" r="0.6"><stop offset="0" stop-color="#FFC24A" stop-opacity="0.9"/><stop offset="0.6" stop-color="#F5893C" stop-opacity="0.45"/><stop offset="1" stop-color="#F5893C" stop-opacity="0"/></radialGradient></defs>'
+    +'<rect x="0" y="0" width="400" height="214" fill="#7A5A44"/>'
+    +_grid(5,38,80,'#6A4A38')
+    +'<rect x="290" y="32" width="72" height="56" rx="4" fill="#2E3A52"/><line x1="326" y1="32" x2="326" y2="88" stroke="#5A4636" stroke-width="3"/><line x1="290" y1="60" x2="362" y2="60" stroke="#5A4636" stroke-width="3"/><rect x="290" y="32" width="72" height="56" rx="4" fill="none" stroke="#5A4636" stroke-width="4"/><circle cx="345" cy="47" r="5" fill="#F5E6B0" opacity="0.7"/>'
+    +'<ellipse cx="60" cy="150" rx="72" ry="62" fill="url(#efire)"/>'
+    +'<g transform="translate(60,150)"><path d="M-34,44 L34,44 L28,-6 Q28,-20 0,-20 Q-28,-20 -28,-6 Z" fill="#5A4038"/><path d="M-22,44 L22,44 L18,2 Q18,-8 0,-8 Q-18,-8 -18,2 Z" fill="#2A1E1A"/><path class="tw" d="M-8,40 Q-14,20 -6,10 Q-2,20 2,8 Q8,22 6,40 Z" fill="#FFB23E"/><path class="tw t2" d="M2,40 Q-2,24 4,14 Q8,24 10,14 Q12,28 10,40 Z" fill="#FFD65A"/></g>'
+    +'<rect x="0" y="212" width="400" height="68" fill="#6A4A32"/>'
+    +'<g stroke="#553A26" stroke-width="2"><line x1="0" y1="230" x2="400" y2="230"/><line x1="0" y1="254" x2="400" y2="254"/><line x1="120" y1="212" x2="120" y2="280"/><line x1="270" y1="212" x2="270" y2="280"/></g>'
+    +'<g stroke="#4A3A2C" stroke-width="3"><line x1="250" y1="0" x2="250" y2="26"/><line x1="278" y1="0" x2="278" y2="30"/></g><rect x="242" y="24" width="16" height="8" rx="2" fill="#8a8f98"/><path d="M272,30 l12,10" stroke="#8a8f98" stroke-width="5" stroke-linecap="round"/>';
+  if(env==='gate')return ''
+    +'<defs><radialGradient id="etorch" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#FFC24A" stop-opacity="0.7"/><stop offset="1" stop-color="#FFC24A" stop-opacity="0"/></radialGradient></defs>'
+    +'<rect x="0" y="0" width="400" height="220" fill="#3A3550"/>'
+    +_grid(5,44,90,'#332E48')
+    +_torch(40,120)+_torch(360,120)
+    +'<rect x="0" y="216" width="400" height="64" fill="#2C2840"/>'
+    +'<g stroke="#242038" stroke-width="2"><line x1="70" y1="216" x2="70" y2="280"/><line x1="200" y1="216" x2="200" y2="280"/><line x1="330" y1="216" x2="330" y2="280"/><line x1="0" y1="250" x2="400" y2="250"/></g>';
+  if(env==='garden')return ''
+    +'<defs><radialGradient id="esun" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#FFF3C0" stop-opacity="0.95"/><stop offset="1" stop-color="#FFF3C0" stop-opacity="0"/></radialGradient></defs>'
+    +'<circle cx="336" cy="54" r="46" fill="url(#esun)"/><circle cx="336" cy="54" r="22" fill="#FFE9A0"/>'
+    +'<g fill="#fff" opacity="0.85"><ellipse cx="90" cy="58" rx="26" ry="12"/><ellipse cx="114" cy="54" rx="18" ry="14"/><ellipse cx="205" cy="40" rx="20" ry="10"/></g>'
+    +'<path d="M0,178 Q120,150 260,176 Q340,190 400,170 L400,280 L0,280 Z" fill="#8FC66E"/>'
+    +'<path d="M0,212 Q160,188 400,212 L400,280 L0,280 Z" fill="#77B559"/>'
+    +'<path d="M0,244 Q200,228 400,246 L400,280 L0,280 Z" fill="#6AA84E"/>'
+    +_flower(60,206,'#F3899F')+_flower(120,226,'#F4D06A')+_flower(300,214,'#B49BE8')+_flower(352,234,'#F58BB0')
+    +'<g stroke="#5F9A44" stroke-width="2.4" stroke-linecap="round" fill="none"><path d="M90,240 q-3,-10 0,-16 M96,240 q3,-9 6,-14"/><path d="M248,232 q-3,-10 0,-16 M254,232 q3,-9 6,-14"/></g>';
+  if(env==='post')return ''
+    +'<circle cx="336" cy="52" r="44" fill="url(#ahalo)"/><circle cx="336" cy="52" r="22" fill="url(#amoon)"/>'
+    +'<g fill="#fff" opacity="0.85"><circle class="tw" cx="60" cy="36" r="1.8"/><circle class="tw t2" cx="150" cy="26" r="1.5"/><circle class="tw t3" cx="252" cy="40" r="1.6"/></g>'
+    +'<g fill="#2E2748" opacity="0.85"><path d="M18,202 L18,150 L48,132 L78,150 L78,202 Z"/><path d="M322,202 L322,156 L348,140 L374,156 L374,202 Z"/></g>'
+    +'<path d="M0,200 Q200,190 400,200 L400,280 L0,280 Z" fill="#3A3355"/>'
+    +'<path d="M0,232 Q200,222 400,234 L400,280 L0,280 Z" fill="#302A48"/>'
+    +'<g transform="translate(66,202)"><rect x="-2" y="-54" width="4" height="54" fill="#2A2440"/><ellipse cx="0" cy="-58" rx="26" ry="20" fill="#FFE9A0" opacity="0.28"/><circle cx="0" cy="-56" r="6" fill="#FFE9A0"/></g>';
+  // night(기본): 밤하늘+달+별+잔별+어두운 지평선
+  return ''
+    +'<circle cx="331" cy="60" r="52" fill="url(#ahalo)"/><circle cx="331" cy="60" r="26" fill="url(#amoon)"/>'
+    +'<g fill="#fff" opacity="0.9"><circle class="tw" cx="60" cy="40" r="2"/><circle class="tw t2" cx="150" cy="26" r="1.6"/><circle class="tw t3" cx="232" cy="52" r="1.8"/></g>'
+    +'<g fill="#F5CD82"><path class="tw t2" d="M96,86 l2.6,6 l6,2.6 l-6,2.6 l-2.6,6 l-2.6,-6 l-6,-2.6 l6,-2.6 z"/><path class="tw t3" d="M283,116 l2.2,5 l5,2.2 l-5,2.2 l-2.2,5 l-2.2,-5 l-5,-2.2 l5,-2.2 z"/></g>'
+    +'<path d="M0,212 Q200,198 400,212 L400,280 L0,280 Z" fill="#241D3A" fill-opacity="0.30"/>'
+    +'<path d="M0,236 Q200,224 400,236 L400,280 L0,280 Z" fill="#241D3A" fill-opacity="0.22"/>';
+}
+function aiScene(label,sky0,sky1,inner,env){
   return '<svg class="scene" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+label+'">'
     +'<defs><clipPath id="rc"><rect x="0" y="0" width="400" height="280" rx="26"/></clipPath>'
     +'<linearGradient id="asky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+sky0+'"/><stop offset="1" stop-color="'+sky1+'"/></linearGradient>'
@@ -423,11 +506,7 @@ function aiScene(label,sky0,sky1,inner){
     +'<radialGradient id="ahalo" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#FFF0C4" stop-opacity="0.5"/><stop offset="1" stop-color="#FFF0C4" stop-opacity="0"/></radialGradient>'
     +'<filter id="paper" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.08 0"/></filter></defs>'
     +'<g clip-path="url(#rc)"><rect x="0" y="0" width="400" height="280" fill="url(#asky)"/>'
-    +'<circle cx="331" cy="60" r="52" fill="url(#ahalo)"/><circle cx="331" cy="60" r="26" fill="url(#amoon)"/>'
-    +'<g fill="#fff" opacity="0.9"><circle class="tw" cx="60" cy="40" r="2"/><circle class="tw t2" cx="150" cy="26" r="1.6"/><circle class="tw t3" cx="232" cy="52" r="1.8"/></g>'
-    +'<g fill="#F5CD82"><path class="tw t2" d="M96,86 l2.6,6 l6,2.6 l-6,2.6 l-2.6,6 l-2.6,-6 l-6,-2.6 l6,-2.6 z"/><path class="tw t3" d="M283,116 l2.2,5 l5,2.2 l-5,2.2 l-2.2,5 l-2.2,-5 l-5,-2.2 l5,-2.2 z"/></g>'
-    +'<path d="M0,212 Q200,198 400,212 L400,280 L0,280 Z" fill="#241D3A" fill-opacity="0.30"/>'
-    +'<path d="M0,236 Q200,224 400,236 L400,280 L0,280 Z" fill="#241D3A" fill-opacity="0.22"/>'
+    +aiEnvBg(env||SCENE_ENV[label]||'night')
     +inner
     +'<rect x="0" y="0" width="400" height="280" filter="url(#paper)"/></g></svg>';
 }
@@ -648,7 +727,7 @@ const ACT_INTROS={
   ]},
   3:{act:3,pages:[
     {cap:'대장장이 곰',hl:'뚝딱',say:'글자 공방에 도착했어요! 대장장이 곰 뚝딱이 커다란 망치를 번쩍 들었어요. "어서 와, 여기선 자음과 모음으로 글자를 뚝딱 만든단다!"',
-      svg:aiScene('대장장이 곰','#8FB8DC','#F3E6C8',aiPost(60,200,0.72)+aiBear(168,120,'대장장이 뚝딱')+aiHani(322,248,0.72))},
+      svg:aiScene('대장장이 곰','#8FB8DC','#F3E6C8',aiBear(168,120,'대장장이 뚝딱')+aiHani(322,248,0.72))},
     {cap:'땅! 새 글자',say:'자음과 모음을 모루에 올리고— 땅! 땅! 뚝딱이 두드리자 새 글자가 반짝 태어났어요. 정말 신기하죠?',
       svg:aiScene('땅! 새 글자','#8FB8DC','#F3E6C8',aiBub(74,116,28,'ㄱ',_cB,_eB,'slideR')+aiOp(128,'+')+aiBub(182,116,28,'ㅏ',_cP,_eP,'slideL')+aiOp(240,'→')+aiSpark(276,82)+aiSpark(340,88,'s2')+aiSpark(310,150,'s3')+aiBub(310,116,34,'가',_cM,_eM,'merge')+aiHani(200,250,0.8))},
     {cap:'직접 만들어요',say:'ㄱ 더하기 ㅏ는 가! 이번엔 네가 망치를 들고 글자를 만들어, 편지에서 사라진 글자를 되찾아 줄래?',
@@ -656,7 +735,7 @@ const ACT_INTROS={
   ]},
   4:{act:4,pages:[
     {cap:'무거운 문',hl:'받침',say:'쿵! 길을 커다란 받침의 문이 막았어요. 문 앞엔 두꺼비 문지기 끄떡이 꿈쩍도 안 하고 앉아 있어요.',
-      svg:aiScene('무거운 문','#3C3358','#5A4468',aiPost(38,204,0.55)+'<g transform="translate(128,146)"><rect x="-42" y="-64" width="84" height="128" rx="8" fill="#4a3d68"/><rect x="-32" y="-50" width="64" height="114" rx="6" fill="#2c2544"/><rect x="-3" y="-50" width="6" height="114" fill="#5a4d7a"/></g>'+aiToad(118,120,'두꺼비 끄떡')+aiHani(320,248,0.75))},
+      svg:aiScene('무거운 문','#3C3358','#5A4468','<g transform="translate(128,146)"><rect x="-42" y="-64" width="84" height="128" rx="8" fill="#4a3d68"/><rect x="-32" y="-50" width="64" height="114" rx="6" fill="#2c2544"/><rect x="-3" y="-50" width="6" height="114" fill="#5a4d7a"/></g>'+aiToad(118,120,'두꺼비 끄떡')+aiHani(320,248,0.75))},
     {cap:'받침돌을 얹어요',say:'"글자 아래 받침돌을 살포시 얹어야 문이 열려." 끄떡이 알려줬어요. 가 아래 이응을 얹으니— 강! 끝소리가 생겼어요.',
       svg:aiScene('받침돌을 얹어요','#3C3358','#5A4468',aiBub(70,116,28,'가',_cM,_eM)+aiOp(122,'+')+aiBub(172,104,24,'ㅇ',_cB,_eB,'drop')+'<text x="172" y="150" font-family="Jua, sans-serif" font-size="13" fill="#ffe9c2" text-anchor="middle">받침돌</text>'+aiOp(232,'→')+aiBub(305,116,33,'강',_cM,_eM,'merge')+aiHani(200,250,0.8))},
     {cap:'문이 열렸다',say:'끄떡이 끄덕— 무거운 문이 스르륵 열렸어요! 자, 받침 끝소리 글자를 되찾아 편지를 채워요.',
@@ -664,7 +743,7 @@ const ACT_INTROS={
   ]},
   5:{act:5,pages:[
     {cap:'메아리 동굴',hl:'메아리',say:'소리 동굴에 들어서자 힘센 메아리가 쩌렁쩌렁 울려요. 천장엔 쌍둥이 박쥐 둘이 나란히 대롱대롱 매달려 있어요.',
-      svg:aiScene('메아리 동굴','#3C3358','#6A4A6A',aiPost(72,198,0.8)+aiBats(196,122,'쌍둥이 박쥐',48)+aiHani(320,248,0.75))},
+      svg:aiScene('메아리 동굴','#3C3358','#6A4A6A',aiBats(196,122,'쌍둥이 박쥐',48)+aiHani(320,248,0.75))},
     {cap:'힘을 꾹!',say:'"우린 똑 닮은 쌍둥이! 힘을 꾹 주면 더 센 소리가 나." 가— 보다 힘센— 까! 박쥐가 신나서 깔깔 웃어요.',
       svg:aiScene('힘을 꾹!','#3C3358','#6A4A6A',aiBub(70,116,25,'ㄱ',_cB,_eB)+aiOp(118,'+')+aiBub(166,116,25,'ㄱ',_cB,_eB)+aiOp(226,'→')+aiSpark(268,84,'s2')+aiSpark(340,150,'s3')+aiBub(302,116,33,'ㄲ',_cR,_eR,'merge')+'<text class="spark" x="302" y="176" font-family="Jua, sans-serif" font-size="20" fill="#ffe27a" text-anchor="middle">까!</text>'+aiHani(200,250,0.8,'determined'))},
     {cap:'센 소리 되찾기',say:'쌍둥이 자음은 힘을 꾹! 까! 우리도 센 소리 글자를 불러 편지에서 사라진 글자를 되찾을까요?',

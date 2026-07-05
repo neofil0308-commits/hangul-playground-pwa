@@ -100,6 +100,21 @@ def test_all_24_act_narration_mp3_files_exist():
             assert f.stat().st_size > 1000, f"{f.name} too small"
 
 
+def test_scene_backgrounds_match_place_per_act():
+    # aiScene이 라벨→환경 매핑으로 장소별 배경을 그린다(밤하늘 일변도 X).
+    assert "function aiEnvBg" in DATA
+    assert "var SCENE_ENV=" in DATA
+    for env in ["'forest'", "'cave'", "'forge'", "'gate'", "'garden'", "'post'"]:
+        assert env in DATA, env
+    # 소리 동굴은 cave, 대장 공방은 forge로 매핑(대표 확인).
+    assert "'메아리 동굴':'cave'" in DATA
+    assert "'대장장이 곰':'forge'" in DATA
+    assert "'시든 마을':'garden'" in DATA
+    # aiScene은 하드코딩 달/지평선 대신 aiEnvBg를 사용.
+    si = DATA.index("function aiScene(")
+    assert "aiEnvBg(env||SCENE_ENV[label]" in DATA[si:si + 1600]
+
+
 def test_act_intro_seen_tracking_lives_in_state():
     for token in [
         "actIntrosSeen",
