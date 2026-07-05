@@ -60,11 +60,31 @@ def test_open_act_intro_engine_exists_in_episode():
         "function finishActIntro",
         "function maybeShowActIntro",
         "var actIntroActive",
-        "deviceSpeak",          # 기기 TTS로 내레이션(MP3 없음)
+        "deviceSpeak",          # MP3 재생 실패 시 기기 TTS 폴백
     ]:
         assert token in EPISODE, token
     # 오프닝 인트로 함수를 재사용하도록 분기했는지.
     assert "if(actIntroActive)" in EPISODE
+
+
+def test_act_intro_narration_prefers_neural_mp3_with_device_fallback():
+    # 시나리오 내레이션은 오프닝처럼 뉴럴 MP3(audio/narr/act{막}_{쪽}.mp3) 우선,
+    # 재생이 막히면 deviceSpeak로 폴백한다.
+    sa = EPISODE.index("function speakActIntro")
+    body = EPISODE[sa:sa + 900]
+    assert "audio/narr/act" in body, "막 내레이션 MP3 경로 없음"
+    assert "actIntroAct" in body and "actIntroPage+1" in body, "막/쪽 인덱스로 MP3 파일명 구성해야 함"
+    assert "onerror" in body and "deviceSpeak" in body, "MP3 실패 시 기기 TTS 폴백 필요"
+
+
+def test_all_24_act_narration_mp3_files_exist():
+    # 1~8막 × 3쪽 = 24개 내레이션 MP3가 실제로 존재하고 비어있지 않아야 한다.
+    narr = ROOT / "audio" / "narr"
+    for act in range(1, 9):
+        for page in range(1, 4):
+            f = narr / f"act{act}_{page}.mp3"
+            assert f.exists(), f"missing {f.name}"
+            assert f.stat().st_size > 1000, f"{f.name} too small"
 
 
 def test_act_intro_seen_tracking_lives_in_state():

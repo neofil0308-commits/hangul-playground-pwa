@@ -351,12 +351,22 @@ function renderActIntroPage(){
   var next=document.getElementById('introNext');if(next){next.textContent=(actIntroPage===pages.length-1)?'시작하기 ▶':'다음 ▶';if(typeof twemojify==='function')twemojify(next);}
   clearIntroPulse();renderIntroProgress();
 }
-// 이 막들은 MP3 내레이션이 없으니 기기 음성(deviceSpeak)으로 현재 쪽 say를 읽는다. 🔊 다시 듣기도 이걸 재생.
-function speakActIntro(){var pages=actIntroPages();var p=pages[actIntroPage];if(!p)return;stopIntroAudio();
+// 시나리오 내레이션: 오프닝(intro N.mp3)과 동일하게 뉴럴 MP3(audio/narr/act{막}_{쪽}.mp3) 우선,
+// 파일이 없거나 재생이 막히면 기기 음성(deviceSpeak)으로 폴백. 🔊 다시 듣기도 이걸 재생.
+function speakActIntro(){var pages=actIntroPages();var p=pages[actIntroPage];if(!p)return;
+  stopIntroAudio();
   cancelIntroAuto();
   var tk=++narrToken;
-  try{if(typeof deviceSpeak==='function')deviceSpeak(p.say,function(){narrationDone(tk);});
-  else if(typeof speak==='function')speak(p.say);}catch(e){}
+  var a=new Audio();var fell=false;
+  function fallback(){if(fell)return;fell=true;
+    try{if(typeof deviceSpeak==='function')deviceSpeak(p.say,function(){narrationDone(tk);});
+    else if(typeof speak==='function')speak(p.say);}catch(e){}}
+  a.onerror=fallback;
+  a.onended=function(){narrationDone(tk);};
+  try{a.volume=Math.max(0,Math.min(1,(typeof volVoice!=='undefined'?volVoice:1)));}catch(e){}
+  a.src='audio/narr/act'+actIntroAct+'_'+(actIntroPage+1)+'.mp3';
+  var pr=a.play();if(pr&&pr.catch)pr.catch(fallback);
+  introAudio=a;
   armNarrationSafety(p.say);}
 function actIntroNext(){var pages=actIntroPages();if(actIntroPage<pages.length-1){actIntroPage++;renderActIntroPage();speakActIntro();}else{finishActIntro();}}
 function actIntroPrev(){if(actIntroPage>0){actIntroPage--;renderActIntroPage();speakActIntro();}}
