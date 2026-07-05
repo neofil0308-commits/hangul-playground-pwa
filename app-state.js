@@ -28,6 +28,8 @@ function hashStr(s){var h=5381;for(var i=0;i<s.length;i++)h=((h*33)^s.charCodeAt
 var progress=lsJSON('hp_progress',{idx:0,mastery:{},album:[],milestones:[],relics:[]});
 // 옛 저장본 관대 처리: relics 없던 진행도 깨지지 않게 기본 빈 배열.
 if(!progress.relics)progress.relics=[];
+// 간격 반복 복습(SRS) 저장소. 옛 저장본 관대 처리.
+if(!progress.review||typeof progress.review!=='object')progress.review={};
 // 막 시작 그림책을 이미 본 막 번호 목록(막마다 1회만 자동 노출). 옛 저장본 관대 처리.
 if(!Array.isArray(progress.actIntrosSeen))progress.actIntrosSeen=[];
 function saveProgress(){lsSetJSON('hp_progress',progress);}
@@ -64,12 +66,39 @@ function curLetterObj(){var ep=curEpisode();if(!ep)return null;
 function progKey(ep){return ep?((ep.final?'F:':'')+(ep.ch||'')):'';}
 // 마스터 목록은 맨 글자(초성·모음)만 — 받침 키('F:')는 게임/복습 풀을 더럽히지 않게 제외.
 function masteredLetters(){return Object.keys(progress.mastery).filter(function(ch){return ch.indexOf('F:')!==0&&isMasteredRec(progress.mastery[ch]);});}
+
+// ===== 간격 반복 복습(SRS, Leitner) — 뗀 글자를 점점 긴 간격으로 재확인해 파지를 강화 =====
+// box(1~5)가 오를수록 다음 복습까지 간격이 길어진다. 맞히면 승급, 틀리면 box1로 리셋.
+var REVIEW_INTERVALS={1:1,2:2,3:4,4:7,5:14}; // box → 다음 복습까지 일수
+function _ymd(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
+function dayKeyAdd(key,n){var p=String(key).split('-');var d=new Date(+p[0],(+p[1])-1,+p[2]);d.setDate(d.getDate()+(n||0));return _ymd(d);}
+function dayKeyLE(a,b){var pa=String(a).split('-'),pb=String(b).split('-');return new Date(+pa[0],pa[1]-1,+pa[2]).getTime()<=new Date(+pb[0],pb[1]-1,+pb[2]).getTime();}
+// 뗀 글자를 복습 일정에 등록(이미 있으면 유지). 첫 복습은 내일부터.
+function scheduleReview(ch){if(!ch||ch.indexOf('F:')===0)return;if(!progress.review)progress.review={};
+  if(!progress.review[ch]){progress.review[ch]={box:1,due:dayKeyAdd(MD,1)};saveProgress();}}
+// 오늘(MD) 기준 복습 예정(due<=오늘)인 글자들.
+function dueReviewChs(){var r=progress.review||{},out=[];
+  Object.keys(r).forEach(function(ch){if(ch.indexOf('F:')===0)return;var rec=r[ch];if(rec&&rec.due&&dayKeyLE(rec.due,MD))out.push(ch);});
+  return out;}
+// 복습 채점: 맞으면 box↑·간격↑, 틀리면 box1·내일 다시.
+function gradeReview(ch,correct){if(!ch)return;if(!progress.review)progress.review={};
+  var rec=progress.review[ch]||{box:1,due:MD};
+  rec.box=correct?Math.min((rec.box||1)+1,5):1;
+  rec.due=dayKeyAdd(MD,REVIEW_INTERVALS[rec.box]||1);
+  progress.review[ch]=rec;saveProgress();}
+// 기존 사용자 시딩: 이미 뗀 글자인데 복습 일정 없으면 오늘부터 복습 대상으로.
+(function seedReview(){try{var chs=masteredLetters(),changed=false;
+  chs.forEach(function(ch){if(!progress.review[ch]){progress.review[ch]={box:1,due:MD};changed=true;}});
+  if(changed)saveProgress();}catch(e){}})();
+
 function markLetterProgress(part){if(part==='find')return;/* 글자 찾기는 추가 활동 플래그 — 마스터 키(met/matched/quizzed)에 영향 없음 */
   var ep=curEpisode();if(!ep||(ep.type!=='letter'&&ep.type!=='combine'))return;
   var key=progKey(ep);
   var rec=progress.mastery[key]||(progress.mastery[key]={met:false,matched:false,quizzed:false});
   if(part==='letter')rec.met=true;else if(part==='word')rec.matched=true;else if(part==='play')rec.quizzed=true;
-  saveProgress();}
+  saveProgress();
+  if(ep.ch&&!ep.final&&isMasteredRec(rec))scheduleReview(ep.ch); // 뗀 즉시 복습 일정 등록
+}
 function letterDone(){var ep=curEpisode();if(!ep||ep.type!=='letter')return false;return isMasteredRec(progress.mastery[progKey(ep)]);}
 function addAlbumStar(){var ep=curEpisode();if(!ep||(ep.type!=='letter'&&ep.type!=='combine')||!ep.ch)return;var key=progKey(ep);if(progress.album.indexOf(key)<0){progress.album.push(key);saveProgress();}}
 function advanceEpisode(){if(progress.idx<EPISODE_PATH.length-1){progress.idx++;saveProgress();}}
@@ -115,7 +144,7 @@ function updateStreak(){if(lastDone===MD)return;streak=(lastDone===yKey())?strea
 function completeMission(part){if(!mission||mission[part])return;mission[part]=true;mission.lastReaction=part;markLetterProgress(part);saveMission();showHaniReaction(part);renderMission();}
 // 글자 공방(3막): 음절 하나를 합쳐 완성하면 그 막의 단일 미션이 한 번에 끝난다(글자형 3단계 대신 1단계).
 function completeCombine(){var ep=curEpisode();if(!ep||ep.type!=='combine'||!mission||mission.letter)return;
-  if(ep.ch){progress.mastery[ep.ch]={met:true,matched:true,quizzed:true};saveProgress();}
+  if(ep.ch){progress.mastery[ep.ch]={met:true,matched:true,quizzed:true};saveProgress();scheduleReview(ep.ch);}
   mission.letter=true;mission.word=true;mission.play=true;mission.lastReaction='all';saveMission();
   if(typeof showHaniReaction==='function')showHaniReaction('all');
   if(typeof renderMission==='function')renderMission();}

@@ -47,6 +47,7 @@
     <div class="mission" id="mission">
       <div class="story-hero" id="storyHero"><div class="story-face">🐥</div><div class="story-copy"><b>하니</b><span id="storyText">오늘의 글자 친구를 만나러 한글 마을로 떠나요!</span></div></div>
       <div class="episode-banner" id="episodeBanner" aria-live="polite"></div>
+      <button class="review-card" id="reviewCard" type="button" style="display:none" onclick="startReview()"><span class="rc-ic">⭐</span><span class="rc-tx">지난 글자 복습 <b id="reviewCount">0개</b><small>기억나는지 살짝 확인해요</small></span><span class="rc-go">▶</span></button>
       <h3>오늘의 모험 🎯</h3>
       <div class="mbar"><i id="mbarFill"></i></div>
       <button class="adventure-start" id="adventureStartBtn" type="button" onclick="document.getElementById('mrowLetter').click()">모험 시작하기 ▶</button>
@@ -235,6 +236,22 @@
     </div>
   </section>
 
+  <section id="review" class="screen"><div class="section-title">지난 글자 복습 ⭐</div><div class="hint">🔊 소리를 듣고, 그 소리의 글자를 찾아요</div>
+    <div class="listen-wrap">
+    <div class="listen-top">
+      <div class="lc-hani">🐥</div>
+      <div class="lc-q" id="revQ">이 소리의 글자를 찾아요</div>
+      <button class="bigplay" id="revPlay" type="button" onclick="if(typeof revTarget!=='undefined'&&revTarget)speak(revTarget.say)">🔊 다시 듣기</button>
+      <div class="lc-progress" id="revProgress"></div>
+      <div id="revScore" class="lc-score">0 / 0</div>
+    </div>
+    <div class="listen-right">
+      <div class="listen-opts" id="revOpts"></div>
+      <div class="feedback" id="revFeedback"></div>
+    </div>
+    </div>
+  </section>
+
   <section id="find" class="screen">
     <button class="ld-back" id="fdBack">⬅ 한글 마을</button>
     <div class="listen-wrap">
@@ -281,6 +298,7 @@
 <script src="app-learning.js"></script>
 <script src="app-writing.js"></script>
 <script src="app-episode.js"></script>
+<script src="app-review.js"></script>
 <script>
 let RATE=parseFloat(lsGet('hp_rate','0.8'))||0.8;
 let koVoice=null,koVoices=[];
@@ -431,7 +449,13 @@ function renderMission(){
   twemojify(document.getElementById('mission'));
   if(allDone&&!mission.rewarded){mission.rewarded=true;saveMission();updateStreak();onEpisodeComplete();setTimeout(function(){confetti();earnSticker();},350);}
   if(typeof maybeShowActIntro==='function')maybeShowActIntro();
+  renderReviewCard();
 }
+// 지난 글자 복습(SRS) 홈 카드: 복습 예정 글자가 있으면 개수와 함께 노출.
+function renderReviewCard(){var c=document.getElementById('reviewCard');if(!c)return;
+  var n=(typeof dueReviewChs==='function')?dueReviewChs().length:0;
+  c.style.display=n>0?'flex':'none';
+  var b=document.getElementById('reviewCount');if(b)b.textContent=n+'개';}
 function openTodayLetter(){var oep=(typeof curEpisode==='function')?curEpisode():null;if(oep&&oep.type==='combine'){if(typeof openCombine==='function')openCombine();return;}if(oep&&oep.type==='sentence'){if(typeof openStory==='function')openStory();return;}var isV=VOWS.indexOf(todayLetter)>=0;lettersTab=isV?'vow':'con';var tabs=document.querySelectorAll('#letterTabs button');tabs.forEach(function(x){x.classList.remove('con-on','vow-on');});if(tabs[isV?1:0])tabs[isV?1:0].classList.add(lettersTab+'-on');renderLetters();openLetterDetail(todayLetter);}
 /* 부모 잠금 + 리포트 */
 var parentUnlocked=false,gateAns=0;
