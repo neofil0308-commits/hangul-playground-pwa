@@ -450,24 +450,48 @@ function aiHelper(x,y,emoji,name,sz){sz=sz||46;name=name||'';var half=Math.max(3
 function aiName(name,sz){name=name||'';if(!name)return '';var half=Math.max(32,name.length*7);var py=(sz*0.62).toFixed(0);
   return '<rect x="-'+half+'" y="'+py+'" width="'+(half*2)+'" height="21" rx="10.5" fill="#FFFAEE" stroke="#E9C899" stroke-width="2"/>'
     +'<text x="0" y="'+(sz*0.62+15).toFixed(0)+'" font-family="Jua, sans-serif" font-size="12" fill="#4A3524" text-anchor="middle">'+name+'</text>';}
-function _mob(x,y,sz,name,art,fscale){var k=(sz*0.0165*(fscale||1));
+function _mob(x,y,sz,name,art,fscale,cls){var k=(sz*0.0165*(fscale||1));
+  var inner=cls?'<g class="'+cls+'">'+art+'</g>':art;   // 애니 클래스는 스케일 그룹 '안'에(둘 다 transform이라 충돌 방지)
   return '<g transform="translate('+x+','+y+')">'
     +'<ellipse cx="0" cy="'+(sz*0.72).toFixed(0)+'" rx="'+(sz*0.6).toFixed(0)+'" ry="'+(sz*0.15).toFixed(0)+'" fill="#000" fill-opacity="0.12"/>'
-    +'<g transform="scale('+k.toFixed(3)+')">'+art+'</g>'+aiName(name,sz)+'</g>';}
-function aiBear(x,y,name,sz){sz=sz||46;var a=''
-  +'<ellipse cx="-27" cy="-22" rx="13" ry="13" fill="#A9713F"/><ellipse cx="27" cy="-22" rx="13" ry="13" fill="#A9713F"/>'
-  +'<circle cx="-27" cy="-22" r="6.6" fill="#CDA074"/><circle cx="27" cy="-22" r="6.6" fill="#CDA074"/>'
-  +'<ellipse cx="0" cy="0" rx="39" ry="38" fill="#B07A46"/>'
-  +'<ellipse cx="0" cy="0" rx="39" ry="38" fill="none" stroke="#8F5E33" stroke-width="1.6" opacity="0.5"/>'
-  +'<ellipse cx="-14" cy="-17" rx="19" ry="15" fill="#E7C79E" opacity="0.45"/>'
-  +'<ellipse cx="0" cy="9" rx="22" ry="17" fill="#EAD8B6"/>'
-  +'<ellipse cx="-26" cy="3" rx="6" ry="4" fill="#F49E9A" opacity="0.6"/><ellipse cx="26" cy="3" rx="6" ry="4" fill="#F49E9A" opacity="0.6"/>'
-  +'<ellipse cx="-13" cy="-7" rx="6.2" ry="7.2" fill="#3B2A1E"/><ellipse cx="13" cy="-7" rx="6.2" ry="7.2" fill="#3B2A1E"/>'
-  +'<circle cx="-15" cy="-10" r="2" fill="#fff"/><circle cx="11" cy="-10" r="2" fill="#fff"/>'
-  +'<ellipse cx="0" cy="3" rx="5" ry="3.8" fill="#4A3524"/>'
-  +'<path d="M0 7 Q0 13 -6 14 M0 7 Q0 13 6 14" stroke="#6E4A2C" stroke-width="2.2" fill="none" stroke-linecap="round"/>'
-  +'<path d="M-28 29 Q0 41 28 29 L24 37 Q0 47 -24 37 Z" fill="#E4574B"/>'
-  +'<circle cx="0" cy="36" r="3" fill="#fff" opacity="0.85"/>';
+    +'<g transform="scale('+k.toFixed(3)+')">'+inner+'</g>'+aiName(name,sz)+'</g>';}
+// 대장장이 곰 뚝딱 — 전신(머리+몸통+팔다리) + 모루 + 망치. 오른팔+망치는 mob-hammer로 '뚝딱' 스윙, 타격 순간 mob-clang 불꽃.
+function aiBear(x,y,name,sz){sz=sz||54;
+  var arm=''  // 스윙하는 오른팔+망치 (어깨 피벗). 이 그룹엔 transform 속성 없음 → CSS 회전 적용.
+    +'<g class="mob-hammer">'
+    +'<path d="M15 -10 Q34 -24 40 -46" stroke="#B07A46" stroke-width="10" fill="none" stroke-linecap="round"/>'
+    +'<circle cx="40" cy="-48" r="7.5" fill="#A9713F"/>'
+    +'<g transform="translate(40,-50) rotate(-16)">'
+      +'<rect x="-3.4" y="-2" width="6.8" height="30" rx="3" fill="#8E5F36"/>'
+      +'<rect x="-16" y="-19" width="32" height="15" rx="4" fill="#9AA3AD"/>'
+      +'<rect x="-16" y="-19" width="32" height="5.5" rx="3" fill="#C3CCD4"/>'
+    +'</g>'
+    +'</g>';
+  var a=''
+    +'<ellipse cx="-15" cy="41" rx="10" ry="7" fill="#9C6A3B"/><ellipse cx="15" cy="41" rx="10" ry="7" fill="#9C6A3B"/>'  // 발
+    +'<ellipse cx="0" cy="10" rx="27" ry="30" fill="#B07A46"/>'  // 몸통
+    +'<ellipse cx="0" cy="10" rx="27" ry="30" fill="none" stroke="#8F5E33" stroke-width="1.6" opacity="0.5"/>'
+    +'<path d="M-30 24 Q-36 10 -21 -4" stroke="#B07A46" stroke-width="10" fill="none" stroke-linecap="round"/>'  // 왼팔(모루에)
+    +'<circle cx="-30" cy="26" r="7.5" fill="#A9713F"/>'
+    +'<path d="M-16 -10 Q0 -16 16 -10 L21 30 Q0 40 -21 30 Z" fill="#E4574B"/>'  // 대장장이 앞치마
+    +'<path d="M-16 -10 Q0 -16 16 -10 L17 0 Q0 4 -17 0 Z" fill="#D5473C"/>'
+    +'<circle cx="0" cy="22" r="3" fill="#fff" opacity="0.8"/>'
+    // 머리
+    +'<circle cx="-17" cy="-50" r="10" fill="#A9713F"/><circle cx="17" cy="-50" r="10" fill="#A9713F"/>'
+    +'<circle cx="-17" cy="-50" r="5" fill="#CDA074"/><circle cx="17" cy="-50" r="5" fill="#CDA074"/>'
+    +'<circle cx="0" cy="-33" r="25" fill="#B07A46"/>'
+    +'<circle cx="0" cy="-33" r="25" fill="none" stroke="#8F5E33" stroke-width="1.4" opacity="0.5"/>'
+    +'<ellipse cx="-9" cy="-43" rx="12" ry="9" fill="#E7C79E" opacity="0.4"/>'
+    +'<ellipse cx="0" cy="-25" rx="14" ry="11" fill="#EAD8B6"/>'
+    +'<ellipse cx="-17" cy="-29" rx="4.2" ry="2.8" fill="#F49E9A" opacity="0.6"/><ellipse cx="17" cy="-29" rx="4.2" ry="2.8" fill="#F49E9A" opacity="0.6"/>'
+    +'<ellipse cx="-8" cy="-37" rx="4.2" ry="5" fill="#3B2A1E"/><ellipse cx="8" cy="-37" rx="4.2" ry="5" fill="#3B2A1E"/>'
+    +'<circle cx="-9.4" cy="-39" r="1.4" fill="#fff"/><circle cx="6.6" cy="-39" r="1.4" fill="#fff"/>'
+    +'<ellipse cx="0" cy="-28" rx="3.6" ry="2.8" fill="#4A3524"/>'
+    +'<path d="M0 -25 Q0 -21 -4 -20 M0 -25 Q0 -21 4 -20" stroke="#6E4A2C" stroke-width="1.8" fill="none" stroke-linecap="round"/>'
+    // 모루(오른쪽 앞)
+    +'<g transform="translate(30,30)"><rect x="-13" y="7" width="26" height="9" rx="2" fill="#3f3b47"/><path d="M-15 -1 L15 -1 L11 7 L-11 7 Z" fill="#524d5b"/><rect x="-17" y="-6" width="24" height="6" rx="2" fill="#625d6c"/><path d="M-17 -6 l-5 3 l5 3 z" fill="#524d5b"/></g>'
+    +'<g class="mob-clang" transform="translate(30,20)"><path d="M0,-7 L1.8,-1.8 L7,0 L1.8,1.8 L0,7 L-1.8,1.8 L-7,0 L-1.8,-1.8 Z" fill="#FFE27A"/></g>'
+    + arm;
   return _mob(x,y,sz,name,a);}
 function aiToad(x,y,name,sz){sz=sz||46;var a=''
   +'<ellipse cx="0" cy="0" rx="42" ry="32" fill="#74B45A"/>'
@@ -485,7 +509,7 @@ function aiToad(x,y,name,sz){sz=sz||46;var a=''
   +'<ellipse cx="-18" cy="29" rx="9" ry="5" fill="#6AA34F"/><ellipse cx="18" cy="29" rx="9" ry="5" fill="#6AA34F"/>'
   +'<path d="M-24 29 l0 4 M-18 30 l0 4 M-12 29 l0 4" stroke="#4E823B" stroke-width="1.8" stroke-linecap="round"/>'
   +'<path d="M12 29 l0 4 M18 30 l0 4 M24 29 l0 4" stroke="#4E823B" stroke-width="1.8" stroke-linecap="round"/>';
-  return _mob(x,y,sz,name,a);}
+  return _mob(x,y,sz,name,a,1,'mob-nod');}
 function aiFirefly(x,y,name,sz){sz=sz||46;var a=''
   +'<circle cx="0" cy="6" r="40" fill="#FFF3B0" opacity="0.22"/>'
   +'<ellipse cx="-22" cy="-4" rx="16" ry="20" fill="#fff" opacity="0.5" transform="rotate(-20 -22 -4)"/>'
@@ -495,15 +519,15 @@ function aiFirefly(x,y,name,sz){sz=sz||46;var a=''
   +'<path d="M-22 6 Q0 12 22 6" stroke="#9CBE4E" stroke-width="1.4" fill="none" opacity="0.5"/>'
   +'<circle cx="0" cy="-20" r="15" fill="#7FA83E"/>'
   +'<path d="M-6 -32 Q-10 -42 -14 -44 M6 -32 Q10 -42 14 -44" stroke="#7FA83E" stroke-width="2.2" fill="none" stroke-linecap="round"/>'
-  +'<circle cx="-14" cy="-44" r="2.6" fill="#FFE27A"/><circle cx="14" cy="-44" r="2.6" fill="#FFE27A"/>'
+  +'<g class="tw"><circle cx="-14" cy="-44" r="2.6" fill="#FFE27A"/></g><g class="tw t2"><circle cx="14" cy="-44" r="2.6" fill="#FFE27A"/></g>'
   +'<ellipse cx="-5" cy="-20" rx="4.4" ry="5.2" fill="#3B2A1E"/><ellipse cx="5" cy="-20" rx="4.4" ry="5.2" fill="#3B2A1E"/>'
   +'<circle cx="-6.3" cy="-22" r="1.5" fill="#fff"/><circle cx="3.7" cy="-22" r="1.5" fill="#fff"/>'
   +'<ellipse cx="-11" cy="-13" rx="3.5" ry="2.4" fill="#F49E9A" opacity="0.6"/><ellipse cx="11" cy="-13" rx="3.5" ry="2.4" fill="#F49E9A" opacity="0.6"/>'
-  +'<circle cx="0" cy="30" r="16" fill="#FFE27A" opacity="0.35"/><circle cx="0" cy="30" r="10" fill="#FFE27A"/><circle cx="0" cy="30" r="5" fill="#FFF6C8"/>';
-  return _mob(x,y,sz,name,a);}
+  +'<g class="mob-blink"><circle cx="0" cy="30" r="16" fill="#FFE27A" opacity="0.35"/><circle cx="0" cy="30" r="10" fill="#FFE27A"/><circle cx="0" cy="30" r="5" fill="#FFF6C8"/></g>';
+  return _mob(x,y,sz,name,a,1,'mob-float');}
 function aiSquirrel(x,y,name,sz){sz=sz||46;var a=''
-  +'<path d="M28 20 Q60 6 52 -30 Q48 -54 22 -50 Q40 -40 40 -18 Q40 6 20 18 Z" fill="#B07A46"/>'
-  +'<path d="M30 16 Q52 4 46 -26 Q43 -44 26 -44 Q38 -34 36 -16 Q34 4 22 14 Z" fill="#C99A63" opacity="0.8"/>'
+  +'<g class="mob-tail"><path d="M28 20 Q60 6 52 -30 Q48 -54 22 -50 Q40 -40 40 -18 Q40 6 20 18 Z" fill="#B07A46"/>'
+  +'<path d="M30 16 Q52 4 46 -26 Q43 -44 26 -44 Q38 -34 36 -16 Q34 4 22 14 Z" fill="#C99A63" opacity="0.8"/></g>'
   +'<ellipse cx="0" cy="14" rx="24" ry="26" fill="#A9713F"/>'
   +'<ellipse cx="0" cy="20" rx="15" ry="16" fill="#EAD8B6" opacity="0.85"/>'
   +'<circle cx="0" cy="-16" r="22" fill="#B07A46"/>'
@@ -519,8 +543,8 @@ function aiSquirrel(x,y,name,sz){sz=sz||46;var a=''
   return _mob(x,y,sz,name,a);}
 function aiBats(x,y,name,sz){sz=sz||46;
   function bat(cx){return '<g transform="translate('+cx+',0)">'
-    +'<path d="M-10 -4 Q-30 -18 -34 -2 Q-26 -6 -20 2 Q-16 -2 -10 2 Z" fill="#6E5E9E"/>'
-    +'<path d="M10 -4 Q30 -18 34 -2 Q26 -6 20 2 Q16 -2 10 2 Z" fill="#6E5E9E"/>'
+    +'<g class="mob-flapL"><path d="M-10 -4 Q-30 -18 -34 -2 Q-26 -6 -20 2 Q-16 -2 -10 2 Z" fill="#6E5E9E"/></g>'
+    +'<g class="mob-flapR"><path d="M10 -4 Q30 -18 34 -2 Q26 -6 20 2 Q16 -2 10 2 Z" fill="#6E5E9E"/></g>'
     +'<circle cx="0" cy="0" r="15" fill="#7C6BA8"/>'
     +'<path d="M-9 -12 L-5 -20 L-1 -12 Z" fill="#7C6BA8"/><path d="M9 -12 L5 -20 L1 -12 Z" fill="#7C6BA8"/>'
     +'<ellipse cx="-5" cy="-1" rx="4" ry="4.6" fill="#2E2440"/><ellipse cx="5" cy="-1" rx="4" ry="4.6" fill="#2E2440"/>'
@@ -529,7 +553,7 @@ function aiBats(x,y,name,sz){sz=sz||46;
     +'<path d="M-3 6 L-2 9 L0 6 L2 9 L3 6" stroke="#fff" stroke-width="1.1" fill="none" stroke-linecap="round"/>'
     +'</g>';}
   var a='<circle cx="0" cy="0" r="40" fill="#6a5db0" opacity="0.14"/>'+bat(-19)+bat(19);
-  return _mob(x,y,sz,name,a,0.9);}
+  return _mob(x,y,sz,name,a,0.9,'mob-float');}
 function aiFairy(x,y,name,sz){sz=sz||46;var a=''
   +'<circle cx="0" cy="0" r="40" fill="#E8D9FF" opacity="0.22"/>'
   +'<ellipse cx="-20" cy="0" rx="16" ry="22" fill="#CBB8F0" opacity="0.55" transform="rotate(-16 -20 0)"/>'
@@ -543,16 +567,16 @@ function aiFairy(x,y,name,sz){sz=sz||46;var a=''
   +'<ellipse cx="-9" cy="-6" rx="3" ry="2" fill="#F49E9A" opacity="0.6"/><ellipse cx="9" cy="-6" rx="3" ry="2" fill="#F49E9A" opacity="0.6"/>'
   +'<path d="M-3 -5 Q0 -2 3 -5" stroke="#B5766A" stroke-width="1.4" fill="none" stroke-linecap="round"/>'
   +'<line x1="16" y1="10" x2="30" y2="-8" stroke="#E7C77A" stroke-width="2.4" stroke-linecap="round"/>'
-  +'<path d="M32 -14 l2.2 5 l5.4 0.6 l-4 3.6 l1.2 5.3 l-4.8 -2.8 l-4.8 2.8 l1.2 -5.3 l-4 -3.6 l5.4 -0.6 z" fill="#FFE27A" stroke="#E8B84A" stroke-width="0.8"/>';
-  return _mob(x,y,sz,name,a);}
+  +'<g class="tw"><path d="M32 -14 l2.2 5 l5.4 0.6 l-4 3.6 l1.2 5.3 l-4.8 -2.8 l-4.8 2.8 l1.2 -5.3 l-4 -3.6 l5.4 -0.6 z" fill="#FFE27A" stroke="#E8B84A" stroke-width="0.8"/></g>';
+  return _mob(x,y,sz,name,a,1,'mob-float');}
 function aiButterfly(x,y,name,sz){sz=sz||46;var a=''
   +'<circle cx="0" cy="0" r="40" fill="#FFE3EC" opacity="0.16"/>'
-  +'<path d="M-4 -2 Q-40 -34 -40 -8 Q-40 6 -8 4 Z" fill="#F58BB0"/>'
-  +'<path d="M4 -2 Q40 -34 40 -8 Q40 6 8 4 Z" fill="#F58BB0"/>'
+  +'<g class="mob-flapL"><path d="M-4 -2 Q-40 -34 -40 -8 Q-40 6 -8 4 Z" fill="#F58BB0"/>'
   +'<path d="M-4 4 Q-34 20 -30 34 Q-24 42 -6 30 Z" fill="#F8A96B"/>'
+  +'<circle cx="-24" cy="-12" r="5" fill="#fff" opacity="0.8"/><circle cx="-18" cy="26" r="3.4" fill="#fff" opacity="0.7"/></g>'
+  +'<g class="mob-flapR"><path d="M4 -2 Q40 -34 40 -8 Q40 6 8 4 Z" fill="#F58BB0"/>'
   +'<path d="M4 4 Q34 20 30 34 Q24 42 6 30 Z" fill="#F8A96B"/>'
-  +'<circle cx="-24" cy="-12" r="5" fill="#fff" opacity="0.8"/><circle cx="24" cy="-12" r="5" fill="#fff" opacity="0.8"/>'
-  +'<circle cx="-18" cy="26" r="3.4" fill="#fff" opacity="0.7"/><circle cx="18" cy="26" r="3.4" fill="#fff" opacity="0.7"/>'
+  +'<circle cx="24" cy="-12" r="5" fill="#fff" opacity="0.8"/><circle cx="18" cy="26" r="3.4" fill="#fff" opacity="0.7"/></g>'
   +'<ellipse cx="0" cy="6" rx="6.5" ry="20" fill="#7A5A9E"/>'
   +'<ellipse cx="0" cy="-10" rx="7.5" ry="8" fill="#8A6AAE"/>'
   +'<path d="M-3 -16 Q-8 -28 -12 -30 M3 -16 Q8 -28 12 -30" stroke="#7A5A9E" stroke-width="2" fill="none" stroke-linecap="round"/>'
@@ -560,7 +584,7 @@ function aiButterfly(x,y,name,sz){sz=sz||46;var a=''
   +'<circle cx="-3" cy="-10" r="2.4" fill="#3B2A1E"/><circle cx="3" cy="-10" r="2.4" fill="#3B2A1E"/>'
   +'<circle cx="-3.7" cy="-11" r="0.9" fill="#fff"/><circle cx="2.3" cy="-11" r="0.9" fill="#fff"/>'
   +'<ellipse cx="-6" cy="-5" rx="2.4" ry="1.6" fill="#F49E9A" opacity="0.6"/><ellipse cx="6" cy="-5" rx="2.4" ry="1.6" fill="#F49E9A" opacity="0.6"/>';
-  return _mob(x,y,sz,name,a);}
+  return _mob(x,y,sz,name,a,1,'mob-flit');}
 function aiHammer(x,y,sz){sz=sz||34;var k=(sz*0.0165);
   var a='<g transform="rotate(18)"><rect x="-3" y="-6" width="6" height="34" rx="3" fill="#9A6A3C"/><rect x="-16" y="-20" width="32" height="16" rx="4" fill="#9AA3AD"/><rect x="-16" y="-20" width="32" height="6" rx="3" fill="#C3CCD4"/></g>';
   return '<g transform="translate('+x+','+y+')"><g transform="scale('+k.toFixed(3)+')">'+a+'</g></g>';}
@@ -624,7 +648,7 @@ const ACT_INTROS={
   ]},
   3:{act:3,pages:[
     {cap:'대장장이 곰',hl:'뚝딱',say:'글자 공방에 도착했어요! 대장장이 곰 뚝딱이 커다란 망치를 번쩍 들었어요. "어서 와, 여기선 자음과 모음으로 글자를 뚝딱 만든단다!"',
-      svg:aiScene('대장장이 곰','#8FB8DC','#F3E6C8',aiPost(64,198,0.75)+aiBear(160,124,'대장장이 뚝딱')+aiHammer(258,132,34)+aiHani(320,248,0.72))},
+      svg:aiScene('대장장이 곰','#8FB8DC','#F3E6C8',aiPost(60,200,0.72)+aiBear(168,120,'대장장이 뚝딱')+aiHani(322,248,0.72))},
     {cap:'땅! 새 글자',say:'자음과 모음을 모루에 올리고— 땅! 땅! 뚝딱이 두드리자 새 글자가 반짝 태어났어요. 정말 신기하죠?',
       svg:aiScene('땅! 새 글자','#8FB8DC','#F3E6C8',aiBub(74,116,28,'ㄱ',_cB,_eB,'slideR')+aiOp(128,'+')+aiBub(182,116,28,'ㅏ',_cP,_eP,'slideL')+aiOp(240,'→')+aiSpark(276,82)+aiSpark(340,88,'s2')+aiSpark(310,150,'s3')+aiBub(310,116,34,'가',_cM,_eM,'merge')+aiHani(200,250,0.8))},
     {cap:'직접 만들어요',say:'ㄱ 더하기 ㅏ는 가! 이번엔 네가 망치를 들고 글자를 만들어, 편지에서 사라진 글자를 되찾아 줄래?',

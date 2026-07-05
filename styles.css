@@ -727,6 +727,25 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .scene .notefloat.n2{animation-delay:.55s;}
 .scene .notefloat.n3{animation-delay:1.1s;}
 @keyframes notefloat{0%,100%{transform:translateY(0);opacity:.55}50%{transform:translateY(-9px);opacity:1}}
+/* ===== 서브캐릭터(막 도우미) 움직임 — 하니처럼 살아있는 도우미 ===== */
+.scene .mob-float{animation:mobFloat 3s ease-in-out infinite;transform-box:fill-box;transform-origin:center bottom;}
+@keyframes mobFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.scene .mob-flit{animation:mobFlit 2.4s ease-in-out infinite;transform-box:fill-box;transform-origin:center;}
+@keyframes mobFlit{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-7px) rotate(2deg)}}
+.scene .mob-nod{animation:mobNod 2.4s ease-in-out infinite;transform-box:fill-box;transform-origin:center bottom;}
+@keyframes mobNod{0%,58%,100%{transform:translateY(0) rotate(0)}20%{transform:translateY(2px) rotate(2.5deg)}38%{transform:translateY(0) rotate(0)}}
+.scene .mob-blink{animation:mobBlink 1.5s ease-in-out infinite;transform-box:fill-box;transform-origin:center;}
+@keyframes mobBlink{0%,100%{opacity:.45;transform:scale(.82)}50%{opacity:1;transform:scale(1.12)}}
+.scene .mob-tail{animation:mobTail 2.6s ease-in-out infinite;transform-box:fill-box;transform-origin:0% 100%;}
+@keyframes mobTail{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(8deg)}}
+.scene .mob-flapL{animation:mobFlapL .5s ease-in-out infinite;transform-box:fill-box;transform-origin:100% 50%;}
+@keyframes mobFlapL{0%,100%{transform:scaleX(1)}50%{transform:scaleX(.55) skewY(-4deg)}}
+.scene .mob-flapR{animation:mobFlapR .5s ease-in-out infinite;transform-box:fill-box;transform-origin:0% 50%;}
+@keyframes mobFlapR{0%,100%{transform:scaleX(1)}50%{transform:scaleX(.55) skewY(4deg)}}
+.scene .mob-hammer{animation:mobHammer 1.1s ease-in-out infinite;transform-box:fill-box;transform-origin:14% 82%;}
+@keyframes mobHammer{0%,100%{transform:rotate(-34deg)}42%{transform:rotate(14deg)}54%{transform:rotate(10deg)}}
+.scene .mob-clang{animation:mobClang 1.1s ease-out infinite;transform-box:fill-box;transform-origin:center;}
+@keyframes mobClang{0%,40%{opacity:0;transform:scale(.2)}48%{opacity:1;transform:scale(1.35)}64%{opacity:0;transform:scale(.9)}100%{opacity:0;transform:scale(.9)}}
 /* 듣고찾기: 오답 시 정답 단어 강조(반복학습) */
 .lopt.reveal{outline:4px solid var(--quiz);outline-offset:2px;animation:pulse 0.7s ease-in-out 2;}
 .lopt .lwd{margin-top:2px;font-size:.95rem;color:var(--ink);}
