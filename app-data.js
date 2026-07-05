@@ -444,6 +444,126 @@ function aiHelper(x,y,emoji,name,sz){sz=sz||46;name=name||'';var half=Math.max(3
   if(name){g+='<rect x="-'+half+'" y="'+py+'" width="'+(half*2)+'" height="21" rx="10.5" fill="#FFFAEE" stroke="#E9C899" stroke-width="2"/>'
     +'<text x="0" y="'+(sz*0.54+15).toFixed(0)+'" font-family="Jua, sans-serif" font-size="12" fill="#4A3524" text-anchor="middle">'+name+'</text>';}
   return g+'</g>';}
+
+// ===== 서브캐릭터(막 도우미) 손그림 빌더 — 하니(aiHaniCore) 톤: 따뜻한 팔레트·큰 반짝 눈·발그레 볼·바닥 그림자 =====
+// 각 함수 (x,y,name,sz) → 장면에 배치되는 <g>. art는 원점 중심으로 그리고 sz에 맞춰 스케일, 이름표는 aiName.
+function aiName(name,sz){name=name||'';if(!name)return '';var half=Math.max(32,name.length*7);var py=(sz*0.62).toFixed(0);
+  return '<rect x="-'+half+'" y="'+py+'" width="'+(half*2)+'" height="21" rx="10.5" fill="#FFFAEE" stroke="#E9C899" stroke-width="2"/>'
+    +'<text x="0" y="'+(sz*0.62+15).toFixed(0)+'" font-family="Jua, sans-serif" font-size="12" fill="#4A3524" text-anchor="middle">'+name+'</text>';}
+function _mob(x,y,sz,name,art,fscale){var k=(sz*0.0165*(fscale||1));
+  return '<g transform="translate('+x+','+y+')">'
+    +'<ellipse cx="0" cy="'+(sz*0.72).toFixed(0)+'" rx="'+(sz*0.6).toFixed(0)+'" ry="'+(sz*0.15).toFixed(0)+'" fill="#000" fill-opacity="0.12"/>'
+    +'<g transform="scale('+k.toFixed(3)+')">'+art+'</g>'+aiName(name,sz)+'</g>';}
+function aiBear(x,y,name,sz){sz=sz||46;var a=''
+  +'<ellipse cx="-27" cy="-22" rx="13" ry="13" fill="#A9713F"/><ellipse cx="27" cy="-22" rx="13" ry="13" fill="#A9713F"/>'
+  +'<circle cx="-27" cy="-22" r="6.6" fill="#CDA074"/><circle cx="27" cy="-22" r="6.6" fill="#CDA074"/>'
+  +'<ellipse cx="0" cy="0" rx="39" ry="38" fill="#B07A46"/>'
+  +'<ellipse cx="0" cy="0" rx="39" ry="38" fill="none" stroke="#8F5E33" stroke-width="1.6" opacity="0.5"/>'
+  +'<ellipse cx="-14" cy="-17" rx="19" ry="15" fill="#E7C79E" opacity="0.45"/>'
+  +'<ellipse cx="0" cy="9" rx="22" ry="17" fill="#EAD8B6"/>'
+  +'<ellipse cx="-26" cy="3" rx="6" ry="4" fill="#F49E9A" opacity="0.6"/><ellipse cx="26" cy="3" rx="6" ry="4" fill="#F49E9A" opacity="0.6"/>'
+  +'<ellipse cx="-13" cy="-7" rx="6.2" ry="7.2" fill="#3B2A1E"/><ellipse cx="13" cy="-7" rx="6.2" ry="7.2" fill="#3B2A1E"/>'
+  +'<circle cx="-15" cy="-10" r="2" fill="#fff"/><circle cx="11" cy="-10" r="2" fill="#fff"/>'
+  +'<ellipse cx="0" cy="3" rx="5" ry="3.8" fill="#4A3524"/>'
+  +'<path d="M0 7 Q0 13 -6 14 M0 7 Q0 13 6 14" stroke="#6E4A2C" stroke-width="2.2" fill="none" stroke-linecap="round"/>'
+  +'<path d="M-28 29 Q0 41 28 29 L24 37 Q0 47 -24 37 Z" fill="#E4574B"/>'
+  +'<circle cx="0" cy="36" r="3" fill="#fff" opacity="0.85"/>';
+  return _mob(x,y,sz,name,a);}
+function aiToad(x,y,name,sz){sz=sz||46;var a=''
+  +'<ellipse cx="0" cy="0" rx="42" ry="32" fill="#74B45A"/>'
+  +'<ellipse cx="0" cy="0" rx="42" ry="32" fill="none" stroke="#4E823B" stroke-width="1.6" opacity="0.5"/>'
+  +'<ellipse cx="0" cy="10" rx="27" ry="18" fill="#CDE9B0" opacity="0.9"/>'
+  +'<circle cx="-30" cy="-10" r="4" fill="#5E9A46"/><circle cx="32" cy="-8" r="3.4" fill="#5E9A46"/><circle cx="20" cy="-22" r="2.8" fill="#5E9A46"/>'
+  +'<circle cx="-18" cy="-28" r="15" fill="#86C169"/><circle cx="18" cy="-28" r="15" fill="#86C169"/>'
+  +'<circle cx="-18" cy="-28" r="15" fill="none" stroke="#4E823B" stroke-width="1.2" opacity="0.5"/><circle cx="18" cy="-28" r="15" fill="none" stroke="#4E823B" stroke-width="1.2" opacity="0.5"/>'
+  +'<circle cx="-18" cy="-25" r="8.5" fill="#fff"/><circle cx="18" cy="-25" r="8.5" fill="#fff"/>'
+  +'<circle cx="-18" cy="-23" r="5" fill="#3B2A1E"/><circle cx="18" cy="-23" r="5" fill="#3B2A1E"/>'
+  +'<circle cx="-19.5" cy="-25" r="1.7" fill="#fff"/><circle cx="16.5" cy="-25" r="1.7" fill="#fff"/>'
+  +'<path d="M-27 -29 A9 9 0 0 1 -9 -29 L-9 -27 L-27 -27 Z" fill="#6AA34F"/><path d="M9 -29 A9 9 0 0 1 27 -29 L27 -27 L9 -27 Z" fill="#6AA34F"/>'
+  +'<ellipse cx="-30" cy="6" rx="6" ry="4" fill="#F49E9A" opacity="0.55"/><ellipse cx="30" cy="6" rx="6" ry="4" fill="#F49E9A" opacity="0.55"/>'
+  +'<path d="M-20 10 Q0 20 20 10" stroke="#3E6B2E" stroke-width="3" fill="none" stroke-linecap="round"/>'
+  +'<ellipse cx="-18" cy="29" rx="9" ry="5" fill="#6AA34F"/><ellipse cx="18" cy="29" rx="9" ry="5" fill="#6AA34F"/>'
+  +'<path d="M-24 29 l0 4 M-18 30 l0 4 M-12 29 l0 4" stroke="#4E823B" stroke-width="1.8" stroke-linecap="round"/>'
+  +'<path d="M12 29 l0 4 M18 30 l0 4 M24 29 l0 4" stroke="#4E823B" stroke-width="1.8" stroke-linecap="round"/>';
+  return _mob(x,y,sz,name,a);}
+function aiFirefly(x,y,name,sz){sz=sz||46;var a=''
+  +'<circle cx="0" cy="6" r="40" fill="#FFF3B0" opacity="0.22"/>'
+  +'<ellipse cx="-22" cy="-4" rx="16" ry="20" fill="#fff" opacity="0.5" transform="rotate(-20 -22 -4)"/>'
+  +'<ellipse cx="22" cy="-4" rx="16" ry="20" fill="#fff" opacity="0.5" transform="rotate(20 22 -4)"/>'
+  +'<ellipse cx="0" cy="6" rx="22" ry="26" fill="#C7E06A"/>'
+  +'<ellipse cx="0" cy="6" rx="22" ry="26" fill="none" stroke="#9CBE4E" stroke-width="1.4" opacity="0.6"/>'
+  +'<path d="M-22 6 Q0 12 22 6" stroke="#9CBE4E" stroke-width="1.4" fill="none" opacity="0.5"/>'
+  +'<circle cx="0" cy="-20" r="15" fill="#7FA83E"/>'
+  +'<path d="M-6 -32 Q-10 -42 -14 -44 M6 -32 Q10 -42 14 -44" stroke="#7FA83E" stroke-width="2.2" fill="none" stroke-linecap="round"/>'
+  +'<circle cx="-14" cy="-44" r="2.6" fill="#FFE27A"/><circle cx="14" cy="-44" r="2.6" fill="#FFE27A"/>'
+  +'<ellipse cx="-5" cy="-20" rx="4.4" ry="5.2" fill="#3B2A1E"/><ellipse cx="5" cy="-20" rx="4.4" ry="5.2" fill="#3B2A1E"/>'
+  +'<circle cx="-6.3" cy="-22" r="1.5" fill="#fff"/><circle cx="3.7" cy="-22" r="1.5" fill="#fff"/>'
+  +'<ellipse cx="-11" cy="-13" rx="3.5" ry="2.4" fill="#F49E9A" opacity="0.6"/><ellipse cx="11" cy="-13" rx="3.5" ry="2.4" fill="#F49E9A" opacity="0.6"/>'
+  +'<circle cx="0" cy="30" r="16" fill="#FFE27A" opacity="0.35"/><circle cx="0" cy="30" r="10" fill="#FFE27A"/><circle cx="0" cy="30" r="5" fill="#FFF6C8"/>';
+  return _mob(x,y,sz,name,a);}
+function aiSquirrel(x,y,name,sz){sz=sz||46;var a=''
+  +'<path d="M28 20 Q60 6 52 -30 Q48 -54 22 -50 Q40 -40 40 -18 Q40 6 20 18 Z" fill="#B07A46"/>'
+  +'<path d="M30 16 Q52 4 46 -26 Q43 -44 26 -44 Q38 -34 36 -16 Q34 4 22 14 Z" fill="#C99A63" opacity="0.8"/>'
+  +'<ellipse cx="0" cy="14" rx="24" ry="26" fill="#A9713F"/>'
+  +'<ellipse cx="0" cy="20" rx="15" ry="16" fill="#EAD8B6" opacity="0.85"/>'
+  +'<circle cx="0" cy="-16" r="22" fill="#B07A46"/>'
+  +'<circle cx="-15" cy="-34" r="8" fill="#A9713F"/><circle cx="15" cy="-34" r="8" fill="#A9713F"/>'
+  +'<circle cx="-15" cy="-34" r="4" fill="#CDA074"/><circle cx="15" cy="-34" r="4" fill="#CDA074"/>'
+  +'<ellipse cx="-24" cy="-10" rx="6" ry="4.5" fill="#F49E9A" opacity="0.55"/><ellipse cx="24" cy="-10" rx="6" ry="4.5" fill="#F49E9A" opacity="0.55"/>'
+  +'<ellipse cx="-9" cy="-16" rx="5.4" ry="6.4" fill="#3B2A1E"/><ellipse cx="9" cy="-16" rx="5.4" ry="6.4" fill="#3B2A1E"/>'
+  +'<circle cx="-10.5" cy="-18.5" r="1.8" fill="#fff"/><circle cx="7.5" cy="-18.5" r="1.8" fill="#fff"/>'
+  +'<ellipse cx="0" cy="-7" rx="3.4" ry="2.6" fill="#5A3A22"/>'
+  +'<path d="M0 -5 Q0 0 -4 1 M0 -5 Q0 0 4 1" stroke="#6E4A2C" stroke-width="1.8" fill="none" stroke-linecap="round"/>'
+  +'<g transform="translate(0,30)"><ellipse cx="0" cy="3" rx="8" ry="9" fill="#E0B978"/><path d="M-8 -2 Q0 -10 8 -2 Q8 2 0 2 Q-8 2 -8 -2 Z" fill="#8A5A34"/><rect x="-1.4" y="-11" width="2.8" height="4" rx="1.2" fill="#6E4423"/></g>'
+  +'<ellipse cx="-9" cy="26" rx="5" ry="4" fill="#A9713F"/><ellipse cx="9" cy="26" rx="5" ry="4" fill="#A9713F"/>';
+  return _mob(x,y,sz,name,a);}
+function aiBats(x,y,name,sz){sz=sz||46;
+  function bat(cx){return '<g transform="translate('+cx+',0)">'
+    +'<path d="M-10 -4 Q-30 -18 -34 -2 Q-26 -6 -20 2 Q-16 -2 -10 2 Z" fill="#6E5E9E"/>'
+    +'<path d="M10 -4 Q30 -18 34 -2 Q26 -6 20 2 Q16 -2 10 2 Z" fill="#6E5E9E"/>'
+    +'<circle cx="0" cy="0" r="15" fill="#7C6BA8"/>'
+    +'<path d="M-9 -12 L-5 -20 L-1 -12 Z" fill="#7C6BA8"/><path d="M9 -12 L5 -20 L1 -12 Z" fill="#7C6BA8"/>'
+    +'<ellipse cx="-5" cy="-1" rx="4" ry="4.6" fill="#2E2440"/><ellipse cx="5" cy="-1" rx="4" ry="4.6" fill="#2E2440"/>'
+    +'<circle cx="-6" cy="-2.5" r="1.3" fill="#fff"/><circle cx="4" cy="-2.5" r="1.3" fill="#fff"/>'
+    +'<ellipse cx="-9" cy="5" rx="3" ry="2" fill="#F49E9A" opacity="0.5"/><ellipse cx="9" cy="5" rx="3" ry="2" fill="#F49E9A" opacity="0.5"/>'
+    +'<path d="M-3 6 L-2 9 L0 6 L2 9 L3 6" stroke="#fff" stroke-width="1.1" fill="none" stroke-linecap="round"/>'
+    +'</g>';}
+  var a='<circle cx="0" cy="0" r="40" fill="#6a5db0" opacity="0.14"/>'+bat(-19)+bat(19);
+  return _mob(x,y,sz,name,a,0.9);}
+function aiFairy(x,y,name,sz){sz=sz||46;var a=''
+  +'<circle cx="0" cy="0" r="40" fill="#E8D9FF" opacity="0.22"/>'
+  +'<ellipse cx="-20" cy="0" rx="16" ry="22" fill="#CBB8F0" opacity="0.55" transform="rotate(-16 -20 0)"/>'
+  +'<ellipse cx="20" cy="0" rx="16" ry="22" fill="#CBB8F0" opacity="0.55" transform="rotate(16 20 0)"/>'
+  +'<path d="M-14 6 Q0 -2 14 6 L20 34 Q0 42 -20 34 Z" fill="#B49BE8"/>'
+  +'<path d="M-14 6 Q0 -2 14 6 L16 18 Q0 22 -16 18 Z" fill="#C9B4F2"/>'
+  +'<circle cx="0" cy="-12" r="15" fill="#FCE7CE"/>'
+  +'<path d="M-15 -14 Q-16 -30 0 -30 Q16 -30 15 -14 Q8 -22 0 -22 Q-8 -22 -15 -14 Z" fill="#F4D06A"/>'
+  +'<ellipse cx="-5" cy="-11" rx="3.4" ry="4.2" fill="#3B2A1E"/><ellipse cx="5" cy="-11" rx="3.4" ry="4.2" fill="#3B2A1E"/>'
+  +'<circle cx="-6" cy="-12.5" r="1.2" fill="#fff"/><circle cx="4" cy="-12.5" r="1.2" fill="#fff"/>'
+  +'<ellipse cx="-9" cy="-6" rx="3" ry="2" fill="#F49E9A" opacity="0.6"/><ellipse cx="9" cy="-6" rx="3" ry="2" fill="#F49E9A" opacity="0.6"/>'
+  +'<path d="M-3 -5 Q0 -2 3 -5" stroke="#B5766A" stroke-width="1.4" fill="none" stroke-linecap="round"/>'
+  +'<line x1="16" y1="10" x2="30" y2="-8" stroke="#E7C77A" stroke-width="2.4" stroke-linecap="round"/>'
+  +'<path d="M32 -14 l2.2 5 l5.4 0.6 l-4 3.6 l1.2 5.3 l-4.8 -2.8 l-4.8 2.8 l1.2 -5.3 l-4 -3.6 l5.4 -0.6 z" fill="#FFE27A" stroke="#E8B84A" stroke-width="0.8"/>';
+  return _mob(x,y,sz,name,a);}
+function aiButterfly(x,y,name,sz){sz=sz||46;var a=''
+  +'<circle cx="0" cy="0" r="40" fill="#FFE3EC" opacity="0.16"/>'
+  +'<path d="M-4 -2 Q-40 -34 -40 -8 Q-40 6 -8 4 Z" fill="#F58BB0"/>'
+  +'<path d="M4 -2 Q40 -34 40 -8 Q40 6 8 4 Z" fill="#F58BB0"/>'
+  +'<path d="M-4 4 Q-34 20 -30 34 Q-24 42 -6 30 Z" fill="#F8A96B"/>'
+  +'<path d="M4 4 Q34 20 30 34 Q24 42 6 30 Z" fill="#F8A96B"/>'
+  +'<circle cx="-24" cy="-12" r="5" fill="#fff" opacity="0.8"/><circle cx="24" cy="-12" r="5" fill="#fff" opacity="0.8"/>'
+  +'<circle cx="-18" cy="26" r="3.4" fill="#fff" opacity="0.7"/><circle cx="18" cy="26" r="3.4" fill="#fff" opacity="0.7"/>'
+  +'<ellipse cx="0" cy="6" rx="6.5" ry="20" fill="#7A5A9E"/>'
+  +'<ellipse cx="0" cy="-10" rx="7.5" ry="8" fill="#8A6AAE"/>'
+  +'<path d="M-3 -16 Q-8 -28 -12 -30 M3 -16 Q8 -28 12 -30" stroke="#7A5A9E" stroke-width="2" fill="none" stroke-linecap="round"/>'
+  +'<circle cx="-12" cy="-30" r="2.4" fill="#F58BB0"/><circle cx="12" cy="-30" r="2.4" fill="#F58BB0"/>'
+  +'<circle cx="-3" cy="-10" r="2.4" fill="#3B2A1E"/><circle cx="3" cy="-10" r="2.4" fill="#3B2A1E"/>'
+  +'<circle cx="-3.7" cy="-11" r="0.9" fill="#fff"/><circle cx="2.3" cy="-11" r="0.9" fill="#fff"/>'
+  +'<ellipse cx="-6" cy="-5" rx="2.4" ry="1.6" fill="#F49E9A" opacity="0.6"/><ellipse cx="6" cy="-5" rx="2.4" ry="1.6" fill="#F49E9A" opacity="0.6"/>';
+  return _mob(x,y,sz,name,a);}
+function aiHammer(x,y,sz){sz=sz||34;var k=(sz*0.0165);
+  var a='<g transform="rotate(18)"><rect x="-3" y="-6" width="6" height="34" rx="3" fill="#9A6A3C"/><rect x="-16" y="-20" width="32" height="16" rx="4" fill="#9AA3AD"/><rect x="-16" y="-20" width="32" height="6" rx="3" fill="#C3CCD4"/></g>';
+  return '<g transform="translate('+x+','+y+')"><g transform="scale('+k.toFixed(3)+')">'+a+'</g></g>';}
 // 별빛 편지 모티프: 따뜻한 크림 편지지 + 우체국 봉랍(seal). 빈 줄=도망친 글자, filled면 글자가 반짝 되살아난 편지.
 function aiLetter(x,y,s,filled,cls){s=(s==null?1:s);cls=cls||'';
   var b='<rect x="-33" y="-36" width="60" height="76" rx="8" fill="#F0E4C8"/>'
@@ -490,7 +610,7 @@ const ACT_INTROS={
     {cap:'텅 빈 편지',hl:'하얗게',say:'별빛 우체국 편지가 하얗게 텅 비었어요. 깜짝 놀란 모음 글자들이 깜깜한 숲으로 숨어 버렸대요. 우리가 사라진 글자를 찾아 편지로 되돌려 줄까요?',
       svg:aiScene('텅 빈 편지','#3C3358','#5A4468',aiPost(84,196,0.9)+aiLetter(178,120,1.25,false)+aiSpark(250,80,'s2')+aiHani(310,246,0.85))},
     {cap:'반딧불이 깜빡이',say:'숲이 너무 어두워요. 그때 반딧불이 깜빡이가 반짝반짝! "모음은 소리를 내면 빛이 나!" 입을 크게 벌리고 아— 하면 숨은 글자가 깨어난대요.',
-      svg:aiScene('반딧불이 깜빡이','#3C3358','#5A4468',aiSpark(90,72)+aiSpark(160,58,'s2')+aiSpark(240,66,'s3')+aiHelper(130,128,'✨','반딧불이 깜빡이')+aiHani(310,246,0.85,'',true))},
+      svg:aiScene('반딧불이 깜빡이','#3C3358','#5A4468',aiSpark(90,72)+aiSpark(160,58,'s2')+aiSpark(240,66,'s3')+aiFirefly(130,128,'반딧불이 깜빡이')+aiHani(310,246,0.85,'',true))},
     {cap:'모음을 불러요',say:'입 모양이 바뀌면 소리도 바뀌어요. 아! 어! 오! 소리를 내면 숨은 모음이 반짝 나와요. 자, 사라진 모음 친구를 소리로 불러 편지로 데려올까요?',
       svg:aiScene('모음을 불러요','#3C3358','#5A4468',aiNote(95,58)+aiNote(200,52,'n2')+aiNote(305,58,'n3')+aiBub(95,120,26,'ㅏ',_cP,_eP)+aiBub(200,120,26,'ㅓ',_cP,_eP)+aiBub(305,120,26,'ㅗ',_cP,_eP)+aiHani(200,248,0.9,'',true))},
   ]},
@@ -498,13 +618,13 @@ const ACT_INTROS={
     {cap:'조용한 숲',hl:'쿨쿨',say:'숲속 자음 친구들이 쿨쿨 잠들어 아무 소리도 안 나요. 편지도 조용— 글자가 하나도 안 보여요.',
       svg:aiScene('조용한 숲','#3C3358','#5A7A68',aiPost(72,198,0.8)+'<text class="notefloat" x="170" y="80" font-family="Jua, sans-serif" font-size="17" fill="#cfe6f3" text-anchor="middle">z  z  z</text>'+aiBub(170,132,30,'ㄱ',_cB,_eB)+aiHani(300,246,0.85))},
     {cap:'숲지기 도토리',say:'그때 다람쥐 도토리가 폴짝! "자음은 혼자선 조용해. 모음 친구 손을 잡아야 깨어나!" 도토리가 앞장서서 길을 알려줘요.',
-      svg:aiScene('숲지기 도토리','#3C3358','#5A7A68',aiHelper(105,126,'🐿️','다람쥐 도토리')+aiBub(232,120,24,'ㄱ',_cB,_eB)+aiOp(280,'+')+aiBub(322,120,24,'ㅏ',_cP,_eP)+aiHani(210,250,0.72))},
+      svg:aiScene('숲지기 도토리','#3C3358','#5A7A68',aiSquirrel(105,126,'다람쥐 도토리')+aiBub(232,120,24,'ㄱ',_cB,_eB)+aiOp(280,'+')+aiBub(322,120,24,'ㅏ',_cP,_eP)+aiHani(210,250,0.72))},
     {cap:'손을 잡으니 가!',say:'ㄱ이 ㅏ 손을 잡으니— 가! 소리가 톡 났어요. 우리도 자음을 깨워서 편지에서 사라진 글자를 되찾아요!',
       svg:aiScene('손을 잡으니 가!','#3C3358','#5A7A68',aiBub(72,120,26,'ㄱ',_cB,_eB,'slideR')+aiOp(121,'+')+aiBub(170,120,26,'ㅏ',_cP,_eP,'slideL')+aiOp(230,'→')+aiNote(300,64)+aiBub(302,120,32,'가',_cM,_eM,'merge')+aiHani(200,250,0.82))},
   ]},
   3:{act:3,pages:[
     {cap:'대장장이 곰',hl:'뚝딱',say:'글자 공방에 도착했어요! 대장장이 곰 뚝딱이 커다란 망치를 번쩍 들었어요. "어서 와, 여기선 자음과 모음으로 글자를 뚝딱 만든단다!"',
-      svg:aiScene('대장장이 곰','#8FB8DC','#F3E6C8',aiPost(64,198,0.75)+aiHelper(160,124,'🐻','대장장이 뚝딱')+aiHelper(258,132,'🔨','',34)+aiHani(320,248,0.72))},
+      svg:aiScene('대장장이 곰','#8FB8DC','#F3E6C8',aiPost(64,198,0.75)+aiBear(160,124,'대장장이 뚝딱')+aiHammer(258,132,34)+aiHani(320,248,0.72))},
     {cap:'땅! 새 글자',say:'자음과 모음을 모루에 올리고— 땅! 땅! 뚝딱이 두드리자 새 글자가 반짝 태어났어요. 정말 신기하죠?',
       svg:aiScene('땅! 새 글자','#8FB8DC','#F3E6C8',aiBub(74,116,28,'ㄱ',_cB,_eB,'slideR')+aiOp(128,'+')+aiBub(182,116,28,'ㅏ',_cP,_eP,'slideL')+aiOp(240,'→')+aiSpark(276,82)+aiSpark(340,88,'s2')+aiSpark(310,150,'s3')+aiBub(310,116,34,'가',_cM,_eM,'merge')+aiHani(200,250,0.8))},
     {cap:'직접 만들어요',say:'ㄱ 더하기 ㅏ는 가! 이번엔 네가 망치를 들고 글자를 만들어, 편지에서 사라진 글자를 되찾아 줄래?',
@@ -512,15 +632,15 @@ const ACT_INTROS={
   ]},
   4:{act:4,pages:[
     {cap:'무거운 문',hl:'받침',say:'쿵! 길을 커다란 받침의 문이 막았어요. 문 앞엔 두꺼비 문지기 끄떡이 꿈쩍도 안 하고 앉아 있어요.',
-      svg:aiScene('무거운 문','#3C3358','#5A4468',aiPost(38,204,0.55)+'<g transform="translate(128,146)"><rect x="-42" y="-64" width="84" height="128" rx="8" fill="#4a3d68"/><rect x="-32" y="-50" width="64" height="114" rx="6" fill="#2c2544"/><rect x="-3" y="-50" width="6" height="114" fill="#5a4d7a"/></g>'+aiHelper(118,120,'🐸','두꺼비 끄떡')+aiHani(320,248,0.75))},
+      svg:aiScene('무거운 문','#3C3358','#5A4468',aiPost(38,204,0.55)+'<g transform="translate(128,146)"><rect x="-42" y="-64" width="84" height="128" rx="8" fill="#4a3d68"/><rect x="-32" y="-50" width="64" height="114" rx="6" fill="#2c2544"/><rect x="-3" y="-50" width="6" height="114" fill="#5a4d7a"/></g>'+aiToad(118,120,'두꺼비 끄떡')+aiHani(320,248,0.75))},
     {cap:'받침돌을 얹어요',say:'"글자 아래 받침돌을 살포시 얹어야 문이 열려." 끄떡이 알려줬어요. 가 아래 이응을 얹으니— 강! 끝소리가 생겼어요.',
       svg:aiScene('받침돌을 얹어요','#3C3358','#5A4468',aiBub(70,116,28,'가',_cM,_eM)+aiOp(122,'+')+aiBub(172,104,24,'ㅇ',_cB,_eB,'drop')+'<text x="172" y="150" font-family="Jua, sans-serif" font-size="13" fill="#ffe9c2" text-anchor="middle">받침돌</text>'+aiOp(232,'→')+aiBub(305,116,33,'강',_cM,_eM,'merge')+aiHani(200,250,0.8))},
     {cap:'문이 열렸다',say:'끄떡이 끄덕— 무거운 문이 스르륵 열렸어요! 자, 받침 끝소리 글자를 되찾아 편지를 채워요.',
-      svg:aiScene('문이 열렸다','#3C3358','#5A4468',aiSpark(140,80)+aiSpark(250,78,'s2')+aiBub(190,120,36,'강',_cM,_eM,'merge')+aiHelper(320,120,'🐸','끄떡')+aiHani(90,250,0.72))},
+      svg:aiScene('문이 열렸다','#3C3358','#5A4468',aiSpark(140,80)+aiSpark(250,78,'s2')+aiBub(190,120,36,'강',_cM,_eM,'merge')+aiToad(320,120,'끄떡')+aiHani(90,250,0.72))},
   ]},
   5:{act:5,pages:[
     {cap:'메아리 동굴',hl:'메아리',say:'소리 동굴에 들어서자 힘센 메아리가 쩌렁쩌렁 울려요. 천장엔 쌍둥이 박쥐 둘이 나란히 대롱대롱 매달려 있어요.',
-      svg:aiScene('메아리 동굴','#3C3358','#6A4A6A',aiPost(72,198,0.8)+aiHelper(196,122,'🦇🦇','쌍둥이 박쥐',48)+aiHani(320,248,0.75))},
+      svg:aiScene('메아리 동굴','#3C3358','#6A4A6A',aiPost(72,198,0.8)+aiBats(196,122,'쌍둥이 박쥐',48)+aiHani(320,248,0.75))},
     {cap:'힘을 꾹!',say:'"우린 똑 닮은 쌍둥이! 힘을 꾹 주면 더 센 소리가 나." 가— 보다 힘센— 까! 박쥐가 신나서 깔깔 웃어요.',
       svg:aiScene('힘을 꾹!','#3C3358','#6A4A6A',aiBub(70,116,25,'ㄱ',_cB,_eB)+aiOp(118,'+')+aiBub(166,116,25,'ㄱ',_cB,_eB)+aiOp(226,'→')+aiSpark(268,84,'s2')+aiSpark(340,150,'s3')+aiBub(302,116,33,'ㄲ',_cR,_eR,'merge')+'<text class="spark" x="302" y="176" font-family="Jua, sans-serif" font-size="20" fill="#ffe27a" text-anchor="middle">까!</text>'+aiHani(200,250,0.8,'determined'))},
     {cap:'센 소리 되찾기',say:'쌍둥이 자음은 힘을 꾹! 까! 우리도 센 소리 글자를 불러 편지에서 사라진 글자를 되찾을까요?',
@@ -528,15 +648,15 @@ const ACT_INTROS={
   ]},
   6:{act:6,pages:[
     {cap:'별빛 뒤',hl:'별빛 뒤',say:'반짝이는 별빛 뒤에 모음들이 숨어서 살짝살짝 반짝여요. 작은 별빛 요정이 손을 흔들며 나타났어요.',
-      svg:aiScene('별빛 뒤','#3C3358','#5A4468',aiPost(66,198,0.75)+aiSpark(120,70)+aiSpark(232,74,'s2')+aiSpark(186,52,'s3')+aiHelper(170,130,'🧚','별빛 요정')+aiHani(315,248,0.8))},
+      svg:aiScene('별빛 뒤','#3C3358','#5A4468',aiPost(66,198,0.75)+aiSpark(120,70)+aiSpark(232,74,'s2')+aiSpark(186,52,'s3')+aiFairy(170,130,'별빛 요정')+aiHani(315,248,0.8))},
     {cap:'겹치면 나와요',say:'"모음 둘이 겹친 자리를 비춰 줄게!" 요정이 지팡이를 반짝. 아 더하기 이는— 애! 숨어 있던 모음이 나왔어요.',
       svg:aiScene('겹치면 나와요','#3C3358','#5A4468',aiBub(74,116,28,'ㅏ',_cP,_eP,'slideR')+aiOp(128,'+')+aiBub(182,116,28,'ㅣ',_cP,_eP,'slideL')+aiOp(240,'→')+aiSpark(276,84)+aiSpark(338,146,'s3')+aiBub(310,116,34,'ㅐ',_cM,_eM,'merge')+aiHani(200,250,0.82))},
     {cap:'숨은 모음 찾기',say:'겹치고 숨은 모음이 아직 많아요. 요정과 함께 숨은 모음을 찾아 편지로 되돌려 줄까요?',
-      svg:aiScene('숨은 모음 찾기','#3C3358','#5A4468',aiHelper(88,122,'🧚','별빛 요정')+aiBub(208,116,28,'ㅏ',_cP,_eP)+aiOp(258,'+')+aiBub(300,116,28,'ㅣ',_cP,_eP)+aiHani(200,250,0.82))},
+      svg:aiScene('숨은 모음 찾기','#3C3358','#5A4468',aiFairy(88,122,'별빛 요정')+aiBub(208,116,28,'ㅏ',_cP,_eP)+aiOp(258,'+')+aiBub(300,116,28,'ㅣ',_cP,_eP)+aiHani(200,250,0.82))},
   ]},
   7:{act:7,pages:[
     {cap:'시든 마을',hl:'시들시들',say:'글자가 사라지자 마을 꽃들이 시들시들 고개를 숙였어요. 정원지기 나비 팔랑이가 울먹여요. "되찾은 글자를 모아 주면 꽃이 다시 필 텐데…"',
-      svg:aiScene('시든 마을','#9CD0E4','#EFEBD2',aiPost(56,200,0.7)+'<g transform="translate(120,172)"><path d="M0,20 Q-4,2 -14,-2" fill="none" stroke="#7f9e5a" stroke-width="3"/><circle cx="-16" cy="-4" r="8" fill="#c9a0b0"/><circle cx="-16" cy="-4" r="3" fill="#e6c86a"/></g><g transform="translate(170,182)"><path d="M0,18 Q4,2 12,-1" fill="none" stroke="#7f9e5a" stroke-width="3"/><circle cx="14" cy="-3" r="7" fill="#b6a8d0"/></g>'+aiHelper(305,118,'🦋','나비 팔랑이')+aiHani(80,250,0.75))},
+      svg:aiScene('시든 마을','#9CD0E4','#EFEBD2',aiPost(56,200,0.7)+'<g transform="translate(120,172)"><path d="M0,20 Q-4,2 -14,-2" fill="none" stroke="#7f9e5a" stroke-width="3"/><circle cx="-16" cy="-4" r="8" fill="#c9a0b0"/><circle cx="-16" cy="-4" r="3" fill="#e6c86a"/></g><g transform="translate(170,182)"><path d="M0,18 Q4,2 12,-1" fill="none" stroke="#7f9e5a" stroke-width="3"/><circle cx="14" cy="-3" r="7" fill="#b6a8d0"/></g>'+aiButterfly(305,118,'나비 팔랑이')+aiHani(80,250,0.75))},
     {cap:'글자가 모여 단어',say:'오 그리고 이— 오이! 글자가 도르르 모이니 단어가 됐어요. 팔랑이 곁에서 시들었던 꽃이 활짝 피어나요!',
       svg:aiScene('글자가 모여 단어','#9CD0E4','#EFEBD2',aiBub(70,116,28,'오',_cB,_eB,'slideR')+aiOp(122,'+')+aiBub(170,116,28,'이',_cP,_eP,'slideL')+aiOp(232,'→')+'<g transform="translate(305,112)"><g class="merge"><rect x="-42" y="-26" width="84" height="52" rx="16" fill="'+_cM+'"/><text y="9" font-family="Jua, sans-serif" font-size="27" fill="#fff" text-anchor="middle">오이</text></g></g>'+aiSpark(305,166,'s2')+aiHani(200,250,0.82))},
     {cap:'단어를 지어요',say:'이제 네가 글자를 모아 단어를 지어, 편지에서 사라진 말을 되찾고 시든 마을을 살려 줄래?',

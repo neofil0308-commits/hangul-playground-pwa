@@ -35,4 +35,4 @@ def test_learning_and_story_data_live_in_external_data_file():
 
 def test_service_worker_precaches_external_data_file_with_new_cache_version():
     assert "./app-data.js" in SW
-    assert "hangul-playground-v67" in SW
+    assert "hangul-playground-v68" in SW

@@ -46,6 +46,19 @@ def test_act_intro_shared_svg_builders_exist():
         assert fn in DATA, fn
 
 
+def test_subcharacters_are_handdrawn_character_builders():
+    # 막 도우미 7종이 하니 톤 손그림 빌더로 정의돼야 한다(이모지 카드 aiHelper 아님).
+    for fn in ["function aiFirefly", "function aiSquirrel", "function aiBear", "function aiToad",
+               "function aiBats", "function aiFairy", "function aiButterfly", "function aiName"]:
+        assert fn in DATA, fn
+    # ACT_INTROS가 실제로 캐릭터 빌더를 호출한다.
+    for call in ["aiFirefly(", "aiSquirrel(", "aiBear(", "aiToad(", "aiBats(", "aiFairy(", "aiButterfly("]:
+        assert call in DATA, call
+    # 옛 이모지 도우미 카드 호출(동물 이모지)은 더 이상 남아있지 않다.
+    for gone in ["'✨','반딧불이", "'🐿️','다람쥐", "'🐻','대장장이", "'🐸','두꺼비", "'🦇🦇'", "'🧚'", "'🦋','나비"]:
+        assert gone not in DATA, gone
+
+
 def test_act_intro_engine_is_multi_page():
     # 오프닝처럼 dots/prev/next로 막의 3쪽을 페이징.
     for token in ["function renderActIntroPage", "function actIntroNext",
