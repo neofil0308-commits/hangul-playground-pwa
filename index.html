@@ -272,6 +272,7 @@
   <section id="sticker" class="screen"><div class="section-title">내 스티커</div><div class="hint" id="stickerHint">도장을 모아요! 🏅</div><div class="grid sticker-grid" id="stickerGrid"></div></section>
 
   <section id="set" class="screen"><div class="section-title">설정</div><div class="hint">소리와 도장을 관리해요 ⚙️</div>
+    <div class="setbox"><h4>학습 대시보드 👨‍👩‍👧</h4><div class="parent-dash" id="parentDash"></div></div>
     <div class="setbox"><h4>학습 리포트</h4><div class="report" id="report"></div><div class="hint" id="reportStreak" style="margin:10px 0 0"></div></div>
     <div class="setbox"><h4>소리</h4><button class="mbtn toggle" id="bgmToggle">배경음악: 켜짐</button><button class="mbtn toggle" id="sfxToggle">효과음: 켜짐</button></div>
     <div class="setbox"><h4>음량</h4><label class="vrow">목소리<input type="range" id="volVoice" min="0" max="100" step="5"></label><label class="vrow">효과음<input type="range" id="volSfx" min="0" max="100" step="5"></label><label class="vrow">배경음악<input type="range" id="volBgm" min="0" max="100" step="5"></label></div>
@@ -465,7 +466,38 @@ document.getElementById('gateOk').addEventListener('click',function(){if(parseIn
 document.getElementById('gateCancel').addEventListener('click',function(){gateModal.classList.remove('show');});
 gateModal.addEventListener('click',function(e){if(e.target===gateModal)gateModal.classList.remove('show');});
 document.getElementById('gateInput').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('gateOk').click();});
-function renderReport(){var r=document.getElementById('report');if(!r)return;var acc=listenTry>0?Math.round(listenCorrect/listenTry*100):0;r.innerHTML='<div class="rcell"><b>'+seenLetters.length+'</b><span>배운 글자</span></div><div class="rcell"><b>'+seenWords.length+'</b><span>배운 단어</span></div><div class="rcell"><b>'+acc+'%</b><span>듣고찾기 정답률</span></div><div class="rcell"><b>'+stickerCount+'</b><span>모은 도장</span></div>';var rs=document.getElementById('reportStreak');if(rs)rs.textContent='연속 출석: '+streak+'일 🔥';}
+function renderReport(){var r=document.getElementById('report');if(!r)return;var acc=listenTry>0?Math.round(listenCorrect/listenTry*100):0;r.innerHTML='<div class="rcell"><b>'+seenLetters.length+'</b><span>배운 글자</span></div><div class="rcell"><b>'+seenWords.length+'</b><span>배운 단어</span></div><div class="rcell"><b>'+acc+'%</b><span>듣고찾기 정답률</span></div><div class="rcell"><b>'+stickerCount+'</b><span>모은 도장</span></div>';var rs=document.getElementById('reportStreak');if(rs)rs.textContent='연속 출석: '+streak+'일 🔥';renderParentDashboard();}
+// 부모 대시보드: 아이가 무엇을 뗐고 어디쯤인지 · 주간 출석 · 복습 현황 · 추천 페이스.
+function renderParentDashboard(){
+  var host=document.getElementById('parentDash');if(!host)return;
+  var mastered=(typeof masteredLetters==='function')?masteredLetters():[];
+  var total=(typeof ALL_LETTER_OBJS!=='undefined')?Object.keys(ALL_LETTER_OBJS).length:40;
+  var ep=(typeof curEpisode==='function')?curEpisode():null;
+  var pos=ep?(ep.actTitle||''):'';
+  var relics=(progress.relics||[]).length;
+  var due=(typeof dueReviewChs==='function')?dueReviewChs().length:0;
+  var rev=progress.review||{};
+  var solid=Object.keys(rev).filter(function(c){return c.indexOf('F:')!==0&&rev[c]&&rev[c].box>=4;}).length;
+  var acc=listenTry>0?Math.round(listenCorrect/listenTry*100):0;
+  var lbl=['일','월','화','수','목','금','토'],days='';
+  for(var i=6;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);var key=d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();var on=activeDays.indexOf(key)>=0;days+='<div class="wk-day'+(on?' on':'')+'"><span>'+lbl[d.getDay()]+'</span><i>'+(on?'⭐':'·')+'</i></div>';}
+  function grid(list){return (list||[]).map(function(o){var got=mastered.indexOf(o.ch)>=0;return '<span class="dg'+(got?' got':'')+'">'+o.ch+'</span>';}).join('');}
+  var vowGrid=grid(typeof VOWS!=='undefined'?VOWS:[])+grid(typeof VOWS_COMPLEX!=='undefined'?VOWS_COMPLEX:[]);
+  var conGrid=grid(typeof CONS!=='undefined'?CONS:[])+grid(typeof CONS_DOUBLE!=='undefined'?CONS_DOUBLE:[]);
+  host.innerHTML=
+    '<div class="pd-top">'
+     +'<div class="pd-stat"><b>'+mastered.length+'<small>/'+total+'</small></b><span>뗀 글자</span></div>'
+     +'<div class="pd-stat"><b>'+streak+'</b><span>연속 출석 🔥</span></div>'
+     +'<div class="pd-stat"><b>'+due+'</b><span>복습 예정 ⭐</span></div>'
+     +'<div class="pd-stat"><b>'+relics+'<small>/8</small></b><span>막 보물 🏆</span></div>'
+    +'</div>'
+    +(pos?'<div class="pd-now">지금 여기: <b>'+pos+'</b></div>':'')
+    +'<div class="pd-sub">이번 주 출석</div><div class="pd-week">'+days+'</div>'
+    +'<div class="pd-sub">뗀 글자 (모음)</div><div class="dg-grid">'+vowGrid+'</div>'
+    +'<div class="pd-sub">뗀 글자 (자음)</div><div class="dg-grid">'+conGrid+'</div>'
+    +'<div class="pd-review">복습: 다시 볼 글자 <b>'+due+'</b>개 · 잘 기억하는 글자 <b>'+solid+'</b>개 · 듣고찾기 정답률 <b>'+acc+'%</b></div>'
+    +'<div class="pd-tip">💡 하루 1글자, 5~10분이면 충분해요. 많이보다 <b>매일 조금씩 + 복습</b>이 오래 남습니다. 아이가 스스로 소리 내어 읽게 기다려 주세요.</div>';
+}
 document.getElementById('mrowLetter').addEventListener('click',openTodayLetter);
 document.getElementById('mrowWord').addEventListener('click',function(){openWordBuild(todayWord[0],todayWord[1]);});
 document.getElementById('mrowPlay').addEventListener('click',function(){go('listen');});

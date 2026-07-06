@@ -15,6 +15,9 @@ var listenTry=parseInt(lsGet('hp_listen_try','0'))||0;
 var listenCorrect=parseInt(lsGet('hp_listen_correct','0'))||0;
 var streak=parseInt(lsGet('hp_streak','0'))||0;
 var lastDone=lsGet('hp_lastdone','');
+// 부모 대시보드용 일별 활동 기록(주간 출석 캘린더). 최근 60일만 유지.
+var activeDays=lsJSON('hp_active_days',[]);
+function markActiveDay(){if(activeDays.indexOf(MD)<0){activeDays.push(MD);if(activeDays.length>60)activeDays=activeDays.slice(-60);lsSetJSON('hp_active_days',activeDays);}}
 
 function markLetterSeen(ch){if(seenLetters.indexOf(ch)<0){seenLetters.push(ch);lsSetJSON('hp_seen_letters',seenLetters);}}
 function markWordSeen(w){if(seenWords.indexOf(w)<0){seenWords.push(w);lsSetJSON('hp_seen_words',seenWords);}}
@@ -141,7 +144,7 @@ var mission=lsJSON('hp_mission',{});
 function loadMission(){pickToday();if(mission.ep!==progress.idx){mission={ep:progress.idx,date:MD,letter:false,word:false,play:false,find:false,rewarded:false};lsSetJSON('hp_mission',mission);}}
 function saveMission(){lsSetJSON('hp_mission',mission);}
 function updateStreak(){if(lastDone===MD)return;streak=(lastDone===yKey())?streak+1:1;lastDone=MD;lsSet('hp_streak',streak);lsSet('hp_lastdone',lastDone);}
-function completeMission(part){if(!mission||mission[part])return;mission[part]=true;mission.lastReaction=part;markLetterProgress(part);saveMission();showHaniReaction(part);renderMission();}
+function completeMission(part){if(!mission||mission[part])return;mission[part]=true;mission.lastReaction=part;markLetterProgress(part);markActiveDay();saveMission();showHaniReaction(part);renderMission();}
 // 글자 공방(3막): 음절 하나를 합쳐 완성하면 그 막의 단일 미션이 한 번에 끝난다(글자형 3단계 대신 1단계).
 function completeCombine(){var ep=curEpisode();if(!ep||ep.type!=='combine'||!mission||mission.letter)return;
   if(ep.ch){progress.mastery[ep.ch]={met:true,matched:true,quizzed:true};saveProgress();scheduleReview(ep.ch);}
