@@ -478,10 +478,12 @@ function renderParentDashboard(){
   var due=(typeof dueReviewChs==='function')?dueReviewChs().length:0;
   var rev=progress.review||{};
   var solid=Object.keys(rev).filter(function(c){return c.indexOf('F:')!==0&&rev[c]&&rev[c].box>=4;}).length;
+  var confirmed=(typeof confirmedLetters==='function')?confirmedLetters():[];
+  var provisional=Math.max(0,mastered.length-confirmed.length);
   var acc=listenTry>0?Math.round(listenCorrect/listenTry*100):0;
   var lbl=['일','월','화','수','목','금','토'],days='';
   for(var i=6;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);var key=d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();var on=activeDays.indexOf(key)>=0;days+='<div class="wk-day'+(on?' on':'')+'"><span>'+lbl[d.getDay()]+'</span><i>'+(on?'⭐':'·')+'</i></div>';}
-  function grid(list){return (list||[]).map(function(o){var got=mastered.indexOf(o.ch)>=0;return '<span class="dg'+(got?' got':'')+'">'+o.ch+'</span>';}).join('');}
+  function grid(list){return (list||[]).map(function(o){var conf=confirmed.indexOf(o.ch)>=0;var got=mastered.indexOf(o.ch)>=0;return '<span class="dg'+(conf?' got confirmed':(got?' got prov':''))+'">'+o.ch+'</span>';}).join('');}
   var vowGrid=grid(typeof VOWS!=='undefined'?VOWS:[])+grid(typeof VOWS_COMPLEX!=='undefined'?VOWS_COMPLEX:[]);
   var conGrid=grid(typeof CONS!=='undefined'?CONS:[])+grid(typeof CONS_DOUBLE!=='undefined'?CONS_DOUBLE:[]);
   host.innerHTML=
@@ -495,8 +497,9 @@ function renderParentDashboard(){
     +'<div class="pd-sub">이번 주 출석</div><div class="pd-week">'+days+'</div>'
     +'<div class="pd-sub">뗀 글자 (모음)</div><div class="dg-grid">'+vowGrid+'</div>'
     +'<div class="pd-sub">뗀 글자 (자음)</div><div class="dg-grid">'+conGrid+'</div>'
-    +'<div class="pd-review">복습: 다시 볼 글자 <b>'+due+'</b>개 · 잘 기억하는 글자 <b>'+solid+'</b>개 · 듣고찾기 정답률 <b>'+acc+'%</b></div>'
-    +'<div class="pd-tip">💡 하루 1글자, 5~10분이면 충분해요. 많이보다 <b>매일 조금씩 + 복습</b>이 오래 남습니다. 아이가 스스로 소리 내어 읽게 기다려 주세요.</div>';
+    +'<div class="pd-legend"><span class="dg got confirmed">가</span> 완전히 뗌(복습 통과) · <span class="dg got prov">가</span> 익히는 중</div>'
+    +'<div class="pd-review">완전히 뗌 <b>'+confirmed.length+'</b> · 익히는 중 <b>'+provisional+'</b> · 다시 볼 글자 <b>'+due+'</b> · 잘 기억 <b>'+solid+'</b> · 듣고찾기 정답률 <b>'+acc+'%</b></div>'
+    +'<div class="pd-tip">💡 하루 1글자, 5~10분이면 충분해요. 많이보다 <b>매일 조금씩 + 복습</b>이 오래 남습니다. 복습에서 약한 글자는 자동으로 더 먼저·쉽게 나와요. 아이가 스스로 소리 내어 읽게 기다려 주세요.</div>';
 }
 document.getElementById('mrowLetter').addEventListener('click',openTodayLetter);
 document.getElementById('mrowWord').addEventListener('click',function(){openWordBuild(todayWord[0],todayWord[1]);});

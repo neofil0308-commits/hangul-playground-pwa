@@ -83,12 +83,30 @@ function scheduleReview(ch){if(!ch||ch.indexOf('F:')===0)return;if(!progress.rev
 function dueReviewChs(){var r=progress.review||{},out=[];
   Object.keys(r).forEach(function(ch){if(ch.indexOf('F:')===0)return;var rec=r[ch];if(rec&&rec.due&&dayKeyLE(rec.due,MD))out.push(ch);});
   return out;}
-// 복습 채점: 맞으면 box↑·간격↑, 틀리면 box1·내일 다시.
+// ===== 적응 난이도 + 지연 마스터리 =====
+// 글자별 정답/오답 통계. 옛 저장본 관대 처리.
+if(!progress.stats||typeof progress.stats!=='object')progress.stats={};
+function recordAttempt(ch,correct){if(!ch)return;var s=progress.stats[ch]||(progress.stats[ch]={r:0,w:0});if(correct)s.r++;else s.w++;}
+// 글자 강도: 복습 box + 정답률로 weak/ok/strong 판정 → 적응 난이도에 사용.
+function letterStrength(ch){var rec=(progress.review||{})[ch];var box=rec?(rec.box||0):0;
+  var s=progress.stats[ch]||{r:0,w:0};var tot=s.r+s.w;var acc=tot?s.r/tot:1;
+  if(box<=1||acc<0.5)return 'weak';if(box>=4&&acc>=0.85)return 'strong';return 'ok';}
+// 적응: 약한 글자는 보기 적게(쉽게), 강한 글자는 많게(어렵게).
+function reviewOptionCount(ch){var st=letterStrength(ch);return st==='weak'?2:(st==='strong'?4:3);}
+// 지연 마스터리: 3게이트만으론 '익히는 중', SRS 복습을 1번이라도 통과(box>=2)하면 '완전히 뗌' 확정.
+function confirmedLetters(){var r=progress.review||{};return Object.keys(r).filter(function(c){return c.indexOf('F:')!==0&&r[c]&&(r[c].box||0)>=2;});}
+function isConfirmed(ch){var rec=(progress.review||{})[ch];return !!(rec&&(rec.box||0)>=2);}
+
+// 복습 채점: 맞으면 box↑·간격↑, 틀리면 box1·내일 다시. 통계도 기록(적응 난이도).
 function gradeReview(ch,correct){if(!ch)return;if(!progress.review)progress.review={};
   var rec=progress.review[ch]||{box:1,due:MD};
   rec.box=correct?Math.min((rec.box||1)+1,5):1;
   rec.due=dayKeyAdd(MD,REVIEW_INTERVALS[rec.box]||1);
-  progress.review[ch]=rec;saveProgress();}
+  progress.review[ch]=rec;recordAttempt(ch,correct);saveProgress();}
+// 복습 큐 정렬: 약한 글자 먼저(약→보통→강) 보여줘 헤매는 글자에 집중.
+function orderByWeakness(chs){var rank={weak:0,ok:1,strong:2};
+  function r(ch){var v=rank[letterStrength(ch)];return v==null?1:v;} // 0(weak)이 falsy로 덮이지 않게
+  return chs.slice().sort(function(a,b){return r(a)-r(b);});}
 // 기존 사용자 시딩: 이미 뗀 글자인데 복습 일정 없으면 오늘부터 복습 대상으로.
 (function seedReview(){try{var chs=masteredLetters(),changed=false;
   chs.forEach(function(ch){if(!progress.review[ch]){progress.review[ch]={box:1,due:MD};changed=true;}});

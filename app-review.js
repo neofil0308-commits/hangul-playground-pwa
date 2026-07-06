@@ -4,7 +4,8 @@
 var revQueue=[],revIdx=0,revTarget=null,revLock=false,revRight=0;
 function _isVowCh(ch){return (typeof VOWS!=='undefined')&&VOWS.some(function(v){return v.ch===ch;});}
 function startReview(){
-  revQueue=shuffle((typeof dueReviewChs==='function'?dueReviewChs():[]).slice()).slice(0,6);
+  var due=shuffle((typeof dueReviewChs==='function'?dueReviewChs():[]).slice());
+  revQueue=((typeof orderByWeakness==='function')?orderByWeakness(due):due).slice(0,6); // 약한 글자 먼저
   revIdx=0;revRight=0;revLock=false;
   if(!revQueue.length){if(typeof go==='function')go('home');return;}
   if(typeof go==='function')go('review');
@@ -18,7 +19,8 @@ function nextReviewQ(){
   revTarget={ch:ch,say:obj.sound||obj.name||ch};
   var isV=_isVowCh(ch);
   var pool=(isV?VOWS:CONS).filter(function(x){return x.ch!==ch;});
-  var others=shuffle(pool).slice(0,2).map(function(x){return x.ch;});
+  var nDist=((typeof reviewOptionCount==='function')?reviewOptionCount(ch):3)-1; // 적응: 약한 글자=보기 적게
+  var others=shuffle(pool).slice(0,Math.max(1,nDist)).map(function(x){return x.ch;});
   var opts=shuffle([ch].concat(others));
   var box=document.getElementById('revOpts');if(box)box.innerHTML='';
   var fb=document.getElementById('revFeedback');if(fb)fb.textContent='';

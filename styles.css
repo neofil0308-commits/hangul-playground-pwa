@@ -522,6 +522,9 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .parent-dash .dg-grid{display:flex;flex-wrap:wrap;gap:5px;}
 .parent-dash .dg{width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:9px;background:#f2eadd;color:#c9b79c;font-family:'Jua',sans-serif;font-size:1.05rem;}
 .parent-dash .dg.got{background:#e9f8ec;color:var(--word-d);box-shadow:0 0 0 2px #bfe6c6 inset;}
+.parent-dash .dg.prov{background:#fff3cf;color:#b6862e;box-shadow:0 0 0 2px #f0d38a inset;}
+.parent-dash .pd-legend{margin:8px 0 0;font-family:'Gowun Dodum',sans-serif;font-size:.78rem;color:#8a7052;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.parent-dash .pd-legend .dg{width:22px;height:22px;font-size:.82rem;}
 .parent-dash .pd-review{margin-top:14px;background:#fbf4e8;border-radius:14px;padding:10px 12px;font-family:'Gowun Dodum',sans-serif;font-size:.86rem;color:#7a6146;}
 .parent-dash .pd-review b{color:var(--pri-d);}
 .parent-dash .pd-tip{margin-top:10px;background:#eef6ff;border-radius:14px;padding:10px 12px;font-family:'Gowun Dodum',sans-serif;font-size:.84rem;line-height:1.55;color:#5a6b82;}
