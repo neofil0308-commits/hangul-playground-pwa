@@ -1,7 +1,7 @@
 // 듣고 찾기 — '오늘의 글자가 들어간 단어 찾기'(글자를 단어 속에서 인식). 오답 시 잠깐 반복학습.
 // Depends on app-data.js, app-state.js, decompose() from the main inline script, and UI helpers.
 
-var listenMode='word',listenN=3,listenScore=0,listenTarget=null,listenBuilt=false,LISTEN_LEN=5,listenLock=false;
+var listenMode='word',listenN=3,listenScore=0,listenTarget=null,listenBuilt=false,LISTEN_LEN=5,listenLock=false,listenWrong=0;
 function todayCh(){return (typeof todayLetter!=='undefined'&&todayLetter&&todayLetter.ch)||'';}
 function todaySay(){return (typeof todayLetter!=='undefined'&&todayLetter&&(todayLetter.sound||todayLetter.name))||todayCh();}
 function wordHasLetter(word,ch){if(!ch||typeof decompose!=='function')return false;var g=decompose(word);for(var i=0;i<g.length;i++){if(g[i].indexOf(ch)>=0)return true;}return false;}
@@ -15,7 +15,7 @@ function listenPool(){
 function wordsStartingWith(ch){return ((typeof LETTER_WORDS!=='undefined')&&LETTER_WORDS[ch])||[];}
 // 단계 상승: 처음엔 글자(ㅓ) 찾기 → 2개 맞히면 'ㅓ로 시작하는 단어'(어묵·어항…) 찾기
 function newListenQuestion(){
-  listenLock=false;
+  listenLock=false;listenWrong=0;
   var ch=todayCh();
   var stage=(listenScore<2)?'letter':'word';
   listenMode=stage;
@@ -77,13 +77,26 @@ function checkListen(btn,o){
     if(listenScore>=LISTEN_LEN){if(fb)fb.textContent='';confetti();earnSticker();listenBigOpen();completeMission('play');setTimeout(startListenRound,2000);}
     else{listenMini(btn,'딩동! 맞아요!');if(fb)fb.textContent='';setTimeout(newListenQuestion,1100);}
   }else{
-    sfxWrong();btn.classList.add('bad');
-    if(listenTarget.isLetter){if(fb)fb.textContent='다시 들어볼까요?';speak(todaySay());setTimeout(function(){btn.classList.remove('bad');},500);return;}
-    // 오답 → 잠깐 반복학습: 정답 강조 + 글자/단어 소리
-    listenLock=true;if(fb)fb.textContent='여기엔 '+ch+'가 없어요!';
-    var ansBtn=document.querySelector('#listenOpts .lopt[data-word="'+listenTarget.word+'"]');if(ansBtn)ansBtn.classList.add('reveal');
-    speak(ch);setTimeout(function(){speak(listenTarget.word);},750);
-    setTimeout(function(){btn.classList.remove('bad');if(ansBtn)ansBtn.classList.remove('reveal');listenLock=false;if(fb)fb.textContent=ch+'가 든 단어를 찾아봐요';},2400);
+    sfxWrong();btn.classList.add('bad');listenWrong++;
+    // 글자 단계: 정답 공개 없이 힌트만 점점 강하게(다시 듣기).
+    if(listenTarget.isLetter){if(fb)fb.textContent=(listenWrong>=2)?'잘 들어봐요 — 이 소리예요':'다시 들어볼까요?';speak(todaySay());setTimeout(function(){btn.classList.remove('bad');},500);return;}
+    // 단어 단계: 단계별 스캐폴딩 — 1회 다시듣기 → 2회 오답 보기 하나 지우기 → 3회 정답 공개.
+    if(listenWrong>=3){
+      listenLock=true;if(fb)fb.textContent='이거예요! '+ch+'가 들어 있어요';
+      var ansBtn=document.querySelector('#listenOpts .lopt[data-word="'+listenTarget.word+'"]');if(ansBtn)ansBtn.classList.add('reveal');
+      speak(ch);setTimeout(function(){speak(listenTarget.word);},750);
+      setTimeout(function(){btn.classList.remove('bad');if(ansBtn)ansBtn.classList.remove('reveal');listenLock=false;if(fb)fb.textContent=ch+'가 든 단어를 찾아봐요';},2400);
+      return;
+    }
+    if(listenWrong===2){
+      var wrongs=[].slice.call(document.querySelectorAll('#listenOpts .lopt')).filter(function(x){return x.dataset.word!==listenTarget.word&&!x.disabled&&x!==btn;});
+      if(wrongs.length){wrongs[0].disabled=true;wrongs[0].classList.add('dim');}
+      if(fb)fb.textContent=ch+' 소리를 잘 들어봐요';
+    }else{
+      if(fb)fb.textContent='다시 들어볼까요?';
+    }
+    speak(ch);setTimeout(function(){speak(listenTarget.word);},650);
+    setTimeout(function(){btn.classList.remove('bad');},500);
   }
 }
 var listenModeBox=document.getElementById('listenMode');

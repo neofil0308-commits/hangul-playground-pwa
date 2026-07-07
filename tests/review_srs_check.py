@@ -37,8 +37,8 @@ def test_existing_users_seeded():
 def test_review_round_logic_present():
     for token in ["function startReview", "function nextReviewQ", "function checkReview", "function finishReview"]:
         assert token in REVIEW, token
-    # 채점은 gradeReview로, 목표 소리는 speak로 재생.
-    assert "gradeReview(ch,true)" in REVIEW and "gradeReview(ch,false)" in REVIEW
+    # 채점은 gradeReview로(힌트 없이 맞히면 승급, 스캐폴딩 후엔 유지), 목표 소리는 speak로 재생.
+    assert "gradeReview(ch,revWrong===0)" in REVIEW and "gradeReview(ch,false)" in REVIEW
     # 비처벌: 오답 시 정답 강조(reveal) 후 진행.
     assert "reveal" in REVIEW
 
@@ -55,4 +55,4 @@ def test_review_screen_and_home_card_wired():
 
 def test_service_worker_precaches_review_module():
     assert "./app-review.js" in SW
-    assert "hangul-playground-v73" in SW
+    assert "hangul-playground-v74" in SW

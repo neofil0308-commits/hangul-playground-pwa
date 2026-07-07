@@ -489,6 +489,8 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .lopt.good{background:#d6f5dd;box-shadow:0 6px 0 #9ad9aa;}
 .lopt.pop{animation:wbpop .32s ease;}
 .lopt.bad{animation:shake .4s;}
+/* 오답 스캐폴딩: 지워진(줄여준) 보기 — 흐리게 + 비활성 */
+.lopt.dim{opacity:.32;filter:grayscale(.6);pointer-events:none;box-shadow:0 3px 0 #e6d8bd;transition:opacity .25s;}
 /* 하나 맞춤(작게) */
 .lc-mini{position:absolute;top:-14px;left:50%;font-family:'Jua',sans-serif;font-size:1rem;color:#fff;background:var(--listen,#36b6c4);padding:3px 11px;border-radius:13px;white-space:nowrap;pointer-events:none;box-shadow:0 2px 0 rgba(0,0,0,.12);animation:wbmini .9s ease forwards;z-index:5;}
 /* 라운드 완료(크게) */
