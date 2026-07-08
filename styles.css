@@ -958,3 +958,22 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .mt-tools .tbtn.stroke.off{background:#cfc4b2;box-shadow:0 4px 0 #ab9d8c;}
 .mt-tools .tbtn.clear{background:#C9B79E;box-shadow:0 4px 0 #A6947B;}
 .mt-tools #lfHear{background:#6FA88E;box-shadow:0 4px 0 #4F8270;}
+
+/* ===== 접근성: 모션 최소화 선호 시 반복·장식 애니메이션 정지(요소는 기본 상태로 보임) ===== */
+@media (prefers-reduced-motion: reduce){
+  /* 장면 속 반복 장식·캐릭터 idle·자모 결합 루프 */
+  .scene .tw,.scene .spark,.scene .notefloat,.scene .send,.scene .peek,.scene .pk2,.scene .pk3,
+  .scene .peekR,.scene .peekUp,.scene .peekL,.scene .gather,.scene .gg2,.scene .gg3,.scene .gg4,
+  .scene .dust,.scene .du2,.scene .glowpulse,.scene .pathflow,.scene .slideR,.scene .slideL,
+  .scene .merge,.scene .drop,.scene .search,.scene .wave,.scene .vanish,.scene .fade,
+  .scene .hani,.scene .hani.determined,.scene .hani.dash,
+  .scene .mob-float,.scene .mob-flit,.scene .mob-nod,.scene .mob-blink,.scene .mob-tail,
+  .scene .mob-flapL,.scene .mob-flapR,.scene .mob-hammer,.scene .mob-clang,
+  /* 인트로 시네마 켄번즈·플로트·CTA 펄스, 홈 복습 카드 펄스 */
+  .intro-art .ia,.intro-art.has-scene .scene,.intro-art.enter,.intro-cap.enter,.intro-next.pulse,
+  .mission .review-card{
+    animation:none !important;
+  }
+  /* 장면 켄번즈 확대 상태 제거 */
+  .intro-art.has-scene .scene{transform:none !important;}
+}
