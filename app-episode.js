@@ -152,8 +152,14 @@ function showRecap(){
     +'<div class="recap-big">'+ch+'</div>'
     +'<div class="recap-words">'+words.map(function(w){return '<span class="recap-w"><i>'+w[1]+'</i><em>'+w[0]+'</em></span>';}).join('')+'</div>';
   if(review)html+='<div class="recap-review">지난 글자도 기억나요? <b>'+review+'</b></div>';
-  html+='<button class="recap-next" id="recapNext">다음 글자로 ➡️</button></div>';
+  // 하루 목표 도달 → 부드러운 종료 넛지(강제 아님): '오늘은 여기까지'를 주 버튼으로.
+  var rest=(typeof dailyGoalReached==='function')&&dailyGoalReached();
+  if(rest)html+='<div class="recap-rest">오늘 목표를 다 했어요! 🌙 눈도 쉬어야 하니, 오늘은 여기까지 할까요?</div>'
+    +'<div class="recap-actions"><button class="recap-home" id="recapHome">오늘은 여기까지 🏠</button><button class="recap-more" id="recapNext">조금 더 할래요</button></div>';
+  else html+='<button class="recap-next" id="recapNext">다음 글자로 ➡️</button>';
+  html+='</div>';
   el.innerHTML=html;el.style.display='flex';if(typeof twemojify==='function')twemojify(el);
+  var hb=document.getElementById('recapHome');if(hb)hb.addEventListener('click',function(){el.style.display='none';if(typeof go==='function')go('home');});
   try{var seq=[isFin?('끝소리 '+((lo&&lo.name)||ch)):(lo?(lo.sound||lo.name||ch):ch)];words.forEach(function(w){seq.push(w[0]);});seq.push('잘했어요');
     if(review){var ro=ALL_LETTER_OBJS[review];seq.push((ro&&(ro.sound||ro.name))||review);}
     if(typeof speakSeq==='function')setTimeout(function(){speakSeq(seq);},350);}catch(e){}
@@ -195,6 +201,7 @@ function showRelic(act){
   var nb=document.getElementById('relicNext');if(nb)nb.addEventListener('click',function(){el.style.display='none';goNextLetter();});
 }
 function onEpisodeComplete(){
+  if(typeof bumpTodayCount==='function')bumpTodayCount(); // 하루 학습량 +1(종료 넛지용)
   var ep=curEpisode();
   // 방금 깬 에피소드가 그 막의 마지막이면 막 번호(아니면 0). 막 클리어면 보물 적립.
   var actDone=(typeof actCompletedAt==='function')?actCompletedAt(progress.idx):0;

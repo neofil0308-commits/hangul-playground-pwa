@@ -274,6 +274,7 @@
   <section id="set" class="screen"><div class="section-title">설정</div><div class="hint">소리와 도장을 관리해요 ⚙️</div>
     <div class="setbox"><h4>학습 대시보드 👨‍👩‍👧</h4><div class="parent-dash" id="parentDash"></div></div>
     <div class="setbox"><h4>학습 리포트</h4><div class="report" id="report"></div><div class="hint" id="reportStreak" style="margin:10px 0 0"></div></div>
+    <div class="setbox"><h4>하루 목표 🌙</h4><div class="hint" style="margin:0 0 10px">목표를 채우면 '오늘은 여기까지' 쉬어가기 넛지가 떠요 (강제 아님)</div><div class="cat-pills goal" id="goalPick"></div></div>
     <div class="setbox"><h4>소리</h4><button class="mbtn toggle" id="bgmToggle">배경음악: 켜짐</button><button class="mbtn toggle" id="sfxToggle">효과음: 켜짐</button></div>
     <div class="setbox"><h4>음량</h4><label class="vrow">목소리<input type="range" id="volVoice" min="0" max="100" step="5"></label><label class="vrow">효과음<input type="range" id="volSfx" min="0" max="100" step="5"></label><label class="vrow">배경음악<input type="range" id="volBgm" min="0" max="100" step="5"></label></div>
     <div class="setbox"><h4>성우(목소리)</h4><div class="cat-pills voice" id="voicePick"></div></div>
@@ -379,6 +380,9 @@ VOICES.forEach(vc=>{const b=document.createElement('button');if(vc[1]===VOICE)b.
 const speedPick=document.getElementById('speedPick');
 SPEEDS.forEach(sp=>{const b=document.createElement('button');if(Math.abs(sp[1]-RATE)<0.01)b.className='on';b.textContent=sp[0];b.addEventListener('click',()=>{RATE=sp[1];lsSet('hp_rate',RATE);document.querySelectorAll('#speedPick button').forEach(x=>x.classList.remove('on'));b.classList.add('on');speak('안녕');});speedPick.appendChild(b);});
 document.getElementById('speedTest').addEventListener('click',()=>speak('가나다라마바사'));
+// 하루 목표(스크린타임 넛지) 선택
+var goalPick=document.getElementById('goalPick');
+if(goalPick){[['1글자',1],['2글자',2],['3글자',3],['제한 없음',0]].forEach(function(g){var b=document.createElement('button');if((typeof dailyGoal!=='undefined')&&dailyGoal===g[1])b.className='on';b.textContent=g[0];b.addEventListener('click',function(){if(typeof setDailyGoal==='function')setDailyGoal(g[1]);document.querySelectorAll('#goalPick button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');});goalPick.appendChild(b);});}
 document.getElementById('resetStickers').addEventListener('click',()=>{if(confirm('도장을 모두 지울까요?')){stickerCount=0;lsSet('hp_stickers',0);stickerBtn.textContent='🏅 0';renderStickerBoard();}});
 stickerBtn.textContent='🏅 '+stickerCount;
 renderStickerBoard();

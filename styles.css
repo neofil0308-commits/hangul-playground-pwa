@@ -810,6 +810,13 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .recap-review b{font-size:1.3rem;color:var(--vow-d);}
 .recap-next{margin-top:16px;font-family:'Jua',sans-serif;font-size:1.35rem;color:#fff;background:linear-gradient(180deg,#F2A95C,var(--pri));border:none;border-radius:999px;padding:15px 34px;box-shadow:0 6px 0 var(--pri-d),0 10px 18px rgba(198,119,46,.35);cursor:pointer;}
 .recap-next:active{transform:translateY(5px);box-shadow:0 1px 0 var(--pri-d);}
+/* 하루 목표 종료 넛지 */
+.recap-rest{margin:14px auto 4px;max-width:420px;font-family:'Gowun Dodum',sans-serif;font-size:1rem;color:#6a6b8a;background:rgba(233,236,255,.7);border-radius:16px;padding:10px 14px;}
+.recap-actions{margin-top:14px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.recap-home{font-family:'Jua',sans-serif;font-size:1.3rem;color:#fff;background:linear-gradient(180deg,#7f8fd6,#5a6cc0);border:none;border-radius:999px;padding:15px 30px;box-shadow:0 6px 0 #4a5aa8,0 10px 18px rgba(70,80,160,.32);cursor:pointer;}
+.recap-home:active{transform:translateY(5px);box-shadow:0 1px 0 #4a5aa8;}
+.recap-more{font-family:'Jua',sans-serif;font-size:1.05rem;color:#8a7250;background:var(--cream2);border:none;border-radius:999px;padding:13px 22px;box-shadow:0 5px 0 #e6d8bd;cursor:pointer;}
+.recap-more:active{transform:translateY(4px);box-shadow:0 1px 0 #e6d8bd;}
 /* ===== 단어 동산: 가로 와이드 2존(왼쪽 세로 스택 / 오른쪽 큰 카드) ===== */
 #wordBuild .wb-wrap{max-width:1060px;margin:0 auto;display:flex;flex-direction:row;align-items:stretch;justify-content:center;gap:22px;padding:6px 14px 20px;min-height:76vh;}
 .wb-col{display:flex;flex-direction:column;min-width:0;}

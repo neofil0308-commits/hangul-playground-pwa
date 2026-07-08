@@ -18,6 +18,13 @@ var lastDone=lsGet('hp_lastdone','');
 // 부모 대시보드용 일별 활동 기록(주간 출석 캘린더). 최근 60일만 유지.
 var activeDays=lsJSON('hp_active_days',[]);
 function markActiveDay(){if(activeDays.indexOf(MD)<0){activeDays.push(MD);if(activeDays.length>60)activeDays=activeDays.slice(-60);lsSetJSON('hp_active_days',activeDays);}}
+// 하루 학습량(스크린타임 넛지용). 하루 목표에 도달하면 '오늘은 여기까지' 부드럽게 권함(강제 X, 부모가 목표 설정).
+var _today=lsJSON('hp_today',{d:MD,n:0});if(!_today||_today.d!==MD)_today={d:MD,n:0};
+function todayEpisodeCount(){return (_today&&_today.d===MD)?(_today.n||0):0;}
+function bumpTodayCount(){if(!_today||_today.d!==MD)_today={d:MD,n:0};_today.n=(_today.n||0)+1;lsSetJSON('hp_today',_today);}
+var dailyGoal=parseInt(lsGet('hp_daily_goal','2'));if(isNaN(dailyGoal))dailyGoal=2; // 0=제한 없음
+function setDailyGoal(n){dailyGoal=n;lsSet('hp_daily_goal',String(n));}
+function dailyGoalReached(){return dailyGoal>0&&todayEpisodeCount()>=dailyGoal;}
 
 function markLetterSeen(ch){if(seenLetters.indexOf(ch)<0){seenLetters.push(ch);lsSetJSON('hp_seen_letters',seenLetters);}}
 function markWordSeen(w){if(seenWords.indexOf(w)<0){seenWords.push(w);lsSetJSON('hp_seen_words',seenWords);}}
