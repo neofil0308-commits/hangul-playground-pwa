@@ -176,11 +176,23 @@ function themeLetterChs(){var a=[];if(typeof todayLetter!=='undefined'&&todayLet
 function themeWordList(){var ws=[],seen={};themeLetterChs().forEach(function(ch){(LETTER_WORDS[ch]||[]).forEach(function(w){if(!seen[w[0]]){seen[w[0]]=1;ws.push(w);}});});return ws;}
 
 var todayLetter=null,todayWord=null;
+// 오늘의 대표 단어: 글자별 예시 뱅크에서 날짜 기반 로테이션(같은 날 고정·날마다 다름) → 같은 글자를 여러 날 봐도 예시가 신선.
+function featuredWord(lo){
+  if(!lo)return ['',''];
+  if(lo.combine||lo.sentence)return [lo.word||'',lo.emoji||''];
+  var bank=(lo.ch&&typeof LETTER_WORDS!=='undefined'&&LETTER_WORDS[lo.ch])||null;
+  if(bank&&bank.length){
+    var p=String(MD).split('-');var dnum=Math.floor(new Date(+p[0],(+p[1])-1,+p[2]).getTime()/86400000);
+    var w=bank[((dnum+hashStr(lo.ch))%bank.length+bank.length)%bank.length]; // 날짜 순번+글자 오프셋 → 순차 로테이션
+    return [w[0],w[1]];
+  }
+  return [lo.word||'',lo.emoji||''];
+}
 // 오늘의 글자/단어는 날짜 랜덤이 아니라 커리큘럼 진행 포인터에서 뽑는다.
 function pickToday(){
   var lo=curLetterObj();
-  if(lo){todayLetter=lo;todayWord=[lo.word||'',lo.emoji||''];}
-  else{var h=hashStr(MD);todayLetter=ALL_LETTERS[h%ALL_LETTERS.length];todayWord=[todayLetter.word||'',todayLetter.emoji||''];}
+  if(lo){todayLetter=lo;todayWord=featuredWord(lo);}
+  else{var h=hashStr(MD);todayLetter=ALL_LETTERS[h%ALL_LETTERS.length];todayWord=featuredWord(todayLetter);}
 }
 
 var mission=lsJSON('hp_mission',{});

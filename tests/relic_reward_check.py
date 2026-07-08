@@ -68,7 +68,7 @@ def test_relic_dom_and_css_exist():
 
 
 def test_service_worker_cache_bumped_for_relic_feature():
-    assert "hangul-playground-v78" in SW
+    assert "hangul-playground-v79" in SW
 
 
 def _run_probe(probe):

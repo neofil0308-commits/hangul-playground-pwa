@@ -55,4 +55,4 @@ def test_review_screen_and_home_card_wired():
 
 def test_service_worker_precaches_review_module():
     assert "./app-review.js" in SW
-    assert "hangul-playground-v78" in SW
+    assert "hangul-playground-v79" in SW
