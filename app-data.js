@@ -1,6 +1,14 @@
 // Static learning, story, and UI data for 하니의 한글 모험.
 // Keep behavior in index.html; this file should stay side-effect free.
 
+// ===== 수익모델: 1회 구매(비소모성) 프리미엄 (구조) =====
+// 무료 체험 = FREE_MAX_ACT 막까지(1막 모음 + 2막 자음). 3막부터 + 둘째 아이 프로필부터 = 프리미엄.
+// ₩5,000 1회 구매(스토어 인앱결제)로 전부 해제. 실제 배포 시엔 결제 성공 콜백이 unlockPremium() 직접 호출.
+// UNLOCK_CODE: 소프트런칭/소유자 기기 해제용 임시 코드(스토어 IAP가 정식 수단).
+const FREE_MAX_ACT=2;
+const PREMIUM_PRICE='₩5,000';
+const UNLOCK_CODE='HANI-2026';
+
 const CONS=[
   {ch:'ㄱ',name:'기역',word:'기린',emoji:'🦒',init:0},{ch:'ㄴ',name:'니은',word:'나비',emoji:'🦋',init:2},
   {ch:'ㄷ',name:'디귿',word:'다람쥐',emoji:'🐿️',init:3},{ch:'ㄹ',name:'리을',word:'로봇',emoji:'🤖',init:5},

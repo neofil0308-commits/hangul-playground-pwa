@@ -62,7 +62,7 @@ def test_mission_state_has_find_flag_and_mastery_unaffected():
 
 
 def test_service_worker_cache_bumped_to_v52():
-    assert "hangul-playground-v79" in SW
+    assert "hangul-playground-v80" in SW
 
 
 def test_generalized_completion_gate_tokens_present():

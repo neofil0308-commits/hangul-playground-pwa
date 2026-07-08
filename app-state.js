@@ -16,6 +16,15 @@ function _pk(k){return _GLOBAL_KEYS[k]?k:('p'+activeProfile()+':'+k);}
   _rawSet('hp_profiles',JSON.stringify([{id:'1',name:'첫째',emoji:'🐣'}]));
 }catch(e){}})();
 function getProfiles(){var a=lsJSON('hp_profiles',null);if(!a||!a.length){a=[{id:'1',name:'첫째',emoji:'🐣'}];lsSetJSON('hp_profiles',a);}return a;}
+// ===== 프리미엄(1회 구매) — 기기/가정 단위 전역 해제. 한 번 구매로 3~8막 + 둘째 프로필부터 전부 해제. =====
+function isUnlocked(){return _rawGet('hp_unlocked')==='1';}
+function unlockPremium(){_rawSet('hp_unlocked','1');}   // ← 스토어 인앱결제 성공 시 이걸 호출(정식). 지금은 코드로도 호출.
+function relockPremium(){_rawSet('hp_unlocked','0');}   // 테스트용 되돌리기.
+function tryUnlockCode(code){if(typeof UNLOCK_CODE!=='undefined'&&code&&String(code).trim().toUpperCase()===UNLOCK_CODE){unlockPremium();return true;}return false;}
+// 콘텐츠 게이트: 현재 막이 무료 범위(FREE_MAX_ACT)를 넘고 미구매면 잠금.
+function accessAllowed(){if(isUnlocked())return true;var ep=(typeof curEpisode==='function')?curEpisode():null;var act=ep?ep.act:1;return act<=(typeof FREE_MAX_ACT!=='undefined'?FREE_MAX_ACT:2);}
+// 프로필 게이트: 첫 아이는 무료, 둘째부터 프리미엄.
+function canAddProfile(){return isUnlocked()||getProfiles().length<1;}
 function currentProfile(){var id=activeProfile();return getProfiles().filter(function(p){return p.id===id;})[0]||getProfiles()[0];}
 function addProfile(name,emoji){var a=getProfiles();var id=''+(Date.now?Date.now():(a.length+1))+a.length;a.push({id:id,name:(name||('아이 '+(a.length+1))).slice(0,8),emoji:emoji||'🐥'});lsSetJSON('hp_profiles',a);return id;}
 function switchProfile(id){_rawSet('hp_active_profile',id);try{location.reload();}catch(e){}}

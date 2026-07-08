@@ -546,6 +546,19 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .profile-item .pi-cur{font-family:'Gaegu',cursive;font-weight:700;font-size:.82rem;color:var(--word-d);}
 .profile-add{display:flex;gap:8px;justify-content:center;margin-bottom:6px;}
 .profile-add input{font-family:'Jua',sans-serif;font-size:1rem;text-align:center;width:120px;padding:9px;border-radius:14px;border:3px solid #e7d6bd;outline:none;color:var(--ink);}
+/* 프리미엄 페이월 */
+.paywall{text-align:center;background:linear-gradient(160deg,#fff6e0,#ffe9c4);border-radius:22px;padding:22px 18px;box-shadow:0 4px 0 #edc677;}
+.paywall .pw-ic{font-size:2.6rem;}
+.paywall .pw-title{font-family:'Jua',sans-serif;font-size:1.35rem;color:#7a531e;margin-top:4px;}
+.paywall .pw-sub{font-family:'Gowun Dodum',sans-serif;font-size:.95rem;color:#8a6a3a;margin:6px 0 12px;line-height:1.5;}
+.paywall .pw-benefits{list-style:none;padding:0;margin:0 auto 14px;max-width:300px;text-align:left;display:inline-block;}
+.paywall .pw-benefits li{font-family:'Gowun Dodum',sans-serif;font-size:.95rem;color:#6a5233;padding:4px 0;}
+.paywall .pw-btn{font-family:'Jua',sans-serif;font-size:1.15rem;color:#fff;background:linear-gradient(180deg,#F2A95C,var(--pri));border:none;border-radius:999px;padding:14px 26px;box-shadow:0 6px 0 var(--pri-d),0 10px 18px rgba(198,119,46,.35);cursor:pointer;}
+.paywall .pw-btn:active{transform:translateY(5px);box-shadow:0 1px 0 var(--pri-d);}
+/* 이용권 모달 */
+.unlock-card .unlock-benefits{font-family:'Gowun Dodum',sans-serif;font-size:.98rem;color:#6a5233;line-height:1.7;background:#fff8ea;border-radius:16px;padding:12px 14px;margin:4px 0 10px;}
+.unlock-card .unlock-price{font-family:'Jua',sans-serif;font-size:1.4rem;color:var(--pri-d);margin:2px 0 12px;}
+.unlock-card input{display:block;font-family:'Jua',sans-serif;font-size:1.15rem;text-align:center;width:100%;max-width:220px;margin:8px auto 0;padding:10px;border-radius:14px;border:3px solid #e7d6bd;outline:none;color:var(--ink);}
 .setbox .toggle{display:block;width:100%;max-width:260px;margin:8px auto 0;background:var(--match);box-shadow:0 4px 0 var(--match-d);}
 .setbox .toggle.off{background:#cbb8a0;box-shadow:0 4px 0 #a99478;}
 .setbox .vrow{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:300px;margin:10px auto 0;font-family:'Jua',sans-serif;color:var(--ink);font-size:1rem;}

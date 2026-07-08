@@ -55,6 +55,13 @@
       <button class="mrow" id="mrowWord"><span class="mk" id="mkW">🦒</span><span class="mtx">단어 동산 <b id="mtW">기린</b><small>글자 친구가 좋아하는 단어를 찾아요</small></span><span class="mck" id="mcW">○</span></button>
       <button class="mrow" id="mrowPlay"><span class="mk">🔊</span><span class="mtx">소리 동굴 <b>듣고 찾기</b><small>소리를 듣고 문을 열어요</small></span><span class="mck" id="mcP">○</span></button>
       <button class="mrow" id="mrowFind"><span class="mk">🔎</span><span class="mtx">글자 찾기 <b id="mtF">ㄱ</b><small>여러 글자 속에서 오늘 글자를 찾아요</small></span><span class="mck" id="mcF">○</span></button>
+      <div class="paywall" id="paywall" style="display:none">
+        <div class="pw-ic">🔒✨</div>
+        <div class="pw-title">다음 마을은 잠겨 있어요</div>
+        <div class="pw-sub">부모님과 함께 이용권을 열면 하니와 끝까지 모험할 수 있어요!</div>
+        <ul class="pw-benefits"><li>🗺️ 3~8막 전체 여정 (졸업까지)</li><li>👧👦 여러 아이 프로필 추가</li><li>💛 한 번 구매로 계속 · 추가 요금 없음</li></ul>
+        <button class="pw-btn" id="paywallBtn" type="button" onclick="openUnlockModal()">부모님: 이용권 열기 · <b id="pwPrice">₩5,000</b> ▶</button>
+      </div>
       <div class="alldone" id="missionDone" style="display:none">한글 마을에 빛이 하나 켜졌어요! 모험 보상: 하니가 스티커를 준비했어요 🎉</div>
       <button class="next-letter" id="nextLetterBtn" style="display:none">다음 글자 만나러 가기 ⭐</button>
       <section class="story-world" id="storyWorld" aria-label="한글 마을 이야기">
@@ -275,6 +282,7 @@
     <div class="setbox"><h4>학습 대시보드 👨‍👩‍👧</h4><div class="parent-dash" id="parentDash"></div></div>
     <div class="setbox"><h4>학습 리포트</h4><div class="report" id="report"></div><div class="hint" id="reportStreak" style="margin:10px 0 0"></div></div>
     <div class="setbox"><h4>하루 목표 🌙</h4><div class="hint" style="margin:0 0 10px">목표를 채우면 '오늘은 여기까지' 쉬어가기 넛지가 떠요 (강제 아님)</div><div class="cat-pills goal" id="goalPick"></div></div>
+    <div class="setbox"><h4>이용권 💛</h4><div class="hint" id="unlockStatus" style="margin:0 0 12px"></div><button class="mbtn" id="setUnlockBtn" type="button" onclick="openUnlockModal()" style="background:var(--word);box-shadow:0 4px 0 var(--word-d)">이용권 열기</button></div>
     <div class="setbox"><h4>소리</h4><button class="mbtn toggle" id="bgmToggle">배경음악: 켜짐</button><button class="mbtn toggle" id="sfxToggle">효과음: 켜짐</button></div>
     <div class="setbox"><h4>음량</h4><label class="vrow">목소리<input type="range" id="volVoice" min="0" max="100" step="5"></label><label class="vrow">효과음<input type="range" id="volSfx" min="0" max="100" step="5"></label><label class="vrow">배경음악<input type="range" id="volBgm" min="0" max="100" step="5"></label></div>
     <div class="setbox"><h4>성우(목소리)</h4><div class="cat-pills voice" id="voicePick"></div></div>
@@ -297,6 +305,17 @@
   <div class="profile-list" id="profileList"></div>
   <div class="profile-add"><input id="profileName" type="text" maxlength="8" placeholder="새 아이 이름"><button class="mbtn" id="profileAdd" style="background:var(--word);box-shadow:0 4px 0 var(--word-d)">+ 추가</button></div>
   <div class="modal-btns"><button class="mbtn" id="profileClose" style="background:#b9a98f;box-shadow:0 4px 0 #9c8b72">닫기</button></div>
+</div></div>
+
+<div class="modal" id="unlockModal"><div class="modal-card unlock-card">
+  <div class="m-tip">부모님만 진행해 주세요 🔒</div>
+  <div class="unlock-benefits">✨ 이용권을 열면<br>· 3~8막 전체 여정 (졸업까지)<br>· 여러 아이 프로필 추가<br>한 번 구매로 계속 — 추가 요금 없어요.</div>
+  <div class="unlock-price" id="unlockPrice">₩5,000 · 1회</div>
+  <div class="gq" id="unlockGateQ">3 × 4 = ?</div>
+  <input id="unlockGateInput" type="number" inputmode="numeric" placeholder="부모 확인">
+  <input id="unlockCode" type="text" placeholder="이용권 코드">
+  <div class="gmsg" id="unlockMsg"></div>
+  <div class="modal-btns"><button class="mbtn" id="unlockOk" style="background:var(--word);box-shadow:0 4px 0 var(--word-d)">이용권 열기</button><button class="mbtn" id="unlockCancel" style="background:#b9a98f;box-shadow:0 4px 0 #9c8b72">닫기</button></div>
 </div></div>
 
 <script src="app-data.js"></script>
@@ -463,6 +482,11 @@ function renderMission(){
   if(sb){var resuming=(progress.idx>0)||mission.letter||mission.word||mission.play||mission.find;
     sb.textContent=(resuming?'이어서 하기 ▶':'모험 시작하기 ▶');
     sb.style.display=complete?'none':'block';}
+  // 프리미엄 콘텐츠 게이트: 현재 막이 무료 범위를 넘고 미구매면 활동 대신 페이월.
+  var locked=(typeof accessAllowed==='function')&&!accessAllowed();
+  var pw=document.getElementById('paywall');if(pw)pw.style.display=locked?'block':'none';
+  if(locked){['mrowLetter','mrowWord','mrowPlay','mrowFind','adventureStartBtn','nextLetterBtn','missionDone','epHearBtn'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.display='none';});
+    var pp=document.getElementById('pwPrice');if(pp&&typeof PREMIUM_PRICE!=='undefined')pp.textContent=PREMIUM_PRICE;}
   twemojify(document.getElementById('mission'));
   if(allDone&&!mission.rewarded){mission.rewarded=true;saveMission();updateStreak();onEpisodeComplete();setTimeout(function(){confetti();earnSticker();},350);}
   if(typeof maybeShowActIntro==='function')maybeShowActIntro();
@@ -475,6 +499,7 @@ function renderReviewCard(){var c=document.getElementById('reviewCard');if(!c)re
   var b=document.getElementById('reviewCount');if(b)b.textContent=n+'개';}
 // '이어서 하기': 오늘의 첫 미완료 단계로 바로 잇기(글자→단어→소리→찾기), 다 했으면 다음 글자.
 function resumeAdventure(){
+  if(typeof accessAllowed==='function'&&!accessAllowed()){openUnlockModal();return;} // 프리미엄 잠금
   var ep=(typeof curEpisode==='function')?curEpisode():null;
   var single=!!(ep&&(ep.type==='combine'||ep.type==='sentence'));
   var click=function(id){var b=document.getElementById(id);if(b)b.click();};
@@ -486,7 +511,7 @@ function resumeAdventure(){
   if(nb&&nb.style.display!=='none'&&typeof goNextLetter==='function'){goNextLetter();return;}
   click('mrowLetter');
 }
-function openTodayLetter(){var oep=(typeof curEpisode==='function')?curEpisode():null;if(oep&&oep.type==='combine'){if(typeof openCombine==='function')openCombine();return;}if(oep&&oep.type==='sentence'){if(typeof openStory==='function')openStory();return;}var isV=VOWS.indexOf(todayLetter)>=0;lettersTab=isV?'vow':'con';var tabs=document.querySelectorAll('#letterTabs button');tabs.forEach(function(x){x.classList.remove('con-on','vow-on');});if(tabs[isV?1:0])tabs[isV?1:0].classList.add(lettersTab+'-on');renderLetters();openLetterDetail(todayLetter);}
+function openTodayLetter(){if(typeof accessAllowed==='function'&&!accessAllowed()){openUnlockModal();return;}var oep=(typeof curEpisode==='function')?curEpisode():null;if(oep&&oep.type==='combine'){if(typeof openCombine==='function')openCombine();return;}if(oep&&oep.type==='sentence'){if(typeof openStory==='function')openStory();return;}var isV=VOWS.indexOf(todayLetter)>=0;lettersTab=isV?'vow':'con';var tabs=document.querySelectorAll('#letterTabs button');tabs.forEach(function(x){x.classList.remove('con-on','vow-on');});if(tabs[isV?1:0])tabs[isV?1:0].classList.add(lettersTab+'-on');renderLetters();openLetterDetail(todayLetter);}
 /* 부모 잠금 + 리포트 */
 var parentUnlocked=false,gateAns=0;
 var gateModal=document.getElementById('gateModal');
@@ -504,11 +529,36 @@ function renderProfileList(){var host=document.getElementById('profileList');if(
 function openProfileModal(){renderProfileList();var m=document.getElementById('profileModal');if(m)m.classList.add('show');}
 function closeProfileModal(){var m=document.getElementById('profileModal');if(m)m.classList.remove('show');}
 (function initProfileUI(){var pm=document.getElementById('profileModal');if(!pm)return;
-  var add=document.getElementById('profileAdd');if(add)add.addEventListener('click',function(){var nm=document.getElementById('profileName');var name=(nm&&nm.value||'').trim();var id=addProfile(name,'🐥');if(nm)nm.value='';switchProfile(id);});
+  var add=document.getElementById('profileAdd');if(add)add.addEventListener('click',function(){
+    if(typeof canAddProfile==='function'&&!canAddProfile()){closeProfileModal();openUnlockModal();return;} // 둘째부터 프리미엄
+    var nm=document.getElementById('profileName');var name=(nm&&nm.value||'').trim();var id=addProfile(name,'🐥');if(nm)nm.value='';switchProfile(id);});
   var cl=document.getElementById('profileClose');if(cl)cl.addEventListener('click',closeProfileModal);
   pm.addEventListener('click',function(e){if(e.target===pm)closeProfileModal();});})();
 renderProfileChip();
-function renderReport(){var r=document.getElementById('report');if(!r)return;var acc=listenTry>0?Math.round(listenCorrect/listenTry*100):0;r.innerHTML='<div class="rcell"><b>'+seenLetters.length+'</b><span>배운 글자</span></div><div class="rcell"><b>'+seenWords.length+'</b><span>배운 단어</span></div><div class="rcell"><b>'+acc+'%</b><span>듣고찾기 정답률</span></div><div class="rcell"><b>'+stickerCount+'</b><span>모은 도장</span></div>';var rs=document.getElementById('reportStreak');if(rs)rs.textContent='연속 출석: '+streak+'일 🔥';renderParentDashboard();}
+/* ===== 프리미엄 이용권(1회 구매) ===== */
+function showPaywall(){if(typeof go==='function')go('home');if(typeof renderMission==='function')renderMission();}
+function openUnlockModal(){var m=document.getElementById('unlockModal');if(!m)return;var a=3+Math.floor(Math.random()*6),b=3+Math.floor(Math.random()*6);m._ans=a*b;
+  var q=document.getElementById('unlockGateQ');if(q)q.textContent=a+' × '+b+' = ?';
+  var gi=document.getElementById('unlockGateInput');if(gi)gi.value='';var uc=document.getElementById('unlockCode');if(uc)uc.value='';
+  var msg=document.getElementById('unlockMsg');if(msg)msg.textContent='';
+  var up=document.getElementById('unlockPrice');if(up&&typeof PREMIUM_PRICE!=='undefined')up.textContent=PREMIUM_PRICE+' · 1회';
+  m.classList.add('show');}
+function closeUnlockModal(){var m=document.getElementById('unlockModal');if(m)m.classList.remove('show');}
+(function initUnlock(){var m=document.getElementById('unlockModal');if(!m)return;
+  var ok=document.getElementById('unlockOk');if(ok)ok.addEventListener('click',function(){
+    var gi=document.getElementById('unlockGateInput');var msg=document.getElementById('unlockMsg');
+    if(!gi||parseInt(gi.value,10)!==m._ans){if(msg)msg.textContent='부모 확인을 다시 해주세요';return;}
+    var code=(document.getElementById('unlockCode')||{}).value||'';
+    if(typeof tryUnlockCode==='function'&&tryUnlockCode(code)){if(msg)msg.textContent='';closeUnlockModal();try{location.reload();}catch(e){}}
+    else{if(msg)msg.textContent='이용권 코드를 확인해 주세요 (구매 시 안내)';}
+  });
+  var cl=document.getElementById('unlockCancel');if(cl)cl.addEventListener('click',closeUnlockModal);
+  m.addEventListener('click',function(e){if(e.target===m)closeUnlockModal();});})();
+function renderReport(){var r=document.getElementById('report');if(!r)return;var acc=listenTry>0?Math.round(listenCorrect/listenTry*100):0;r.innerHTML='<div class="rcell"><b>'+seenLetters.length+'</b><span>배운 글자</span></div><div class="rcell"><b>'+seenWords.length+'</b><span>배운 단어</span></div><div class="rcell"><b>'+acc+'%</b><span>듣고찾기 정답률</span></div><div class="rcell"><b>'+stickerCount+'</b><span>모은 도장</span></div>';var rs=document.getElementById('reportStreak');if(rs)rs.textContent='연속 출석: '+streak+'일 🔥';renderParentDashboard();
+  var us=document.getElementById('unlockStatus'),ub=document.getElementById('setUnlockBtn');
+  if(us){var unlocked=(typeof isUnlocked==='function')&&isUnlocked();
+    us.textContent=unlocked?'전체 이용권이 열려 있어요 ✅ (3~8막 · 다자녀)':'무료 체험 중 — 1~2막까지 열려 있어요. 3막부터·둘째 아이부터는 이용권이 필요해요.';
+    if(ub)ub.style.display=unlocked?'none':'inline-block';}}
 // 부모 대시보드: 아이가 무엇을 뗐고 어디쯤인지 · 주간 출석 · 복습 현황 · 추천 페이스.
 function renderParentDashboard(){
   var host=document.getElementById('parentDash');if(!host)return;
