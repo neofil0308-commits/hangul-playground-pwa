@@ -50,7 +50,7 @@
       <button class="review-card" id="reviewCard" type="button" style="display:none" onclick="startReview()"><span class="rc-ic">⭐</span><span class="rc-tx">지난 글자 복습 <b id="reviewCount">0개</b><small>기억나는지 살짝 확인해요</small></span><span class="rc-go">▶</span></button>
       <h3>오늘의 모험 🎯</h3>
       <div class="mbar"><i id="mbarFill"></i></div>
-      <button class="adventure-start" id="adventureStartBtn" type="button" onclick="document.getElementById('mrowLetter').click()">모험 시작하기 ▶</button>
+      <button class="adventure-start" id="adventureStartBtn" type="button" onclick="resumeAdventure()">모험 시작하기 ▶</button>
       <button class="mrow" id="mrowLetter"><span class="mk" id="mkL">ㄱ</span><span class="mtx">글자 숲 <b id="mtL">ㄱ</b><small>숨어 있는 글자 친구를 만나요</small></span><span class="mck" id="mcL">○</span></button>
       <button class="mrow" id="mrowWord"><span class="mk" id="mkW">🦒</span><span class="mtx">단어 동산 <b id="mtW">기린</b><small>글자 친구가 좋아하는 단어를 찾아요</small></span><span class="mck" id="mcW">○</span></button>
       <button class="mrow" id="mrowPlay"><span class="mk">🔊</span><span class="mtx">소리 동굴 <b>듣고 찾기</b><small>소리를 듣고 문을 열어요</small></span><span class="mck" id="mcP">○</span></button>
@@ -451,6 +451,11 @@ function renderMission(){
   renderEpisodeBanner();
   renderStarAlbum();
   var nb=document.getElementById('nextLetterBtn');if(nb)nb.style.display=(complete&&progress.idx<EPISODE_PATH.length-1)?'block':'none';
+  // '모험 시작하기' → 복귀자면 '이어서 하기'로, 완료 시 숨김(다음 글자 버튼이 대신).
+  var sb=document.getElementById('adventureStartBtn');
+  if(sb){var resuming=(progress.idx>0)||mission.letter||mission.word||mission.play||mission.find;
+    sb.textContent=(resuming?'이어서 하기 ▶':'모험 시작하기 ▶');
+    sb.style.display=complete?'none':'block';}
   twemojify(document.getElementById('mission'));
   if(allDone&&!mission.rewarded){mission.rewarded=true;saveMission();updateStreak();onEpisodeComplete();setTimeout(function(){confetti();earnSticker();},350);}
   if(typeof maybeShowActIntro==='function')maybeShowActIntro();
@@ -461,6 +466,19 @@ function renderReviewCard(){var c=document.getElementById('reviewCard');if(!c)re
   var n=(typeof dueReviewChs==='function')?dueReviewChs().length:0;
   c.style.display=n>0?'flex':'none';
   var b=document.getElementById('reviewCount');if(b)b.textContent=n+'개';}
+// '이어서 하기': 오늘의 첫 미완료 단계로 바로 잇기(글자→단어→소리→찾기), 다 했으면 다음 글자.
+function resumeAdventure(){
+  var ep=(typeof curEpisode==='function')?curEpisode():null;
+  var single=!!(ep&&(ep.type==='combine'||ep.type==='sentence'));
+  var click=function(id){var b=document.getElementById(id);if(b)b.click();};
+  if(single||!mission.letter){click('mrowLetter');return;}
+  if(!mission.word){click('mrowWord');return;}
+  if(!mission.play){click('mrowPlay');return;}
+  if(!mission.find){click('mrowFind');return;}
+  var nb=document.getElementById('nextLetterBtn');
+  if(nb&&nb.style.display!=='none'&&typeof goNextLetter==='function'){goNextLetter();return;}
+  click('mrowLetter');
+}
 function openTodayLetter(){var oep=(typeof curEpisode==='function')?curEpisode():null;if(oep&&oep.type==='combine'){if(typeof openCombine==='function')openCombine();return;}if(oep&&oep.type==='sentence'){if(typeof openStory==='function')openStory();return;}var isV=VOWS.indexOf(todayLetter)>=0;lettersTab=isV?'vow':'con';var tabs=document.querySelectorAll('#letterTabs button');tabs.forEach(function(x){x.classList.remove('con-on','vow-on');});if(tabs[isV?1:0])tabs[isV?1:0].classList.add(lettersTab+'-on');renderLetters();openLetterDetail(todayLetter);}
 /* 부모 잠금 + 리포트 */
 var parentUnlocked=false,gateAns=0;
