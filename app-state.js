@@ -1,10 +1,29 @@
 // Persistent app state and daily mission lifecycle for 하니의 한글 모험.
 // Keep DOM rendering in index.html; this file owns storage, daily picks, and mission mutation.
 
-function lsGet(k,d){try{const v=localStorage.getItem(k);return v===null?d:v;}catch(e){return d;}}
-function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
-function lsJSON(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
-function lsSetJSON(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+// ===== 다자녀 프로필: 저장 키를 프로필별(p<id>:)로 분리. 프로필 레지스트리 2개만 전역. =====
+function _rawGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function _rawSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+var _GLOBAL_KEYS={hp_profiles:1,hp_active_profile:1};
+function activeProfile(){return _rawGet('hp_active_profile')||'1';}
+function _pk(k){return _GLOBAL_KEYS[k]?k:('p'+activeProfile()+':'+k);}
+// 기존 단일 사용자 데이터를 첫 프로필(p1:)로 1회 이전(진도 보존). 프로필 도입 전 사용자 구제.
+(function _migrateProfiles(){try{
+  if(_rawGet('hp_profiles'))return; // 이미 이전됨
+  var keys=['hp_progress','hp_mission','hp_stickers','hp_streak','hp_lastdone','hp_seen_letters','hp_seen_words','hp_listen_try','hp_listen_correct','hp_active_days','hp_today','hp_daily_goal','hp_voice','hp_rate','hp_vol_voice','hp_vol_sfx','hp_vol_bgm','hp_sfx','hp_bgm','hp_intro_seen'];
+  keys.forEach(function(k){var v=_rawGet(k);if(v!==null&&_rawGet('p1:'+k)===null)_rawSet('p1:'+k,v);});
+  _rawSet('hp_active_profile','1');
+  _rawSet('hp_profiles',JSON.stringify([{id:'1',name:'첫째',emoji:'🐣'}]));
+}catch(e){}})();
+function getProfiles(){var a=lsJSON('hp_profiles',null);if(!a||!a.length){a=[{id:'1',name:'첫째',emoji:'🐣'}];lsSetJSON('hp_profiles',a);}return a;}
+function currentProfile(){var id=activeProfile();return getProfiles().filter(function(p){return p.id===id;})[0]||getProfiles()[0];}
+function addProfile(name,emoji){var a=getProfiles();var id=''+(Date.now?Date.now():(a.length+1))+a.length;a.push({id:id,name:(name||('아이 '+(a.length+1))).slice(0,8),emoji:emoji||'🐥'});lsSetJSON('hp_profiles',a);return id;}
+function switchProfile(id){_rawSet('hp_active_profile',id);try{location.reload();}catch(e){}}
+
+function lsGet(k,d){try{const v=localStorage.getItem(_pk(k));return v===null?d:v;}catch(e){return d;}}
+function lsSet(k,v){try{localStorage.setItem(_pk(k),v);}catch(e){}}
+function lsJSON(k,d){try{var v=localStorage.getItem(_pk(k));return v?JSON.parse(v):d;}catch(e){return d;}}
+function lsSetJSON(k,v){try{localStorage.setItem(_pk(k),JSON.stringify(v));}catch(e){}}
 function todayKey(){var d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
 function yKey(){var y=new Date();y.setDate(y.getDate()-1);return y.getFullYear()+'-'+(y.getMonth()+1)+'-'+y.getDate();}
 

@@ -41,7 +41,7 @@
 
   <section id="home" class="screen active">
     <header aria-label="하니의 한글 모험"><div class="mascot">🐥</div><div class="logo">하니의 한<b>글</b> 모험</div><div class="sub">한글 마을에 흩어진 글자 친구들을 찾아요</div><div class="hani-hello">안녕! 오늘도 모험 갈까? 🐥</div></header>
-    <div class="home-intro-bar"><button class="replay-intro" id="replayIntro">📖 이야기 다시 보기</button><button class="replay-intro replay-act-intro" id="replayActIntro">💡 오늘 배우는 것</button></div>
+    <div class="home-intro-bar"><button class="replay-intro profile-chip" id="profileBtn" type="button" onclick="openProfileModal()">🐣 첫째 ▾</button><button class="replay-intro" id="replayIntro">📖 이야기 다시 보기</button><button class="replay-intro replay-act-intro" id="replayActIntro">💡 오늘 배우는 것</button></div>
     <section class="star-album star-album-top" id="starAlbum" aria-label="여정 진행 상황 — 지난 글자를 누르면 다시 갈 수 있어요"></section>
     <div class="home-workbench" id="homeWorkbench" aria-label="iPad 기준 한글 모험 홈">
     <div class="mission" id="mission">
@@ -292,6 +292,13 @@
   <div class="modal-btns"><button class="mbtn" id="gateOk" style="background:var(--word);box-shadow:0 4px 0 var(--word-d)">확인</button><button class="mbtn" id="gateCancel" style="background:#b9a98f;box-shadow:0 4px 0 #9c8b72">취소</button></div>
 </div></div>
 
+<div class="modal" id="profileModal"><div class="modal-card profile-card">
+  <div class="m-tip">누가 배울까요? 🐥</div>
+  <div class="profile-list" id="profileList"></div>
+  <div class="profile-add"><input id="profileName" type="text" maxlength="8" placeholder="새 아이 이름"><button class="mbtn" id="profileAdd" style="background:var(--word);box-shadow:0 4px 0 var(--word-d)">+ 추가</button></div>
+  <div class="modal-btns"><button class="mbtn" id="profileClose" style="background:#b9a98f;box-shadow:0 4px 0 #9c8b72">닫기</button></div>
+</div></div>
+
 <script src="app-data.js"></script>
 <script src="app-state.js"></script>
 <script src="app-listen.js"></script>
@@ -488,6 +495,19 @@ document.getElementById('gateOk').addEventListener('click',function(){if(parseIn
 document.getElementById('gateCancel').addEventListener('click',function(){gateModal.classList.remove('show');});
 gateModal.addEventListener('click',function(e){if(e.target===gateModal)gateModal.classList.remove('show');});
 document.getElementById('gateInput').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('gateOk').click();});
+/* ===== 다자녀 프로필 UI ===== */
+function renderProfileChip(){var b=document.getElementById('profileBtn');if(!b||typeof currentProfile!=='function')return;var p=currentProfile();b.textContent=(p.emoji||'🐥')+' '+(p.name||'아이')+' ▾';}
+function renderProfileList(){var host=document.getElementById('profileList');if(!host||typeof getProfiles!=='function')return;var cur=activeProfile();
+  host.innerHTML=getProfiles().map(function(p){return '<button class="profile-item'+(p.id===cur?' on':'')+'" data-id="'+p.id+'"><span class="pi-emoji">'+(p.emoji||'🐥')+'</span><span class="pi-name">'+p.name+'</span>'+(p.id===cur?'<span class="pi-cur">지금</span>':'')+'</button>';}).join('');
+  host.querySelectorAll('.profile-item').forEach(function(el){el.addEventListener('click',function(){var id=el.getAttribute('data-id');if(id!==activeProfile())switchProfile(id);else closeProfileModal();});});
+  if(typeof twemojify==='function')twemojify(host);}
+function openProfileModal(){renderProfileList();var m=document.getElementById('profileModal');if(m)m.classList.add('show');}
+function closeProfileModal(){var m=document.getElementById('profileModal');if(m)m.classList.remove('show');}
+(function initProfileUI(){var pm=document.getElementById('profileModal');if(!pm)return;
+  var add=document.getElementById('profileAdd');if(add)add.addEventListener('click',function(){var nm=document.getElementById('profileName');var name=(nm&&nm.value||'').trim();var id=addProfile(name,'🐥');if(nm)nm.value='';switchProfile(id);});
+  var cl=document.getElementById('profileClose');if(cl)cl.addEventListener('click',closeProfileModal);
+  pm.addEventListener('click',function(e){if(e.target===pm)closeProfileModal();});})();
+renderProfileChip();
 function renderReport(){var r=document.getElementById('report');if(!r)return;var acc=listenTry>0?Math.round(listenCorrect/listenTry*100):0;r.innerHTML='<div class="rcell"><b>'+seenLetters.length+'</b><span>배운 글자</span></div><div class="rcell"><b>'+seenWords.length+'</b><span>배운 단어</span></div><div class="rcell"><b>'+acc+'%</b><span>듣고찾기 정답률</span></div><div class="rcell"><b>'+stickerCount+'</b><span>모은 도장</span></div>';var rs=document.getElementById('reportStreak');if(rs)rs.textContent='연속 출석: '+streak+'일 🔥';renderParentDashboard();}
 // 부모 대시보드: 아이가 무엇을 뗐고 어디쯤인지 · 주간 출석 · 복습 현황 · 추천 페이스.
 function renderParentDashboard(){

@@ -535,6 +535,17 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .gate-card input{font-family:'Jua',sans-serif;font-size:1.6rem;text-align:center;width:150px;padding:10px;border-radius:16px;border:3px solid #e7d6bd;outline:none;color:var(--ink);}
 .gate-card .gmsg{font-family:'Gaegu',cursive;font-weight:700;color:var(--trace-d);min-height:1.2em;margin-top:8px;}
 .gate-card .modal-btns{margin-top:14px;display:flex;gap:10px;justify-content:center;}
+/* 다자녀 프로필 */
+.profile-chip{background:#fff3cf !important;box-shadow:0 4px 0 #edc677 !important;color:#6a4a1e !important;}
+.profile-card{max-width:360px;}
+.profile-list{display:flex;flex-direction:column;gap:8px;margin:6px 0 14px;}
+.profile-item{display:flex;align-items:center;gap:12px;border:none;background:var(--cream2);border-radius:16px;padding:12px 14px;font-family:'Jua',sans-serif;font-size:1.1rem;color:var(--ink);cursor:pointer;box-shadow:0 3px 0 #e6d8bd;text-align:left;}
+.profile-item.on{background:#e9f8ec;box-shadow:0 3px 0 #bfe6c6;}
+.profile-item .pi-emoji{font-size:1.6rem;width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:#fff;border-radius:12px;flex:0 0 auto;}
+.profile-item .pi-name{flex:1;}
+.profile-item .pi-cur{font-family:'Gaegu',cursive;font-weight:700;font-size:.82rem;color:var(--word-d);}
+.profile-add{display:flex;gap:8px;justify-content:center;margin-bottom:6px;}
+.profile-add input{font-family:'Jua',sans-serif;font-size:1rem;text-align:center;width:120px;padding:9px;border-radius:14px;border:3px solid #e7d6bd;outline:none;color:var(--ink);}
 .setbox .toggle{display:block;width:100%;max-width:260px;margin:8px auto 0;background:var(--match);box-shadow:0 4px 0 var(--match-d);}
 .setbox .toggle.off{background:#cbb8a0;box-shadow:0 4px 0 #a99478;}
 .setbox .vrow{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:300px;margin:10px auto 0;font-family:'Jua',sans-serif;color:var(--ink);font-size:1rem;}
