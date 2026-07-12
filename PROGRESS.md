@@ -72,12 +72,27 @@
 - [x] 7막 단어 마을(단어 읽기) — 단어 동산(`wordBuild`)으로 사실상 구현(드래그 조립·구조도·차등 피드백)
 - [x] **NVIDIA Build 이미지 카드 asset 파이프라인 PoC** — `.env` 보안 규칙, `tools/generate_nvidia_cards.py`, `assets/generated-cards/cards.json`/placeholder SVG 3종, service worker precache(v36), 회귀 테스트 추가. 실호출 가능한 모델(`qwen-image`, `qwen-image-edit`, `flux.1-dev` 등)을 확인하고 local `.env` 기반으로만 호출하도록 정리.
 - [x] **NVIDIA 오브젝트-only 한글 카드 조립 PoC** — 전체 카드를 모델에 맡기는 방식은 구도/글자/핵심 오브젝트 안정성이 낮아 폐기. NVIDIA는 흰 배경 단일 오브젝트만 생성하고, 로컬 Pillow 합성으로 카드 배경·상단 오브젝트 영역·하단 한글 패널을 결정론적으로 조립하는 구조로 전환. 샘플 3종(`ㅏ`, `오이`, `하니`) 재생성 및 시각 QA 완료.
-- [ ] **(우선) 잔재 화면 정리** — 초기 놀이터 화면(`letters/syl/word/match/quiz/trace/sent/sentWrite`)이 모험 플로우와 공존. `ARCHITECTURE.md` §3 기준으로 (a) syl→3막·sent→8막 재설계 편입, (b) word/trace/match/quiz/letters 중복 제거 또는 부모용 격리 결정.
-- [ ] 비글자형 막 엔진 편입: 3막 글자 공방(자모 결합), 8막 이야기 책(문장 읽기) — 현재 데이터만 정의됨
+- [x] 비글자형 막 엔진 편입: 3막 글자 공방(자모 결합, `openCombine`/`combine`), 8막 이야기 책(문장 읽기·졸업, `openStory`/`story`) — 구현·플레이 가능, `episode_progress_check.py` 통과. (2026-07-12 실측으로 확인, 문서 정정)
+- [ ] **3·8막 콘텐츠 보강** — 3막 음절 6개(가·나·다·마·고·모)·8막 문장 6개로 얇음. 음절/문장 표본 확장(3막은 받침 결합 음절 후보 — `combineTeach`에 3자모 경로 이미 존재).
+- [ ] **(우선) 잔재 화면 정리** — 초기 놀이터 화면(`letters/syl/word/match/quiz/trace/sent/sentWrite`)이 모험 플로우와 공존. 3·8막이 `combine`/`story`로 이미 편입됐으므로 8종 전부 순수 중복 → 중복 제거 또는 부모용 격리.
 - [ ] (옵션) 듣고 찾기 #4: 정답 단어 속 글자 반짝(예 "오리"에서 ㅗ 강조)
 - [ ] iPad 실기기에서 홈 화면 설치, standalone 실행, 오디오 재생, service worker 캐시 확인
 
 ## 작업 이력
+
+### 2026-07-12 (Claude Code) — 문서 동기화: 3·8막 완성도 실측 & 정정
+
+- **문서 불일치 실측**: `유료배포_검토.md`(07-05)는 "3막 글자 공방·8막 문장 읽기 = 데이터만 정의"라 했으나, `PROGRESS.md`(07-08)는 "이미 구현됨"이라 상충. 코드 실측으로 후자가 맞음을 확정.
+  - 3막: [app-learning.js](app-learning.js) `openCombine`/`cbTap`/`cbDragStart`/`combineTeach`, [app-state.js](app-state.js) `completeCombine`, [index.html](index.html) `#combine` 화면 — 자모 드래그 합치기 + 결합원리 음성. 플레이 가능.
+  - 8막: `openStory`/`stReadAll`/`stDoneReading`, `completeStory`, `#story` 화면 — 문장 읽기·졸업. 플레이 가능.
+  - 테스트 `episode_progress_check.py`(`test_stage_b_combine_act_is_playable`/`test_stage_c_sentence_act_is_playable` 등 16개) 통과로 재확인.
+- **정정한 문서**: `README.md`(§4 표 3·8막 ✅ / §6 현황), `ARCHITECTURE.md`(§3 현재 플로우 표에 `combine`/`story` 추가, 잔재표·방향제안), `유료배포_검토.md`(§9·콘텐츠 심화 정정 각주), `PROGRESS.md`(다음 작업 갱신).
+- **남은 실질**: 막 엔진이 아니라 **콘텐츠 표본**이 얇음(3막 음절 6개·8막 문장 6개) → 다음 단계는 콘텐츠 보강.
+- **콘텐츠 보강(이어서 진행)**:
+  - 3막 글자 공방 음절 6→**14개**(받침 없는 CV): 바(바다🌊)·사(사자🦁)·하(하마🦛)·기(기차🚂)·도(도토리🌰)·토(토끼🐰)·구(구름☁️)·무(무지개🌈) 추가. 모두 CV라 combine 2자모 드래그 안전(python 유니코드 분해로 종성 0 확인).
+  - 8막 이야기 책 문장 6→**14개**. 새 문장의 모든 단어가 그림 단서(cue)를 갖도록 `SUBJ`(6→12)·`OBJ`(6→11)·`VERB`(6→10) 확장 후 조합. Node 런타임 검증: 14문장 전 단어 cue 누락 0.
+  - 음성: `generate_voices.py`에 새 문장 단어 + 3막 예시단어(`SYL_WORDS`) 추가 후 **edge-tts로 신경망 MP3 생성 완료** — 신규 21텍스트 × 3음성(f/kid/m) = **201개**. 기존 코퍼스와 음량 맞추려 `ffmpeg loudnorm=I=-18`로 정규화(-19~-21.5 → ~-18 LUFS). 앱 `keyOf`(codePointAt→hex)와 파일명 일치, 로컬 서버 3음성 전부 HTTP 200 서빙 확인.
+  - 테스트: 음절 배열 핀을 유연화(첫 음절군만). SW는 network-first라 데이터 변경엔 버전 범프 불필요(v80 유지). 정적 175개 통과.
 
 ### 2026-07-08 (Telegram) — 수익모델: 1회 구매 프리미엄 구조(클라이언트)
 

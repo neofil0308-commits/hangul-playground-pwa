@@ -158,8 +158,8 @@ def test_stage_b_combine_act_is_playable():
     state = STATE.read_text(encoding="utf-8")
     ep = EPISODE.read_text(encoding="utf-8")
     learning = (ROOT / "app-learning.js").read_text(encoding="utf-8")
-    # 3막 combine 콘텐츠: 목표 음절 + 예시 단어/그림
-    assert "syllables:['가','나','다','마','고','모']" in data
+    # 3막 combine 콘텐츠: 목표 음절 + 예시 단어/그림 (표본 확장 가능 — 첫 음절군만 핀)
+    assert "syllables:['가','나','다','마','고','모'" in data
     assert "sylWords:" in data
     # EPISODE_PATH가 combine 막을 음절별 노드로 펼침(ch 트릭으로 글자 기계장치 재사용)
     assert "a.type==='combine'" in data
