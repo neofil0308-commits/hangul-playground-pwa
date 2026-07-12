@@ -11,9 +11,15 @@ def test_featured_word_rotation():
     body = STATE[fi:fi + 700]
     assert "LETTER_WORDS" in body            # 예시 뱅크에서 뽑음
     assert "86400000" in body                # 날짜 순번 기반 로테이션
-    # pickToday가 로테이션 함수를 사용.
+    # pickToday가 로테이션 함수를 사용(글자형 막은 featuredWord, 7막 단어 마을은 wordActWord).
     pi = STATE.index("function pickToday")
-    assert "featuredWord(" in STATE[pi:pi + 300]
+    picktoday = STATE[pi:pi + 800]
+    assert "featuredWord(" in picktoday
+    assert "wordActWord(" in picktoday          # 7막: 오늘의 단어 로테이션
+    # 7막 단어 로테이션도 날짜 순번 기반.
+    assert "function wordActWord" in STATE
+    wi = STATE.index("function wordActWord")
+    assert "86400000" in STATE[wi:wi + 400]
 
 
 def test_word_bank_has_multiple_examples_per_letter():
