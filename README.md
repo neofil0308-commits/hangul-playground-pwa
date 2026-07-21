@@ -73,6 +73,10 @@ python -m pytest -q tests/ -o python_files="*_check.py"
 # 런타임 스모크 (화면 전환·핵심 경로를 실제로 눌러 본다 — 정적 테스트가 못 잡는 회귀용)
 npm install jsdom                 # 최초 1회
 node tools/smoke_runtime.js       # 위 http.server가 5399 포트로 떠 있어야 함
+
+# 화면 캡처 (진짜 Chrome — jsdom이 못 보는 '보이는 문제'용. shots/ 에 PNG)
+npm install puppeteer-core        # 최초 1회. 브라우저는 시스템 Chrome을 쓴다
+node tools/screenshot.js
 ```
 
 > 편집 후 옛 화면이 보이면: 브라우저에서 서비스워커/캐시 비우고 두 번 새로고침(자세히 `ARCHITECTURE.md` §7). 실기기 접속 불가면 방화벽(5399 인바운드) 확인.
