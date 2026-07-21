@@ -128,6 +128,25 @@ def check_final_words_have_that_final(d):
     return "받침 예시 낱말이 그 받침을 가지는가", bad
 
 
+def check_combine_syllables_use_taught_jamo(d):
+    """합치기 화의 음절은 그 시점까지 배운 자모만으로 이루어져야 한다.
+
+    4막 받침 조립처럼 음절을 직접 만드는 화에 아직 안 배운 모음·자음이 섞이면
+    아이가 조립할 수 없는 카드가 나온다.
+    """
+    bad = []
+    taught = set()
+    for act in d["CURRICULUM"]:
+        for syl in act.get("syllables", []):
+            missing = sorted(word_jamo(syl) - taught - {"ㅇ"})
+            if missing:
+                bad.append(f"{act['act']}막 음절 '{syl}'에 아직 안 배운 자모: {' '.join(missing)}")
+        # 낱자 화가 먼저 나오는 막은 그 글자들도 이 막에서 배운 것으로 친다.
+        taught.update(act.get("letters", []))
+        taught.update(syl for syl in act.get("syllables", []))
+    return "합치기 음절이 배운 자모로만 되어 있는가", bad
+
+
 def check_milestone_prerequisites(d):
     """맛보기 단어는 그 시점까지 배운 자모만으로 이루어져야 한다.
 
@@ -314,6 +333,7 @@ def run_all():
         check_example_words_contain_their_sound(d),
         check_final_words_have_that_final(d),
         check_syllable_example_starts_with_syllable(d),
+        check_combine_syllables_use_taught_jamo(d),
         check_milestone_prerequisites(d),
         check_option_pool_covers_taught_letters(d, decl),
         check_speech_resolves_every_letter(),

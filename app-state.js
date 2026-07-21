@@ -122,10 +122,14 @@ function curLetterObj(){var ep=curEpisode();if(!ep)return null;
   if(ep.type==='combine')return combineTarget(ep);
   if(ep.type==='sentence')return sentenceTarget(ep);
   return null;}
-// 진행/앨범 키: 보통은 글자 그대로, 4막 받침은 'F:'+글자로 분리 → 2막 초성과 collapse 방지.
-function progKey(ep){return ep?((ep.final?'F:':'')+(ep.ch||'')):'';}
-// 마스터 목록은 맨 글자(초성·모음)만 — 받침 키('F:')는 게임/복습 풀을 더럽히지 않게 제외.
-function masteredLetters(){return Object.keys(progress.mastery).filter(function(ch){return ch.indexOf('F:')!==0&&isMasteredRec(progress.mastery[ch]);});}
+// 진행/앨범 키: 보통은 글자, 4막 받침은 'F:'+글자, 7막은 'W:'+단어(첫 낱자가 겹쳐도 화가 구분되게).
+function progKey(ep){if(!ep)return '';
+  if(ep.type==='word'&&ep.word)return 'W:'+ep.word;
+  return (ep.final?'F:':'')+(ep.ch||'');}
+// 마스터 목록은 낱자만 — 받침 키('F:')와 7막 단어 키('W:')는 게임/복습 풀을 더럽히지 않게 제외.
+// (오답노트 #1: 풀에 넣는 지점과 꺼내는 지점 양쪽에 필터를 둔다)
+function masteredLetters(){return Object.keys(progress.mastery).filter(function(ch){
+  return ch.indexOf('F:')!==0&&ch.indexOf('W:')!==0&&isMasteredRec(progress.mastery[ch]);});}
 
 // ===== 간격 반복 복습(SRS, Leitner) — 뗀 글자를 점점 긴 간격으로 재확인해 파지를 강화 =====
 // box(1~5)가 오를수록 다음 복습까지 간격이 길어진다. 맞히면 승급, 틀리면 box1로 리셋.
@@ -234,7 +238,8 @@ function pickToday(){
   var ep=(typeof curEpisode==='function')?curEpisode():null;
   // 7막(단어 마을): 오늘의 단어를 정하고, 그 첫 낱자를 오늘의 글자로 삼아 낱자 게임과 단어가 맞물리게 한다.
   if(ep&&ep.type==='word'){
-    var w=wordActWord();
+    // 7막은 화마다 단어가 정해져 있다(난이도순). 옛 저장본처럼 단어가 없는 노드면 날짜 로테이션으로 폴백.
+    var w=(ep.word)?[ep.word,ep.emoji||'']:wordActWord();
     var init=(typeof decompose==='function')?((decompose(w[0])[0]||[])[0]):'';
     todayLetter=(typeof ALL_LETTER_OBJS!=='undefined'&&ALL_LETTER_OBJS[init])||BASIC_LETTERS[hashStr(MD)%BASIC_LETTERS.length];
     todayWord=w;

@@ -116,6 +116,24 @@ try {
   ok('ㄱ 발화형이 이름', w.jamoSpeech('ㄱ') === '기역', w.jamoSpeech('ㄱ'));
 } catch (e) { ok('낱자 발화', false, e.message); }
 
+// 커리큘럼 보강(3단계) 회귀 방어 — 각 막이 최소 분량을 갖고, 새 화 유형이 실제로 열린다.
+try {
+  const path = w.eval('EPISODE_PATH');
+  const byAct = {};
+  path.forEach(e => { byAct[e.act] = (byAct[e.act] || 0) + 1; });
+  ok('모든 막이 5화 이상', Object.values(byAct).every(n => n >= 5), JSON.stringify(byAct));
+  ok('4막에 받침 조립 화가 있다', path.some(e => e.act === 4 && e.type === 'combine'));
+  ok('7막이 단어마다 한 화', path.filter(e => e.act === 7).every(e => !!e.word));
+  ok('7막이 10화 이상', path.filter(e => e.act === 7).length >= 10);
+} catch (e) { ok('커리큘럼 구성', false, e.message); }
+
+// 4막 받침 조립: 3자모(초성+중성+종성)로 분해되어야 드래그 판이 만들어진다.
+try {
+  const ep = w.eval('EPISODE_PATH').find(e => e.act === 4 && e.type === 'combine');
+  const jamo = w.eval('decompose')(ep.ch)[0];
+  ok('받침 음절이 3자모로 분해된다', jamo.length === 3, `${ep.ch} → ${jamo.join('')}`);
+} catch (e) { ok('받침 조립 분해', false, e.message); }
+
 // 오늘의 글자 열기(글자 숲)
 try { w.go('home'); w.openTodayLetter();
   ok('openTodayLetter 동작', w.document.getElementById('letterDetail').classList.contains('active')

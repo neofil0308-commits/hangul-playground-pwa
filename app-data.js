@@ -220,29 +220,29 @@ const LETTER_WORDS={
  'ㅠ':[['유니콘','🦄'],['유령','👻'],['유모차','🚼']],
  'ㅡ':[['음악','🎵'],['음식','🍲']],
  'ㅣ':[['이빨','🦷'],['이불','🛏️'],['이모','👩'],['인형','🧸']],
- 'ㅐ':[['개미','🐜'],['개','🐶']],
- 'ㅔ':[['게','🦀']],
+ 'ㅐ':[['개미','🐜'],['개','🐶'],['배','🚢'],['해','🌞']],
+ 'ㅔ':[['게','🦀'],['세모','🔺'],['베개','🛏️']],
  'ㅒ':[['얘기','💬']],
- 'ㅖ':[['시계','🕐']],
- 'ㅘ':[['사과','🍎']],
- 'ㅙ':[['왜','❓']],
- 'ㅚ':[['참외','🍈']],
- 'ㅝ':[['원숭이','🐵']],
- 'ㅞ':[['웨','🔊']],
- 'ㅟ':[['귀','👂']],
- 'ㅢ':[['의자','🪑']],
+ 'ㅖ':[['시계','🕐'],['계단','🪜']],
+ 'ㅘ':[['사과','🍎'],['과자','🍪'],['화분','🪴']],
+ 'ㅙ':[['돼지','🐷']],
+ 'ㅚ':[['참외','🍈'],['외투','🧥']],
+ 'ㅝ':[['원숭이','🐵'],['병원','🏥']],
+ 'ㅞ':[['스웨터','🧥']],
+ 'ㅟ':[['귀','👂'],['쥐','🐭'],['바위','🪨']],
+ 'ㅢ':[['의자','🪑'],['의사','🩺']],
 };
 
 // 4막 받침(끝소리) 예시 단어 — 글자가 음절의 '끝소리(받침)'로 들어간 단어들.
 // 2막 초성(LETTER_WORDS)과 분리: 4막 글자 숲은 이 목록으로 받침을 가르친다(끝소리 ㄱ → 책·약).
 const FINAL_WORDS={
- 'ㄱ':[['책','📖'],['약','💊']],
- 'ㄴ':[['산','⛰️'],['손','✋']],
+ 'ㄱ':[['책','📖'],['약','💊'],['수박','🍉']],
+ 'ㄴ':[['산','⛰️'],['손','✋'],['눈','👁️']],
  'ㄷ':[['숟가락','🥄']],
- 'ㄹ':[['발','🦶'],['별','⭐']],
- 'ㅁ':[['곰','🐻'],['밤','🌰']],
- 'ㅂ':[['컵','☕'],['밥','🍚']],
- 'ㅇ':[['강','🏞️'],['빵','🍞']],
+ 'ㄹ':[['발','🦶'],['별','⭐'],['물','💧']],
+ 'ㅁ':[['곰','🐻'],['밤','🌰'],['봄','🌸']],
+ 'ㅂ':[['컵','☕'],['밥','🍚'],['입','👄']],
+ 'ㅇ':[['강','🏞️'],['빵','🍞'],['공','⚽']],
 };
 
 const PRESET_SENTS=['고양이가 우유를 마셔요','아기가 사과를 먹어요','강아지가 공을 던져요','토끼가 책을 봐요','곰이 밥을 먹어요','오리가 물을 마셔요','나비가 꽃을 봐요','새가 노래를 불러요','강아지가 뼈를 물어요','아기가 바나나를 먹어요','엄마가 꽃을 심어요','아빠가 별을 그려요','아이가 공을 던져요','물고기가 물을 좋아해요'];
@@ -279,8 +279,12 @@ const CURRICULUM=[
    syllables:['가','나','다','마','고','모','바','사','하','기','도','토','구','무'],
    sylWords:{'가':['가방','🎒'],'나':['나비','🦋'],'다':['다리','🌉'],'마':['마차','🐴'],'고':['고래','🐳'],'모':['모자','🧢'],'바':['바다','🌊'],'사':['사자','🦁'],'하':['하마','🦛'],'기':['기차','🚂'],'도':['도토리','🌰'],'토':['토끼','🐰'],'구':['구름','☁️'],'무':['무지개','🌈']},
    intro:'자음과 모음을 합치면 글자가 돼요. 가·나·다를 만들어요.',relic:'글자 망치',relicEmoji:'🔨'},
-  {act:4,key:'final',type:'letter',title:'4막 받침의 문',place:'글자 공방',
+  {act:4,key:'final',type:'letter',title:'4막 받침의 문',place:'받침의 문',
    letters:['ㄱ','ㄴ','ㄷ','ㄹ','ㅁ','ㅂ','ㅇ'],
+   // 받침 낱자를 익힌 뒤 같은 순서로 '글자 아래 붙여보기'를 한 화씩. 모든 자모가 4막까지 배운 것.
+   syllables:['국','산','숟','발','곰','컵','강'],
+   sylWords:{'국':['국수','🍜'],'산':['산','🏔️'],'숟':['숟가락','🥄'],'발':['발','🦶'],
+             '곰':['곰','🐻'],'컵':['컵','☕'],'강':['강아지','🐶']},
    intro:'글자 아래 받침이 들어오면 끝소리가 생겨요.',relic:'받침 돌',relicEmoji:'🪨'},
   {act:5,key:'tense',type:'letter',title:'5막 쌍둥이 소리',place:'소리 동굴',
    letters:['ㄲ','ㄸ','ㅃ','ㅆ','ㅉ'],
@@ -289,6 +293,10 @@ const CURRICULUM=[
    letters:['ㅐ','ㅔ','ㅒ','ㅖ','ㅚ','ㅟ','ㅢ','ㅘ','ㅝ','ㅙ','ㅞ'],
    intro:'숨어 있던 모음들이 빛을 찾으러 나와요.',relic:'숨은 별빛',relicEmoji:'🌟'},
   {act:7,key:'word',type:'word',title:'7막 단어 마을',place:'단어 동산',
+   // 난이도 3단계: ① 받침 없는 2음절 ② 받침 있는 2음절 ③ 3음절.
+   words:[['모자','🧢'],['나비','🦋'],['우유','🥛'],['포도','🍇'],
+          ['가방','🎒'],['사탕','🍬'],['수박','🍉'],['신발','👟'],
+          ['바나나','🍌'],['코끼리','🐘'],['다람쥐','🐿️'],['강아지','🐶']],
    intro:'글자들이 모여 단어가 됐어요. 이제 단어를 읽어요.',relic:'단어 꽃다발',relicEmoji:'💐'},
   {act:8,key:'sentence',type:'sentence',title:'8막 이야기 책',place:'별빛 우체국',
    sentences:PRESET_SENTS.slice(),
@@ -306,9 +314,14 @@ const STORY_MILESTONES=[
 ];
 // 진행 경로: 글자형 막은 글자 하나하나가 에피소드, 그 외 막은 막 자체가 한 단계.
 const EPISODE_PATH=(function(){var p=[];CURRICULUM.forEach(function(a){
-  if(a.type==='letter'){var isFin=(a.key==='final');a.letters.forEach(function(ch){var node={act:a.act,actKey:a.key,actTitle:a.title,place:a.place,type:'letter',ch:ch};if(isFin)node.final=true;p.push(node);});}
+  if(a.type==='letter'){var isFin=(a.key==='final');a.letters.forEach(function(ch){var node={act:a.act,actKey:a.key,actTitle:a.title,place:a.place,type:'letter',ch:ch};if(isFin)node.final=true;p.push(node);});
+    // 낱자를 익힌 뒤 '붙여보기' 화가 있는 막(4막 받침)은 여기서 이어 붙인다.
+    (a.syllables||[]).forEach(function(ch){var ex=(a.sylWords&&a.sylWords[ch])||[];
+      p.push({act:a.act,actKey:a.key,actTitle:a.title,place:a.place,type:'combine',ch:ch,word:ex[0]||'',emoji:ex[1]||''});});}
   else if(a.type==='combine'){a.syllables.forEach(function(ch){var ex=(a.sylWords&&a.sylWords[ch])||[];p.push({act:a.act,actKey:a.key,actTitle:a.title,place:a.place,type:'combine',ch:ch,word:ex[0]||'',emoji:ex[1]||''});});}
   else if(a.type==='sentence'){(a.sentences||[]).forEach(function(s){var words=s.split(' ');p.push({act:a.act,actKey:a.key,actTitle:a.title,place:a.place,type:'sentence',sent:s,words:words,cues:sentCues(words)});});}
+  else if(a.type==='word'&&a.words&&a.words.length){a.words.forEach(function(w){
+    p.push({act:a.act,actKey:a.key,actTitle:a.title,place:a.place,type:'word',word:w[0],emoji:w[1]});});}
   else{p.push({act:a.act,actKey:a.key,actTitle:a.title,place:a.place,type:a.type});}
 });return p;})();
 // 익힘 판정(관대): 글자를 만나고(met) + 카드 짝맞추기(matched) + 소리퀴즈 정답(quizzed) 셋이면 마스터.
