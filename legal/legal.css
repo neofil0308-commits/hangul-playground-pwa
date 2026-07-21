@@ -1,0 +1,38 @@
+/* 법적 고지 페이지 공통 스타일.
+   앱 본체(styles.css)와 분리한다 — 이 페이지들은 부모가 읽는 문서라
+   아이용 UI 톤(큰 버튼·애니메이션)이 아니라 가독성 우선이다.
+   폰트는 앱과 동일한 자체 호스팅 폰트를 쓴다(외부 요청 0건 유지). */
+:root{
+  --bg:#D8C7A6; --cream:#FBF2DF; --ink:#4A3524; --sub:#8A6E52;
+  --pri:#E89A4E; --pri-d:#C6772E; --line:#E6D5B8;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0; padding:24px 16px 64px;
+  font-family:'Gowun Dodum',sans-serif; color:var(--ink);
+  background:var(--bg); line-height:1.75; font-size:16px;
+}
+.doc{max-width:760px; margin:0 auto; background:var(--cream);
+  border-radius:20px; padding:36px 32px; box-shadow:0 8px 24px rgba(120,80,40,.14);}
+.back{display:inline-block; margin-bottom:20px; font-family:'Jua',sans-serif;
+  text-decoration:none; color:var(--pri-d); background:#fff; padding:8px 16px;
+  border-radius:20px; box-shadow:0 3px 0 var(--line);}
+h1{font-family:'Jua',sans-serif; font-size:1.7rem; margin:0 0 6px; line-height:1.35;}
+h2{font-family:'Jua',sans-serif; font-size:1.15rem; margin:32px 0 10px;
+  padding-top:20px; border-top:1px solid var(--line); color:var(--pri-d);}
+h2:first-of-type{border-top:none; padding-top:0;}
+.meta{color:var(--sub); font-size:.9rem; margin:0 0 8px;}
+.lead{background:#fff; border-left:4px solid var(--pri); border-radius:0 12px 12px 0;
+  padding:14px 18px; margin:20px 0 4px;}
+ul,ol{padding-left:22px; margin:10px 0;}
+li{margin:6px 0;}
+table{width:100%; border-collapse:collapse; margin:14px 0; font-size:.94rem;}
+th,td{border:1px solid var(--line); padding:9px 11px; text-align:left; vertical-align:top;}
+th{background:#fff; font-family:'Jua',sans-serif; font-weight:400; white-space:nowrap;}
+/* 판매자 정보 등 아직 채우지 않은 항목. 배포 전 전부 실제 값으로 교체할 것. */
+.todo{background:#FFE9C7; color:#8a5a12; border-radius:5px; padding:1px 7px; font-size:.9em;}
+.foot{margin-top:36px; padding-top:18px; border-top:1px solid var(--line);
+  color:var(--sub); font-size:.88rem;}
+/* 좁은 화면(폰)에서 표가 페이지를 밀지 않도록 가로 스크롤 상자에 담는다. */
+.scroll{overflow-x:auto;}
+@media (max-width:520px){ .doc{padding:26px 18px;} h1{font-size:1.4rem;} }
