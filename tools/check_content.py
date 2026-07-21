@@ -197,10 +197,11 @@ def spoken_form(obj):
     return obj.get("name") or obj.get("sound") or obj["ch"]
 
 
-def check_audio_coverage(d):
-    """앱이 소리내어 읽는 모든 텍스트에 3음성 MP3가 있어야 한다.
+def collect_spoken_texts(d):
+    """앱이 소리내어 읽는 모든 텍스트 → {텍스트: 출처}.
 
-    없으면 기기 TTS로 폴백한다 — README 설계원칙 1(기계음 금지) 위반.
+    검사기와 음성 생성기(generate_voices.py)가 **이 함수 하나**를 공유한다.
+    각자 목록을 들고 있으면 "화면엔 있는데 MP3가 없는" 문구가 반드시 생긴다.
     """
     texts = {}
 
@@ -242,6 +243,13 @@ def check_audio_coverage(d):
             for w in s.split(" "):
                 put(w, "문장 단어")
 
+    return texts
+
+
+def check_audio_coverage(d):
+    """수집한 텍스트에 3음성 MP3가 모두 있는지. 없으면 기기 TTS로 폴백한다
+    — README 설계원칙 1(기계음 금지) 위반."""
+    texts = collect_spoken_texts(d)
     bad = []
     for voice in ("f", "kid", "m"):
         folder = ROOT / "audio" / voice

@@ -20,8 +20,8 @@ import pytest
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 CHECKER = ROOT / "tools" / "check_content.py"
 
-# 남은 위반 수. 계획 단계가 끝날 때마다 낮춘다. 0이 목표.
-MAX_VIOLATIONS = 3
+# 2026-07-22 개선 계획 완료 시점에 0건 달성. 이제 어떤 위반도 허용하지 않는다.
+MAX_VIOLATIONS = 0
 
 # 이미 0건이라 절대 되돌아가면 안 되는 항목 (제목의 앞부분으로 매칭).
 LOCKED_CLEAN = [
@@ -58,11 +58,7 @@ def test_violation_count_does_not_regress(results):
         f"콘텐츠 위반이 {total}건으로 늘었다(기준 {MAX_VIOLATIONS}건). "
         "`python tools/check_content.py`로 확인할 것."
     )
-    if total < MAX_VIOLATIONS:
-        pytest.fail(
-            f"위반이 {total}건으로 줄었다 🎉 — MAX_VIOLATIONS를 {total}로 낮춰 "
-            "이 개선을 고정하세요."
-        )
+    # 0건을 달성했으므로 더 낮출 여지가 없다(래칫 종료).
 
 
 @pytest.mark.parametrize("prefix", LOCKED_CLEAN)

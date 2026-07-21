@@ -48,33 +48,46 @@ INIT = [0,2,3,5,6,7,9,11,12,14,15,16,17,18]
 MED  = [0,2,4,6,8,12,13,17,18,20]
 FIN  = [0,1,4,7,8,16,17,19,21]
 
-import re
-def words_from_appdata():
-    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "app-data.js")
+# ---------- 앱이 실제로 읽는 텍스트 ----------
+# 목록을 여기 따로 들고 있으면 app-data.js가 바뀔 때마다 어긋난다(실제로 5·6막 낱자와
+# 막 클리어·졸업 문구가 통째로 빠져 있었다). 검사기와 **같은 수집 함수**를 쓴다.
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "tools"))
+
+
+# 낱말 성격의 출처만 한 글자씩 쪼갠다(단어를 짚어 읽는 활동이 있어서).
+# UI 문구('읽었어요')나 자음 이름('지읒')까지 쪼개면 쓰이지도 않는 음절이 잔뜩 생긴다.
+WORDLIKE_SOURCES = {"자음 예시", "쌍자음 예시", "모음 예시", "복모음 예시",
+                    "글자별 낱말", "받침 낱말", "단어뱅크", "음절 예시단어",
+                    "따라쓰기 낱말", "받침 음절", "음절"}
+
+
+def texts_from_appdata():
+    """검사기와 같은 수집 함수를 써서 {텍스트: 출처}를 얻는다."""
     try:
-        txt = open(path, encoding="utf-8").read()
-    except Exception:
-        return []
-    out = set()
-    for marker in ["LETTER_WORDS", "WORDS"]:
-        m = re.search(r"const " + marker + r"\s*=\s*\{(.*?)\n\};", txt, re.S)
-        if m:
-            for w in re.findall(r"\['([가-힣]+)'", m.group(1)):
-                out.add(w)
-    return sorted(out)
+        from check_content import load_data, collect_spoken_texts
+        return collect_spoken_texts(load_data())
+    except Exception as e:
+        print("! app-data.js에서 텍스트를 못 읽었습니다(node 필요):", str(e)[:120])
+        print("  아래 하드코딩 목록만으로 진행합니다.")
+        return {}
+
 
 def build_text_set():
-    s = set()
-    appwords = words_from_appdata()
-    for grp in (CONS_NAMES, VOW_SOUNDS, EX_WORDS, WORDS, SENT, SYL_WORDS, BATCHIM, EXTRA, appwords):
+    from_app = texts_from_appdata()
+    s = set(from_app)
+    # 폴백용 하드코딩 목록(위가 실패해도 기본 코퍼스는 만들어지도록).
+    for grp in (CONS_NAMES, VOW_SOUNDS, EX_WORDS, WORDS, SENT, SYL_WORDS, BATCHIM, EXTRA):
         s.update(grp)
+    # 받아쓰기·합치기에 쓰이는 음절 조합(초성×중성×종성) — 데이터에 없지만 화면에서 만들어진다.
     for i in INIT:
         for m in MED:
             for f in FIN:
-                s.add(chr(0xAC00 + i*588 + m*28 + f))
-    for w in EX_WORDS + WORDS + appwords:
-        for ch in w:
-            s.add(ch)
+                s.add(chr(0xAC00 + i * 588 + m * 28 + f))
+    # 낱말만 한 글자씩.
+    wordlike = [w for w, src in from_app.items() if src in WORDLIKE_SOURCES]
+    for w in wordlike + EX_WORDS + WORDS + SYL_WORDS:
+        if all('가' <= c <= '힣' for c in w):
+            s.update(w)
     return sorted(s)
 
 def key_of(t):
