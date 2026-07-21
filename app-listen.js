@@ -23,9 +23,14 @@ function listenLetterTarget(){
   return {ch:pick,say:obj.sound||obj.name||pick};
 }
 function wordHasLetter(word,ch){if(!ch||typeof decompose!=='function')return false;var g=decompose(word);for(var i=0;i<g.length;i++){if(g[i].indexOf(ch)>=0)return true;}return false;}
+// 오답 후보는 app-state.js의 letterPool()이 정한다(같은 계열 + 이미 지나온 글자).
+function _letterCandidates(ch){
+  if(typeof letterPool==='function')return letterPool(ch);
+  return (typeof ALL_LETTERS!=='undefined'?ALL_LETTERS:[]).filter(function(x){return x.ch!==ch;});
+}
 // 후보 풀: letter 모드는 글자 목록, word 모드는 전체 단어쌍.
 function listenPool(){
-  if(listenMode==='letter')return (typeof ALL_LETTERS!=='undefined'?ALL_LETTERS:[]).map(function(x){return{glyph:x.ch,say:(x.name||x.sound)};});
+  if(listenMode==='letter')return _letterCandidates(listenCh).map(function(x){return{glyph:x.ch,say:(x.name||x.sound)};});
   var seen={},out=[];ALL_WORDS.forEach(function(w){if(!seen[w[0]]){seen[w[0]]=1;out.push(w);}});
   if(typeof LETTER_WORDS!=='undefined')Object.keys(LETTER_WORDS).forEach(function(k){LETTER_WORDS[k].forEach(function(w){if(!seen[w[0]]){seen[w[0]]=1;out.push(w);}});});
   return out;
@@ -42,7 +47,7 @@ function newListenQuestion(){
   var ll=document.getElementById('listenLetter');if(ll)ll.textContent=(stage==='letter')?'?':ch; // 글자 찾기 단계엔 정답을 숨김(소리로만)
   renderListenProgress();
   if(stage==='letter'){
-    var others=shuffle((typeof ALL_LETTERS!=='undefined'?ALL_LETTERS:[]).filter(function(x){return x.ch!==ch;})).slice(0,Math.max(1,listenN-1)).map(function(x){return{glyph:x.ch,say:x.name||x.sound};});
+    var others=shuffle(_letterCandidates(ch)).slice(0,Math.max(1,listenN-1)).map(function(x){return{glyph:x.ch,say:x.name||x.sound};});
     var opts=shuffle([{glyph:ch,say:listenSay}].concat(others));
     listenTarget={glyph:ch,say:listenSay,isLetter:true};
     opts.forEach(function(o){var isV=(typeof JUNG!=='undefined'&&JUNG.indexOf(o.glyph)>=0);var b=document.createElement('button');b.className='lopt lopt-jamo jrole-'+(isV?'v':'c');b.innerHTML='<div class="lglyph">'+jamoCharSVG(o.glyph,isV)+'</div>';b.addEventListener('click',function(){checkListen(b,o);});if(box)box.appendChild(b);});

@@ -30,6 +30,8 @@ function buildAdventureMap(){
     b.addEventListener('click',function(){
       if(p.action==='letter')openTodayLetter();
       else if(p.action==='word')openWordBuild(todayWord[0],todayWord[1]);
+      // 글자 찾기는 오늘의 글자로 판을 새로 깔아야 한다(홈 미션 행과 같은 진입점).
+      else if(p.action==='find'&&typeof openFind==='function')openFind();
       else go(p.target);
     });
     mapGrid.appendChild(b);
@@ -38,21 +40,20 @@ function buildAdventureMap(){
 }
 function updateAdventureMap(){
   if(!mapGrid||!mission)return;
-  var done=(mission.letter?1:0)+(mission.word?1:0)+(mission.play?1:0);
-  var current=!mission.letter?'letter':(!mission.word?'word':(!mission.play?'play':''));
+  var done=missionDoneCount(),current=missionCurrentPart();
   document.querySelectorAll('#mapGrid .map-node').forEach(function(node){
     var q=node.dataset.quest;
-    var lit=!q||(q==='letter'&&mission.letter)||(q==='word'&&mission.word)||(q==='play'&&mission.play);
+    var lit=!q||!!mission[q];
     node.classList.toggle('map-lit',!!lit);
     node.classList.toggle('map-current',!!q&&q===current);
     node.classList.toggle('map-locked',!!q&&!lit&&q!==current);
   });
   var light=document.getElementById('mapLight');
-  if(light)light.textContent='한글 마을 불빛 '+done+' / 3';
+  if(light)light.textContent='한글 마을 불빛 '+done+' / '+missionTotal();
 }
 function updateQuestRoute(){
   if(!mission)return;
-  var current=!mission.letter?'letter':(!mission.word?'word':(!mission.play?'play':''));
+  var current=missionCurrentPart();
   [['routeLetter','letter'],['routeWord','word'],['routePlay','play']].forEach(function(pair){
     var el=document.getElementById(pair[0]);if(!el)return;
     var key=pair[1],lit=!!mission[key];
@@ -62,8 +63,8 @@ function updateQuestRoute(){
 }
 function renderHaniReaction(){
   var key=(mission&&mission.lastReaction)||'';
-  var done=mission?((mission.letter?1:0)+(mission.word?1:0)+(mission.play?1:0)):0;
-  if(done===3)key='all';
+  var done=mission?missionDoneCount():0;
+  if(done>=missionTotal())key='all'; // 전부 끝났을 때만 마무리 반응으로 덮는다
   var rx=HANI_REACTIONS[key]||{badge:'하니의 반응',text:'하니가 오늘의 첫 빛 조각을 기다리고 있어요.',log:'모험을 하나 완료하면 보물이 반짝이며 하니가 대답해요.'};
   var panel=document.getElementById('haniReaction');
   var badge=document.getElementById('haniReactionBadge');if(badge)badge.textContent=rx.badge;
@@ -98,16 +99,16 @@ function updateStoryBible(active){
 }
 function updateStoryWorld(){
   if(!mission)return;
-  var done=(mission.letter?1:0)+(mission.word?1:0)+(mission.play?1:0);
-  var current=!mission.letter?'letter':(!mission.word?'word':(!mission.play?'play':''));
+  var done=missionDoneCount(),current=missionCurrentPart();
   var copy=document.getElementById('storyChapterText');
   if(copy){
     if(done===0)copy.textContent='하니와 함께 첫 빛 조각을 찾으러 글자 숲으로 떠나요.';
     else if(!mission.word)copy.textContent='글자 숲에 첫 불빛이 켜졌어요. 이제 단어 동산의 꽃을 피워요.';
-    else if(!mission.play)copy.textContent='단어 꽃이 피었어요. 마지막 빛 조각은 소리 동굴 문 뒤에 있어요.';
-    else copy.textContent='세 빛 조각이 모였어요. 한글 마을의 오늘 이야기가 완성됐어요!';
+    else if(!mission.play)copy.textContent='단어 꽃이 피었어요. 다음 빛 조각은 소리 동굴 문 뒤에 있어요.';
+    else if(missionParts().indexOf('find')>=0&&!mission.find)copy.textContent='소리 종이 울렸어요. 마지막 빛 조각은 숨은 글자 속에 있어요.';
+    else copy.textContent='빛 조각이 모두 모였어요. 한글 마을의 오늘 이야기가 완성됐어요!';
   }
-  var pieces=document.getElementById('storyLightPieces');if(pieces)pieces.textContent='빛 조각 '+done+' / 3';
+  var pieces=document.getElementById('storyLightPieces');if(pieces)pieces.textContent='빛 조각 '+done+' / '+missionTotal();
   var active=STORY_CHAPTERS.find(function(ch){return ch.key===current;})||STORY_CHAPTERS[STORY_CHAPTERS.length-1];
   var scene=document.getElementById('storySceneText');if(scene)scene.textContent='장면: '+active.scene;
   var clue=document.getElementById('storyClueText');if(clue)clue.textContent='단서: '+active.clue+' 보상: '+active.reward;

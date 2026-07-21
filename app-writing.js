@@ -87,7 +87,10 @@ let drawing=false,lx,ly;
 function tpos(e){const r=canvas.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}
 
 let traceChar='ㄱ';
-function sayTrace(ch){if([...ch].length>1){speak(ch);return;}const c=CONS.find(x=>x.ch===ch);const v=VOWS.find(x=>x.ch===ch);speak(c?c.name:(v?v.sound:ch));}
+// 따라쓰기 대상 읽기. 낱말/음절은 그대로, 낱자는 ALL_LETTER_OBJS의 이름·소릿값으로.
+function sayTrace(ch){if([...ch].length>1){speak(ch);return;}
+  const o=(typeof ALL_LETTER_OBJS!=='undefined')?ALL_LETTER_OBJS[ch]:null;
+  speak((o&&(o.name||o.sound))||ch);}
 function fitGuide(){const h=traceStage.getBoundingClientRect().height||330;const n=[...traceChar].length;const frac=n>=3?0.33:(n===2?0.52:0.80);traceGuide.style.fontSize=Math.round(h*frac)+'px';}
 function selectTrace(ch,silent){traceChar=ch;traceGuide.textContent=ch;fitGuide();clearTrace();renderStrokes(ch);if(!silent)sayTrace(ch);}
 const traceChips=document.getElementById('traceChips');

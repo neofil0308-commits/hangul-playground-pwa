@@ -2,7 +2,9 @@
 // app-state.js의 dueReviewChs/gradeReview, app-data.js의 ALL_LETTER_OBJS/CONS/VOWS/jamoCharSVG,
 // 인라인 스크립트의 go/speak/sfx*/confetti/earnSticker/shuffle/renderReviewCard 를 런타임에 사용.
 var revQueue=[],revIdx=0,revTarget=null,revLock=false,revRight=0,revWrong=0;
-function _isVowCh(ch){return (typeof VOWS!=='undefined')&&VOWS.some(function(v){return v.ch===ch;});}
+// 복모음(6막)도 모음으로 봐야 타일 색(jrole-v)과 오답 후보가 맞는다 — app-state.js에 단일화.
+function _isVowCh(ch){return (typeof isVowelCh==='function')?isVowelCh(ch)
+  :((typeof VOWS!=='undefined')&&VOWS.some(function(v){return v.ch===ch;}));}
 function startReview(){
   var due=shuffle((typeof dueReviewChs==='function'?dueReviewChs():[]).slice());
   revQueue=((typeof orderByWeakness==='function')?orderByWeakness(due):due).slice(0,6); // 약한 글자 먼저
@@ -18,7 +20,7 @@ function nextReviewQ(){
   var ch=revQueue[revIdx];var obj=(typeof ALL_LETTER_OBJS!=='undefined'&&ALL_LETTER_OBJS[ch])||{ch:ch,sound:ch};
   revTarget={ch:ch,say:obj.sound||obj.name||ch};
   var isV=_isVowCh(ch);
-  var pool=(isV?VOWS:CONS).filter(function(x){return x.ch!==ch;});
+  var pool=(typeof letterPool==='function')?letterPool(ch):(isV?VOWS:CONS).filter(function(x){return x.ch!==ch;});
   var nDist=((typeof reviewOptionCount==='function')?reviewOptionCount(ch):3)-1; // 적응: 약한 글자=보기 적게
   var others=shuffle(pool).slice(0,Math.max(1,nDist)).map(function(x){return x.ch;});
   var opts=shuffle([ch].concat(others));

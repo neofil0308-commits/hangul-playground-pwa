@@ -174,12 +174,18 @@ function showGraduation(){
     +'<div class="grad-emoji">✨ 💌 ✨</div>'
     +'<div class="grad-sent">'+sent+'</div>'
     +'<div class="recap-review">글자들이 다시 반짝— 별빛 편지가 살아났어요! 이제 하니가 이 편지를 배달하러 가요. ✉️🐥</div>'
-    +'<button class="recap-next" id="recapNext">다음 이야기로 ➡️</button></div>';
+    +'<button class="recap-next" id="recapNext">여정 마치기 🎓</button></div>';
   el.innerHTML=html;el.style.display='flex';if(typeof twemojify==='function')twemojify(el);
   try{if(typeof confetti==='function')confetti();}catch(e){}
   try{if(typeof speakSeq==='function')setTimeout(function(){speakSeq([sent,'스스로 읽었어요','별빛 편지가 살아났어요','하니가 편지를 배달할게요']);},400);
     else if(typeof speak==='function')speak('스스로 읽었어요');}catch(e){}
-  var nb=document.getElementById('recapNext');if(nb)nb.addEventListener('click',function(){el.style.display='none';goNextLetter();});
+  var nb=document.getElementById('recapNext');if(nb)nb.addEventListener('click',function(){el.style.display='none';finishJourney();});
+}
+// 여정의 끝 — 더 갈 곳이 없으므로 별빛 앨범(지나온 길)을 보여주고 홈으로 돌아간다.
+function finishJourney(){
+  try{renderStarAlbum();}catch(e){}
+  if(typeof go==='function')go('home');
+  try{window.scrollTo({top:0,behavior:'smooth'});}catch(e){}
 }
 // 막 클리어 보물 획득 연출: ○막 클리어! + 큰 보물 이모지 + 보물 이름 + 하니 칭찬.
 // recap/graduation과 같은 #relicPop(=recap-pop 오버레이) 구조·쇼/디스미스 패턴을 그대로 따른다.
@@ -206,8 +212,9 @@ function onEpisodeComplete(){
   // 방금 깬 에피소드가 그 막의 마지막이면 막 번호(아니면 0). 막 클리어면 보물 적립.
   var actDone=(typeof actCompletedAt==='function')?actCompletedAt(progress.idx):0;
   if(actDone&&typeof awardRelic==='function')awardRelic(actDone);
-  // 8막(문장)은 졸업 연출이 곧 막 클리어 축하 — 보물(별빛 편지)은 적립만 하고 졸업 화면 유지.
-  if(ep&&ep.type==='sentence'){renderStarAlbum();setTimeout(showGraduation,900);return;}
+  // 8막(문장)은 문장을 읽을 때마다 recap을 띄우고, 졸업은 여정의 마지막에서 딱 한 번만.
+  // 이전에는 문장 14개마다 졸업이 떠서 '한글을 뗐다'는 순간이 14번 소모됐다.
+  if(ep&&ep.type==='sentence'&&isLastEpisode()){renderStarAlbum();setTimeout(showGraduation,900);return;}
   addAlbumStar();
   renderStarAlbum();
   var m=checkMilestone();

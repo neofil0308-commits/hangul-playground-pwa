@@ -24,7 +24,8 @@ function openLetterDetail(it){curLetter=it;markLetterSeen(it.ch);if(typeof today
 /* 단어 공부 + 분해 + 합쳐보기 */
 let curWord='';
 // 자모 한 개의 읽는 이름/소리 (이응, 오 …)
-function jamoSay(j){var c=CONS.find(function(x){return x.ch===j;});if(c)return c.name;var v=VOWS.find(function(x){return x.ch===j;});if(v)return v.sound;return j;}
+// 낱자의 발화형(자음=이름, 모음=소릿값). 쌍자음·복모음까지 담은 ALL_LETTER_OBJS 기준.
+function jamoSay(j){var o=(typeof ALL_LETTER_OBJS!=='undefined')?ALL_LETTER_OBJS[j]:null;return (o&&(o.name||o.sound))||j;}
 // 풀어듣기(가르치는 설명): 단어별 통 신경망 MP3가 있으면 매끄럽게 재생, 없으면 조각 이어붙이기로 폴백.
 var explainAudio=null;
 function explainWord(word){

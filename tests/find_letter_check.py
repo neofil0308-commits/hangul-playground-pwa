@@ -62,12 +62,16 @@ def test_mission_state_has_find_flag_and_mastery_unaffected():
 
 
 def test_service_worker_cache_bumped_to_v52():
-    assert "hangul-playground-v83" in SW
+    assert "hangul-playground-v84" in SW
 
 
 def test_generalized_completion_gate_tokens_present():
-    # 게이트가 3으로 하드코딩되지 않고 에피소드별 필요 단계로 일반화됨
-    assert "['letter','word','play','find']" in HTML
+    # 게이트가 3으로 하드코딩되지 않고 에피소드별 필요 단계로 일반화됨.
+    # 필요 단계 목록은 app-state.js의 missionParts()가 단독으로 정한다(홈·지도·빛조각 공용).
+    state = (ROOT / "app-state.js").read_text(encoding="utf-8")
+    assert "['letter','word','play','find']" in state
+    assert "function missionParts" in state
+    assert "missionDoneCount()" in HTML
     assert "allDone" in HTML
     assert "!mission.rewarded" in HTML
     # 옛 저장본 관대 처리(이미 보상받은 미션도 다음 버튼 노출)

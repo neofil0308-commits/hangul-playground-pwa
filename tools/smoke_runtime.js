@@ -82,6 +82,40 @@ try {
   w.document.getElementById('wbWrite').dispatchEvent(new w.Event('click'));
   ok("단어 동산 '써보기' → trace 진입", w.document.getElementById('trace').classList.contains('active'));
 } catch (e) { ok("단어 동산 '써보기' → trace 진입", false, e.message); }
+// ── 2026-07-22 콘텐츠 정합성 수정 회귀 방어 ──────────────────────────
+// 게임 오답 후보: 정답과 같은 계열이어야 하고, 정답 자신은 빠져야 한다.
+// (5막 쌍자음·6막 복모음이 풀에 없어 정답만 모양이 달랐던 문제)
+try {
+  const pool = w.letterPool('ㄲ');
+  ok('letterPool(ㄲ)이 후보를 낸다', pool.length > 0);
+  ok('letterPool(ㄲ)에 정답이 없다', !pool.some(o => o.ch === 'ㄲ'));
+  ok('letterPool(ㄲ)이 전부 자음', pool.every(o => !w.isVowelCh(o.ch)));
+  const vpool = w.letterPool('ㅐ');
+  ok('letterPool(ㅐ)이 전부 모음', vpool.length > 0 && vpool.every(o => w.isVowelCh(o.ch)));
+  ok('복모음이 모음으로 인식된다', w.isVowelCh('ㅐ') && w.isVowelCh('ㅘ'));
+} catch (e) { ok('letterPool 동작', false, e.message); }
+
+// 미션 단계 수가 홈·지도·빛조각에서 하나로 통일됐는가
+try {
+  ok('missionParts/missionTotal 정의됨',
+     typeof w.missionParts === 'function' && typeof w.missionTotal === 'function');
+  ok('missionTotal이 3 또는 4', [3, 4].includes(w.missionTotal()));
+} catch (e) { ok('미션 단계 헬퍼', false, e.message); }
+
+// 지도에 네 번째 모험(글자 찾기) 장소가 생겼는가
+try {
+  const nodes = [...w.document.querySelectorAll('#mapGrid .map-node')];
+  ok('지도에 글자 찾기 노드가 있다', nodes.some(n => n.dataset.target === 'find'));
+  ok('지도 노드가 5곳', nodes.length === 5, `실제 ${nodes.length}곳`);
+} catch (e) { ok('지도 노드', false, e.message); }
+
+// 낱자 발화가 쌍자음·복모음까지 이름/소릿값으로 바뀌는가
+try {
+  ok('ㄲ 발화형이 이름', w.jamoSpeech('ㄲ') === '쌍기역', w.jamoSpeech('ㄲ'));
+  ok('ㅐ 발화형이 소릿값', w.jamoSpeech('ㅐ') === '애', w.jamoSpeech('ㅐ'));
+  ok('ㄱ 발화형이 이름', w.jamoSpeech('ㄱ') === '기역', w.jamoSpeech('ㄱ'));
+} catch (e) { ok('낱자 발화', false, e.message); }
+
 // 오늘의 글자 열기(글자 숲)
 try { w.go('home'); w.openTodayLetter();
   ok('openTodayLetter 동작', w.document.getElementById('letterDetail').classList.contains('active')

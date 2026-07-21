@@ -88,7 +88,7 @@
           <small id="haniReactionLog">모험을 하나 완료하면 보물이 반짝이며 하니가 대답해요.</small>
         </div>
         <div class="story-tools">
-          <span class="story-pieces" id="storyLightPieces">빛 조각 0 / 3</span>
+          <span class="story-pieces" id="storyLightPieces">빛 조각 0 / 4</span>
           <button class="copy-story" id="copyStoryText" aria-label="오늘의 한글 마을 이야기 복사">이야기 복사</button>
           <span class="copy-status" id="copyStoryStatus" aria-live="polite"></span>
         </div>
@@ -101,7 +101,7 @@
       </section>
     </div>
     <section class="adventure-map" id="adventureMap" aria-label="한글 마을 지도">
-      <div class="map-head"><div><h3>한글 마을 지도</h3><p>가고 싶은 장소를 눌러 모험을 이어가요.</p><span class="ipad-note">iPad 기준 · 어디서든 이어서 보기</span></div><div class="map-light" id="mapLight">한글 마을 불빛 0 / 3</div></div>
+      <div class="map-head"><div><h3>한글 마을 지도</h3><p>가고 싶은 장소를 눌러 모험을 이어가요.</p><span class="ipad-note">iPad 기준 · 어디서든 이어서 보기</span></div><div class="map-light" id="mapLight">한글 마을 불빛 0 / 4</div></div>
       <div class="quest-route" id="questRoute" aria-label="오늘의 모험 길">
         <button class="route-step" id="routeLetter">1 글자 숲</button><span class="route-line"></span>
         <button class="route-step" id="routeWord">2 단어 동산</button><span class="route-line"></span>
@@ -122,7 +122,7 @@
 
 
   <section id="letterDetail" class="screen">
-    <button class="ld-back" id="ldBack">⬅ 글자 친구들</button>
+    <button class="ld-back" id="ldBack">⬅ 한글 마을</button>
     <div class="lf-wrap">
       <div class="lf-head"><div class="ld-glyph" id="ldGlyph">ㄱ</div><div class="ld-name" id="ldName">기역</div><button class="ld-sound" id="ldSound">🔊 소리 듣기</button></div>
       <div class="lf-panel lf-words-panel"><h4>이 글자 낱말 — 눌러서 듣고 써봐요 🔊✏️</h4><div class="ld-words" id="ldWords"></div></div>
@@ -136,7 +136,7 @@
 
 
   <section id="wordBuild" class="screen">
-    <button class="ld-back" id="wbBack">⬅ 단어 동산</button>
+    <button class="ld-back" id="wbBack">⬅ 한글 마을</button>
     <div class="wb-wrap">
       <div class="wb-col wb-left">
         <div class="wb-pic" id="wbPic">🥒</div>
@@ -351,7 +351,10 @@ function speakSeq(arr){let i=0;(function nx(){if(i>=arr.length)return;speakOne(a
 function compose(i,m,f){return String.fromCharCode(0xAC00+i*588+m*28+(f||0));}
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function decompose(word){const out=[];for(const chr of word){const code=chr.charCodeAt(0)-0xAC00;if(code<0||code>11171){out.push([chr]);continue;}const i=Math.floor(code/588),m=Math.floor((code%588)/28),f=code%28;const j=[CHO[i],JUNG[m]];if(f>0)j.push(JONG[f]);out.push(j);}return out;}
-function sayJamo(j){const c=CONS.find(x=>x.ch===j);if(c){speak(c.name);return;}const v=VOWS.find(x=>x.ch===j);if(v){speak(v.sound);return;}speak(j);}
+function sayJamo(j){speak(jamoSpeech(j));}
+/* 낱자를 소리내어 읽을 때의 텍스트. 자음=이름(기역), 모음=소릿값(아).
+   ALL_LETTER_OBJS를 써야 쌍자음(5막)·복모음(6막)도 이름/소릿값을 찾는다. */
+function jamoSpeech(j){var o=(typeof ALL_LETTER_OBJS!=='undefined')?ALL_LETTER_OBJS[j]:null;return (o&&(o.name||o.sound))||j;}
 function confetti(){const ems=['🎉','⭐','🌟','✨','🎈','🥳'];for(let i=0;i<14;i++){const s=document.createElement('div');s.className='confetti';s.textContent=ems[Math.floor(Math.random()*ems.length)];s.style.left=Math.random()*100+'vw';s.style.animationDuration=(1.6+Math.random()*1.4)+'s';document.body.appendChild(s);setTimeout(()=>s.remove(),3200);}}
 
 /* 이모지 -> Twemoji 이미지 */
@@ -425,9 +428,7 @@ function renderMission(){
   setRow('mrowLetter','mcL',mission.letter);
   if(!single){setRow('mrowWord','mcW',mission.word);setRow('mrowPlay','mcP',mission.play);setRow('mrowFind','mcF',mission.find);}
   // 완료 게이트 일반화: 글자 막은 4단계(글자·단어·소리·찾기), 합치기/문장 막은 단일 트립(letter·word·play).
-  var req=single?['letter','word','play']:['letter','word','play','find'];
-  var done=0;for(var ri=0;ri<req.length;ri++){if(mission[req[ri]])done++;}
-  var total=req.length;
+  var done=missionDoneCount(),total=missionTotal();
   var allDone=done===total;
   var complete=allDone||!!mission.rewarded;
   var story=document.getElementById('storyText');

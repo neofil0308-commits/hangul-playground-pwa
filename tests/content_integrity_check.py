@@ -21,12 +21,17 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 CHECKER = ROOT / "tools" / "check_content.py"
 
 # 남은 위반 수. 계획 단계가 끝날 때마다 낮춘다. 0이 목표.
-MAX_VIOLATIONS = 13
+MAX_VIOLATIONS = 4
 
 # 이미 0건이라 절대 되돌아가면 안 되는 항목 (제목의 앞부분으로 매칭).
 LOCKED_CLEAN = [
+    "예시 낱말이 그 글자의 소리",
     "받침 예시 낱말",
     "음절 예시 낱말",
+    "맛보기 선행조건",
+    "게임 보기 풀",
+    "낱자 발화",
+    "선택지 이모지",
 ]
 
 
