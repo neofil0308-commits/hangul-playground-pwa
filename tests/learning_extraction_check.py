@@ -22,14 +22,9 @@ def test_learning_logic_lives_in_external_learning_file():
     assert LEARNING.exists()
     learning = LEARNING.read_text(encoding="utf-8")
     for token in [
-        "const lettersGrid=document.getElementById('lettersGrid')",
         "let lettersTab='con'",
-        "function renderLetters",
-        "const letterTabsBox=document.getElementById('letterTabs')",
         "function openLetterDetail",
-        "const wordCats=document.getElementById('wordCats')",
         "function openWordBuild",
-        "function renderWords",
         "function initLearningScreens",
     ]:
         assert token in learning
@@ -66,4 +61,4 @@ def test_learning_drops_legacy_word_modal():
 
 def test_service_worker_precaches_external_learning_file_with_new_cache_version():
     assert "./app-learning.js" in SW
-    assert "hangul-playground-v82" in SW
+    assert "hangul-playground-v83" in SW

@@ -20,10 +20,6 @@ def test_writing_logic_lives_in_external_writing_file():
     for token in [
         "const mtStage=document.getElementById('mtStage')",
         "function mtSelect",
-        "function renderBuilder",
-        "function saySyl",
-        "function composedText",
-        "function startWriting",
         "function strokeSVGMarkup",
         "function glyphInkBox",
         "function calibrateStrokes",
@@ -50,11 +46,7 @@ def test_writing_file_keeps_canvas_and_audio_behavior_tokens():
         "function mtWord",
         "rec.ctx.lineWidth=14",
         "mtRenderStrokes()",
-        "compose(selInit,selMed,selJong)",
-        "speak(compose(selInit,selMed,selJong))",
         "rec.canvas.setPointerCapture",
-        "speakSeq(writeText.split(' '))",
-        "confetti();earnSticker();",
         "canvas.setPointerCapture",
         "marker-end=\"url(#ah)\"",
         "sayTrace(traceChar)",
@@ -64,4 +56,4 @@ def test_writing_file_keeps_canvas_and_audio_behavior_tokens():
 
 def test_service_worker_precaches_external_writing_file_with_new_cache_version():
     assert "./app-writing.js" in SW
-    assert "hangul-playground-v82" in SW
+    assert "hangul-playground-v83" in SW

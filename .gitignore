@@ -15,3 +15,7 @@ _*.png
 # 로컬 전용 — 대용량 디자인 시안·세션 설정
 design reference/
 .claude/
+
+# 런타임 스모크(tools/smoke_runtime.js)용 로컬 의존성 — 앱은 정적이라 런타임 의존 없음
+node_modules/
+package-lock.json

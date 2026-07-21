@@ -2,11 +2,7 @@
 // Depends on app-data.js/app-state.js and UI/audio helpers from the main app script.
 
 /* 글자 친구들 (자음/모음 통합) */
-const lettersGrid=document.getElementById('lettersGrid');
 let lettersTab='con';
-function renderLetters(){lettersGrid.className='grid '+lettersTab;lettersGrid.innerHTML='';const list=lettersTab==='con'?CONS:VOWS;list.forEach(it=>{const b=document.createElement('button');b.className='card';const sub=lettersTab==='con'?it.name:it.sound;b.innerHTML='<span class="arrow">▶</span><div class="big">'+it.ch+'</div><span class="nm">'+sub+'</span>';b.addEventListener('click',()=>openLetterDetail(it));lettersGrid.appendChild(b);});twemojify(lettersGrid);}
-const letterTabsBox=document.getElementById('letterTabs');
-function initLetterTabs(){[['con','자음 친구들'],['vow','모음 친구들']].forEach((t,i)=>{const b=document.createElement('button');b.textContent=t[1];if(i===0)b.classList.add(t[0]+'-on');b.addEventListener('click',()=>{lettersTab=t[0];document.querySelectorAll('#letterTabs button').forEach(x=>x.classList.remove('con-on','vow-on'));b.classList.add(t[0]+'-on');renderLetters();});letterTabsBox.appendChild(b);});}
 
 /* 상세 화면 */
 const ldGlyph=document.getElementById('ldGlyph'),ldName=document.getElementById('ldName'),ldWords=document.getElementById('ldWords'),letterDetail=document.getElementById('letterDetail'),ldSound=document.getElementById('ldSound');
@@ -26,7 +22,6 @@ function openLetterDetail(it){curLetter=it;markLetterSeen(it.ch);if(typeof today
 (function(){var h=document.getElementById('lfHear');if(h)h.addEventListener('click',()=>{if(lfWord)speak(lfWord);else if(curLetter)sayJamo(curLetter.ch);});})();
 
 /* 단어 공부 + 분해 + 합쳐보기 */
-const wordCats=document.getElementById('wordCats'),wordGrid=document.getElementById('wordGrid');
 let curWord='';
 // 자모 한 개의 읽는 이름/소리 (이응, 오 …)
 function jamoSay(j){var c=CONS.find(function(x){return x.ch===j;});if(c)return c.name;var v=VOWS.find(function(x){return x.ch===j;});if(v)return v.sound;return j;}
@@ -134,15 +129,6 @@ function wbDragStart(e,btn,j){
   document.addEventListener('pointermove',mv);
   document.addEventListener('pointerup',up);
   document.addEventListener('pointercancel',up);
-}
-function renderWords(cat){wordGrid.innerHTML='';WORDS[cat].forEach(w=>{const b=document.createElement('button');b.className='card';b.innerHTML='<span class="spk">🔍</span><div class="big">'+w[1]+'</div><div class="wd">'+w[0]+'</div>';b.addEventListener('click',()=>openWordBuild(w[0],w[1]));wordGrid.appendChild(b);});twemojify(wordGrid);}
-function initWordStudy(){Object.keys(WORDS).forEach((cat,i)=>{const b=document.createElement('button');if(i===0)b.className='on';b.textContent=cat;b.addEventListener('click',()=>{document.querySelectorAll('#wordCats button').forEach(x=>x.classList.remove('on'));b.classList.add('on');renderWords(cat);});wordCats.appendChild(b);});
-  renderWords(Object.keys(WORDS)[0]);
-  var wbB=document.getElementById('wbBack');if(wbB)wbB.addEventListener('click',()=>go('home'));
-  var wbH=document.getElementById('wbHear');if(wbH)wbH.addEventListener('click',()=>speak(wbWord));
-  var wbE=document.getElementById('wbExplain');if(wbE)wbE.addEventListener('click',()=>explainWord(wbWord));
-  var wbR=document.getElementById('wbReset');if(wbR)wbR.addEventListener('click',()=>{if(wbWord)openWordBuild(wbWord,wbEmoji);});
-  var wbW=document.getElementById('wbWrite');if(wbW)wbW.addEventListener('click',()=>{if(typeof loadCustomTrace==='function'&&wbWord)loadCustomTrace([...wbWord]);if(typeof go==='function')go('trace');});
 }
 
 /* ===== 글자 공방 (3막 combine): 자음+모음을 끌어다 음절을 합치기 =====
@@ -395,12 +381,21 @@ function initFind(){
   var p=document.getElementById('fdPlay');if(p)p.addEventListener('click',function(){if(typeof speak==='function')speak(fdSayText());});
 }
 
+// 단어 동산(wordBuild) 도구 버튼. 옛 '단어 공부' 화면 초기화와 한 함수(initWordStudy)에
+// 섞여 있던 것을 분리했다 — 그 화면은 제거됐지만 이 바인딩은 모험 플로우의 살아있는 기능이다.
+function initWordGarden(){
+  var wbB=document.getElementById('wbBack');if(wbB)wbB.addEventListener('click',()=>go('home'));
+  var wbH=document.getElementById('wbHear');if(wbH)wbH.addEventListener('click',()=>speak(wbWord));
+  var wbE=document.getElementById('wbExplain');if(wbE)wbE.addEventListener('click',()=>explainWord(wbWord));
+  var wbR=document.getElementById('wbReset');if(wbR)wbR.addEventListener('click',()=>{if(wbWord)openWordBuild(wbWord,wbEmoji);});
+  // '써보기' → 따라쓰기(trace) 화면. trace의 유일한 입구다.
+  var wbW=document.getElementById('wbWrite');if(wbW)wbW.addEventListener('click',()=>{if(typeof loadCustomTrace==='function'&&wbWord)loadCustomTrace([...wbWord]);if(typeof go==='function')go('trace');});
+}
+
 function initLearningScreens(){
-  initLetterTabs();
-  renderLetters();
   ldSound.addEventListener('click',()=>{if(curLetter)sayJamo(curLetter.ch);});
   document.getElementById('ldBack').addEventListener('click',()=>go('home'));
-  initWordStudy();
+  initWordGarden();
   initCombine();
   initStory();
   initFind();

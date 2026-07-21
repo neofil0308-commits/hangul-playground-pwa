@@ -1,13 +1,13 @@
 # 한글 놀이터 작업일지
 
-> 마지막 업데이트: 2026-07-21 (유료배포 1~2단계 — 웹폰트 자체 호스팅 + 법적 문서 3종 초안)
+> 마지막 업데이트: 2026-07-21 (유료배포 1~3단계 — 폰트 self-host · 법적 문서 3종 · 잔재 화면 제거 + 런타임 스모크)
 >
-> 📌 개발 목적·방향은 [`README.md`](README.md), 구조·내용(현재 플로우 vs 잔재 화면)은 [`ARCHITECTURE.md`](ARCHITECTURE.md) 참고.
+> 📌 개발 목적·방향은 [`README.md`](README.md), 구조·화면 인벤토리는 [`ARCHITECTURE.md`](ARCHITECTURE.md) 참고.
 
 ## 현재 상태
 
 - 정적 PWA 형태의 한글 학습 앱입니다.
-- 앱 핵심은 `index.html`의 HTML/JavaScript, `styles.css`의 스타일, `app-data.js`의 정적 데이터, `app-state.js`의 미션 상태 로직, `app-listen.js`의 듣고 찾기 로직, `app-router.js`의 화면 이동/메뉴 초기화, `app-adventure.js`의 지도/스토리 렌더링, `app-learning.js`의 글자/단어 학습 로직, `app-writing.js`의 쓰기/획순 로직, `app-games.js`의 게임 로직, `app-episode.js`의 에피소드 진행/별빛 앨범 렌더링으로 분리되었습니다.
+- 앱 핵심은 `index.html`의 HTML/JavaScript, `styles.css`의 스타일, `app-data.js`의 정적 데이터, `app-state.js`의 미션 상태 로직, `app-listen.js`의 듣고 찾기 로직, `app-router.js`의 화면 이동/메뉴 초기화, `app-adventure.js`의 지도/스토리 렌더링, `app-learning.js`의 글자/단어 학습 로직, `app-writing.js`의 쓰기/획순 로직, `app-episode.js`의 에피소드 진행/별빛 앨범 렌더링으로 분리되었습니다.
 - 핵심 경험이 `한글 떼기 커리큘럼(별빛 우체국 8막 여정)`으로 확장되었습니다. 스토리 진행 = 실제 한글 학습 순서이며, 만 4세·자모 백지 기준으로 한 화 = 글자 1개, 관대한 익힘 판정, 빠른 성취 맛보기로 설계되었습니다.
 - 첫 실행 시 `인트로 그림책`(6장)이 나옵니다. 손그림 SVG 일러스트(종이 그레인 질감, 일관된 하니 캐릭터)에 장면별 의미 있는 CSS 애니메이션이 들어가고, 하니가 edge-tts 신경망 음성(`audio/narr/intro1~6.mp3`)으로 읽어줍니다. 글 못 읽는 4세를 위해 그림+소리 중심, 줄글 스토리는 `부모님 보기`로 접힙니다.
 - service worker는 개발 중 캐시 꼬임을 막기 위해 `network-first`로 동작합니다(온라인이면 항상 최신, 오프라인이면 캐시 폴백).
@@ -74,7 +74,7 @@
 - [x] **NVIDIA 오브젝트-only 한글 카드 조립 PoC** — 전체 카드를 모델에 맡기는 방식은 구도/글자/핵심 오브젝트 안정성이 낮아 폐기. NVIDIA는 흰 배경 단일 오브젝트만 생성하고, 로컬 Pillow 합성으로 카드 배경·상단 오브젝트 영역·하단 한글 패널을 결정론적으로 조립하는 구조로 전환. 샘플 3종(`ㅏ`, `오이`, `하니`) 재생성 및 시각 QA 완료.
 - [x] 비글자형 막 엔진 편입: 3막 글자 공방(자모 결합, `openCombine`/`combine`), 8막 이야기 책(문장 읽기·졸업, `openStory`/`story`) — 구현·플레이 가능, `episode_progress_check.py` 통과. (2026-07-12 실측으로 확인, 문서 정정)
 - [ ] **3·8막 콘텐츠 보강** — 3막 음절 6개(가·나·다·마·고·모)·8막 문장 6개로 얇음. 음절/문장 표본 확장(3막은 받침 결합 음절 후보 — `combineTeach`에 3자모 경로 이미 존재).
-- [ ] **(우선) 잔재 화면 정리** — 초기 놀이터 화면(`letters/syl/word/match/quiz/trace/sent/sentWrite`)이 모험 플로우와 공존. 3·8막이 `combine`/`story`로 이미 편입됐으므로 8종 전부 순수 중복 → 중복 제거 또는 부모용 격리.
+- [x] **잔재 화면 정리** — 도달 경로 전수 추적 후 죽은 화면 5종(`letters/syl/word/sent/sentWrite`) 제거. `match`/`quiz`/`app-games.js`는 이미 삭제돼 있었고, `trace`는 단어 동산에서 진입하는 살아있는 화면이라 유지.
 - [ ] (옵션) 듣고 찾기 #4: 정답 단어 속 글자 반짝(예 "오리"에서 ㅗ 강조)
 - [ ] iPad 실기기에서 홈 화면 설치, standalone 실행, 오디오 재생, service worker 캐시 확인
 
@@ -117,6 +117,19 @@
   - **런타임 파일(index.html·styles.css·sw.js·manifest.json·app-*.js)의 외부 URL 0건** — 남은 건 SVG 네임스페이스 문자열 `w3.org` 9개뿐(네트워크 요청 아님).
   - 정적 회귀 **182개 통과**(신규 `tests/selfhosted_fonts_check.py` 7개 — CDN 재유입·로드 순서·`@import` 부활·woff2 실존·3패밀리 선언·OFL 동봉·SW precache).
 - 참고: 헤드리스 Chrome이 이 환경에서 기동하지 않아 브라우저 렌더 스모크는 미실시. 실기기/브라우저에서 폰트 3종 적용 육안 확인 필요.
+
+### 2026-07-21 (Claude Code) — 유료배포 3단계: 잔재 화면 제거 + 런타임 스모크 도입
+
+- **실측이 문서를 뒤집음**: `ARCHITECTURE.md`는 잔재 화면 8종이 "홈의 더 많은 놀이터 보기 등으로 아직 진입 가능"이라 했으나, 도달 경로를 전수 추적하니 **전부 진입 불가능한 죽은 화면**이었다. 홈 `MENU`에는 듣고찾기·스티커·설정 3개뿐이고, 지도 노드는 `action`으로 `openTodayLetter`/`openWordBuild`에 직결되며, `sent`↔`sentWrite`는 서로만 오가는 고립된 섬이었다. `match`·`quiz`·`app-games.js`는 **이미 삭제돼 있었다**(문서만 남아 있었음).
+- **따라서 이 작업은 컴플라이언스가 아니라 코드 위생이다** — 죽은 화면은 심사 스크린샷이나 아이 UX에 노출되지 않는다. 그래도 `index.html` 300KB에 섞여 있어 이후 작업의 오독 원인이 되므로 제거.
+- **제거**(순 감소 기준 총 **15,683자**): `index.html` −2,736(화면 5종 마크업 + `openTodayLetter`의 탭 DOM 조작), `app-writing.js` −6,247(글자 만들기 + 문장 쓰기 블록), `styles.css` −5,064(죽은 선택자 48건 — `@media` 안까지), `app-learning.js` −1,636(글자 목록 + 단어 공부; `initWordGarden` 복구분 반영한 순감소). `app-router.js`의 `sentWrite` 분기도 제거.
+- ⚠️ **`trace`는 유지**. 단어 동산 '✏️ 써보기'로 진입하는 살아있는 화면이다. 문서가 "중복"이라 한 것은 틀렸다.
+- 🐛 **작업 중 낸 회귀와 그 교훈**: `initWordStudy()`가 이름과 달리 **옛 '단어 공부' 화면 초기화 + 살아있는 단어 동산 버튼 5개(`wbBack/wbHear/wbExplain/wbReset/wbWrite`) 바인딩을 함께** 들고 있었다. 함수를 통째로 지우면서 단어 동산 도구가 전부 죽었는데 **정적 테스트 193개는 전부 통과했다.** → `initWordGarden()`으로 분리해 복구.
+- **그래서 런타임 스모크를 도입**(`tools/smoke_runtime.js`): jsdom으로 실제 `index.html` + 전 스크립트를 로컬 서버에서 로드하고 화면 전환·버튼 클릭을 눌러 본다. 검사 26건(제거 화면 부재·살아있는 화면 존재·단어 동산 버튼 5개·핵심 함수 10개·`go()` 7화면·**단어 동산→따라쓰기 경로**·`openTodayLetter`) 전부 통과, 스크립트 오류 0건. jsdom은 저장소에 넣지 않는다(`npm install jsdom` + `node_modules/` gitignore).
+- **CSS 제거 기준**: "선택자에 죽은 클래스가 **하나라도** 있으면 그 선택자는 영원히 매칭되지 않는다"(복합·자손 선택자는 모든 클래스가 있어야 매칭). 이 규칙으로 `.pick3 .chip`·`.crayon.on`처럼 살아있는 클래스와 섞인 것까지 안전하게 제거. 문자열 조합(`'jrole-'+x`)으로 만들어지는 클래스는 후보에서 배제.
+- **문서 정정**: `ARCHITECTURE.md` §3 화면 인벤토리 전면 재작성(+파일별 줄 수 실측 보정, `app-games.js` 행 삭제), `README.md` §6·§7(3막 14음절·8막 14문장으로 보정, 스모크 실행법 추가), `PROGRESS.md` 현재 상태.
+- **검증**: 정적 회귀 **201개 통과**(신규 `legacy_screens_removed_check.py` 8개 — 제거 화면 마크업·이동 경로·**trace 진입 경로 보존**·공유 데이터(`SUBJ`/`OBJ`/`VERB`/`PRESET_SENTS`) 생존·CSS). 기존 테스트 중 제거한 코드를 핀으로 잡던 3건 정리. JS 문법 전체 통과. SW `v83`.
+- **다음**: TWA(Android) 패키징 → Play Billing 비소모성 상품 + 구매 복원 → `unlockPremium()` 연결, `UNLOCK_CODE` 평문 상수 폐기.
 
 ### 2026-07-21 (Claude Code) — 유료배포 2단계: 법적 문서 3종 초안 + 앱 연결
 

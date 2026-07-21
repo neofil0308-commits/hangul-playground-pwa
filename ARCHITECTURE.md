@@ -18,14 +18,13 @@
 | `app-data.js` | ~231 | **정적 데이터**: 자모/단어/획순/커리큘럼/인트로/스토리/보상 상수 + 순수 헬퍼 |
 | `app-state.js` | ~62 | localStorage, 오늘의 글자 선택(`pickToday`), 미션/진행도(`progress`), 마스터 판정, 테마 풀 |
 | `app-router.js` | ~8 | 화면 이동 `go(id)`, 홈 버튼, 메뉴 초기화 |
-| `app-episode.js` | ~182 | 에피소드 배너, **여정(별빛 앨범) 렌더 + 이전 단계 이동**, 인트로 그림책, recap, 맛보기 |
-| `app-adventure.js` | ~149 | 한글 마을 지도, 스토리 줄기/바이블/하니 반응, 이야기 복사 |
-| `app-learning.js` | ~162 | **글자 숲(letterDetail)**, **단어 동산(wordBuild)**: 단어 조립·드래그·풀어듣기·구조도 |
-| `app-writing.js` | ~115 | 따라쓰기/획순 canvas, `strokesFor`/`strokeSVGMarkup`, 미니 받아쓰기, 크레용 |
-| `app-listen.js` | ~93 | **소리 동굴(듣고 찾기)**: 단계형 문제, 진행 종, 차등 피드백 |
-| `app-games.js` | ~55 | (잔재) 짝 맞추기·소리 퀴즈·선 잇기 |
+| `app-episode.js` | ~420 | 에피소드 배너, **여정(별빛 앨범) 렌더 + 이전 단계 이동**, 인트로 그림책, recap, 맛보기 |
+| `app-adventure.js` | ~169 | 한글 마을 지도, 스토리 줄기/바이블/하니 반응, 이야기 복사 |
+| `app-learning.js` | ~402 | **글자 숲(letterDetail)**, **단어 동산(wordBuild)**: 단어 조립·드래그·풀어듣기·구조도 |
+| `app-writing.js` | ~123 | 따라쓰기/획순 canvas, `strokesFor`/`strokeSVGMarkup`/`glyphInkBox`, 미니 받아쓰기 |
+| `app-listen.js` | ~124 | **소리 동굴(듣고 찾기)**: 단계형 문제, 진행 종, 차등 피드백 |
 | `styles.css` | (대) | 전체 스타일, 가로 와이드 2단 레이아웃, 인트로 장면, 차등 효과 |
-| `sw.js` | 16 | service worker, **network-first + cache:'no-cache'**, 캐시명 `hangul-playground-v35` |
+| `sw.js` | ~16 | service worker, **network-first + cache:'no-cache'**, 캐시명 `hangul-playground-v83` |
 | `manifest.json` | — | PWA 설치(`landscape-primary`, education/kids) |
 | `generate_voices.py` | — | 단어/자모 음성 MP3 생성(app-data.js에서 단어 목록 파싱, 멱등) |
 | `generate_explain.py` | — | "이응에 ㅗ를 더하면 오" 풀어듣기 MP3 생성(통 MP3, 멱등) |
@@ -34,36 +33,39 @@
 
 로드 순서: `app-data → app-state → app-listen → app-router → app-adventure → app-learning → app-writing → app-games → app-episode → (메인 inline)`.
 
-## 3. 화면 인벤토리 — ⚠️ 현재 플로우 vs 잔재
+## 3. 화면 인벤토리
 
-> **이 구분이 "엉망진창" 느낌의 핵심.** 초기 '한글 놀이터'(기능 모음) 화면과 이후 '하니의 모험'(커리큘럼) 화면이 공존한다. 잔재 화면은 홈의 `더 많은 놀이터 보기` 접힘 메뉴 등으로 아직 진입 가능.
+> **2026-07-21 정리 완료.** 초기 '한글 놀이터' 잔재 화면은 전부 제거됐고, 지금은 모험 플로우 화면만 남는다.
 
-### ✅ 현재 모험 플로우 (메인 — 계속 발전시킬 것)
+### ✅ 현재 모험 플로우 (전부)
 | 화면 id | 이름 | 내용 |
 |---------|------|------|
 | `intro` | 인트로 그림책 | 6장 SVG + 하니 내레이션(최초 1회) |
-| `home` | 홈/지도 | 상단 여정 status(이전 단계 이동) + 오늘의 3모험 + 지도 |
+| `home` | 홈/지도 | 상단 여정 status(이전 단계 이동) + 오늘의 3모험 + 별자리 지도 |
 | `letterDetail` | **글자 숲** | 가로 2단: 왼쪽 글자+소리+낱말 / 오른쪽 받아쓰기(획순) |
-| `wordBuild` | **단어 동산** | 그림+단어+구조도 조립판(드래그) / 큰 카드 8~10장, 차등 효과 |
+| `wordBuild` | **단어 동산** | 그림+단어+구조도 조립판(드래그) + 도구 버튼(듣기·설명·다시·써보기) |
+| `trace` | **따라쓰기** | 단어 동산 '✏️ 써보기'로 진입. 획순 가이드 위에 손으로 쓴다 |
 | `listen` | **소리 동굴** | 소리 동굴 패널 + 큰 보기 카드 + 진행 종 + 차등 효과 |
-| `combine` | **글자 공방(3막)** | 자음+모음 드래그 합치기(`openCombine`) + 결합원리 음성("ㄱ에 ㅏ를 더하면 가") |
-| `story` | **이야기 책(8막·졸업)** | 문장 읽기(`openStory`): 단어칩 소리·단어별 하이라이트·"읽었어요!" 자가신고 → 졸업 |
+| `combine` | **글자 공방(3막)** | 자음+모음 드래그 합치기(`openCombine`) + 결합원리 음성 |
+| `story` | **이야기 책(8막·졸업)** | 문장 읽기(`openStory`): 단어칩 소리·하이라이트 → 졸업 |
+| `review` | 복습 ⭐ | 간격반복(SRS)으로 지난 글자 재확인 |
+| `find` | 글자 찾기 | 여러 글자 속에서 오늘 글자 찾기 |
 | `sticker` | 스티커 | 보상 도장 |
-| `set` | 설정 | 리포트, 소리 on/off, 음량 |
+| `set` | 설정 | 부모 대시보드·리포트·하루 목표·이용권·소리·약관/정책 (부모 게이트 뒤) |
 | (오버레이) | recap/milestone/big-correct | 마무리 정리·맛보기·완성 축하 |
 
-### 🟡 초기 놀이터 잔재 (정리/통합/제거 후보)
-| 화면 id | 이름 | 상태 |
-|---------|------|------|
-| `letters` | 글자 친구들(목록) | letterDetail의 옛 진입점 |
-| `syl` | 글자 만들기 | **중복**: 3막은 이미 `combine` 화면으로 구현됨 → 제거/격리 |
-| `word` | 단어 공부(모달 그리드) | wordBuild로 대체됨, `openWord` 모달 잔존 |
-| `match` | 짝 맞추기 | 잔재 게임 |
-| `quiz` | 소리 퀴즈/선 잇기 | 잔재 게임 |
-| `trace` | 따라쓰기(독립) | letterDetail 받아쓰기와 중복 |
-| `sent` / `sentWrite` | 문장 보기/쓰기 | **중복**: 8막은 이미 `story` 화면으로 구현됨 → 제거/격리 |
+### 🗑️ 제거된 잔재 화면 (2026-07-21)
+`letters`(글자 목록) · `syl`(글자 만들기) · `word`(단어 공부) · `sent`(문장 고르기) · `sentWrite`(문장 쓰기)
 
-> **방향 제안**: 3막·8막은 이미 `combine`/`story` 화면으로 모험 플로우에 편입 완료됐다. 따라서 잔재 화면 8종(letters/syl/word/match/quiz/trace/sent/sentWrite)은 전부 순수 중복 → 제거하거나 부모용 보조로 격리한다.
+- 제거 근거: **다섯 화면 모두 어디서도 진입할 수 없는 죽은 화면이었다.** 홈 메뉴(`MENU`)에는
+  듣고 찾기·스티커·설정 3개뿐이고, 지도 노드는 `action`으로 모험 플로우(`openTodayLetter`/
+  `openWordBuild`)에 직결되며, `sent`↔`sentWrite`는 서로만 오가는 고립된 섬이었다.
+- 기능은 이미 대체돼 있었다: `syl`→`combine`(3막), `sent`/`sentWrite`→`story`(8막),
+  `word`→`wordBuild`(단어 동산), `letters`→오늘의 글자 직행.
+- `match`·`quiz` 화면과 `app-games.js`는 그 이전에 이미 삭제된 상태였다(문서만 뒤늦게 반영).
+- ⚠️ **`trace`는 잔재가 아니다.** 단어 동산 '써보기'에서 진입하는 살아있는 화면이라 유지했다.
+- 회귀 방지: `tests/legacy_screens_removed_check.py`(마크업·이동 경로·공유 데이터·CSS)와
+  `tools/smoke_runtime.js`(실제 화면 전환 런타임 스모크).
 
 ## 4. 핵심 데이터 모델 (`app-data.js`)
 

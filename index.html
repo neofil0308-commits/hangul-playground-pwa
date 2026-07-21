@@ -120,9 +120,6 @@
 
   <div class="recap-pop relic-pop" id="relicPop" style="display:none" aria-live="polite"></div>
 
-  <section id="letters" class="screen"><div class="section-title">글자 친구들</div><div class="hint">탭을 고르고 카드를 누르면 자세히 볼 수 있어요 👀</div>
-    <div class="letter-tabs" id="letterTabs"></div>
-    <div class="grid con" id="lettersGrid"></div></section>
 
   <section id="letterDetail" class="screen">
     <button class="ld-back" id="ldBack">⬅ 글자 친구들</button>
@@ -136,15 +133,7 @@
       </div>
     </div></section>
 
-  <section id="syl" class="screen"><div class="section-title">글자 만들기</div><div class="hint">자음 + 모음 + 받침 = 글자! (받침은 골라도 되고 안 골라도 돼요)</div>
-    <div class="builder"><div class="formula"><div class="slot" id="slotC">ㄱ</div><span class="plus">+</span><div class="slot" id="slotV">ㅏ</div><span class="plus">+</span><div class="slot" id="slotF">·</div><span class="eq">=</span><div class="result" id="result">가</div></div><button class="playbtn" id="sylPlay">🔊 소리 듣기</button></div>
-    <div class="pick3">
-      <div class="pcard pc-con"><h4>자음</h4><div class="chips col" id="sylC"></div></div>
-      <div class="pcard pc-vow"><h4>모음</h4><div class="chips col" id="sylV"></div></div>
-      <div class="pcard pc-fin"><h4>받침</h4><div class="chips col" id="sylF"></div></div>
-    </div></section>
 
-  <section id="word" class="screen"><div class="section-title">단어 공부</div><div class="hint">그림을 누르면 글자가 풀려요 🔍🔊</div><div class="cat-pills" id="wordCats"></div><div class="grid" id="wordGrid"></div></section>
 
   <section id="wordBuild" class="screen">
     <button class="ld-back" id="wbBack">⬅ 단어 동산</button>
@@ -202,21 +191,7 @@
     </div>
   </section>
 
-  <section id="sent" class="screen"><div class="section-title">문장 쓰기</div><div class="hint">예문을 고르거나, 직접 만들어요 ✏️</div>
-    <div class="pick-h">📚 예문 고르기</div>
-    <div class="sent-presets" id="sentPresets"></div>
-    <div class="pick-h">🛠️ 직접 만들기</div>
-    <div class="sentbox"><div class="sentence" id="sentence">고양이가 우유를 먹어요</div></div>
-    <div class="trace-tools"><button class="tbtn sound" id="sentPreview" style="background:var(--sent);box-shadow:0 4px 0 var(--sent-d)">🔊 미리듣기</button><button class="tbtn done" id="sentToWrite" style="background:var(--trace);box-shadow:0 4px 0 var(--trace-d)">✏️ 이 문장 쓰기</button></div>
-    <div class="picker"><h4>누가?</h4><div class="chips sent-pick" id="sSub"></div><h4>무엇을?</h4><div class="chips sent-pick" id="sObj"></div><h4>어떻게?</h4><div class="chips sent-pick" id="sVerb"></div></div></section>
 
-  <section id="sentWrite" class="screen">
-    <button class="ld-back" id="sentBack">⬅ 문장 선택</button>
-    <div class="sentbox"><div class="sentence" id="writeSentence">고양이가 우유를 먹어요</div></div>
-    <div class="crayons" id="crayons"></div>
-    <div class="sent-boxes" id="sentBoxes"></div>
-    <div class="trace-tools"><button class="tbtn sound" id="sentPlay" style="background:var(--sent);box-shadow:0 4px 0 var(--sent-d)">🔊 읽어주기</button><button class="tbtn clear" id="sentClear">🧽 지우기</button><button class="tbtn done" id="sentDone">✅ 다 썼어요</button></div>
-  </section>
 
   <section id="trace" class="screen"><div class="section-title">따라쓰기</div><div class="hint">연한 글자 위에 손으로 따라 써요 ✏️</div>
     <div class="trace-stage" id="traceStage"><div class="trace-grid"></div><div class="trace-guide" id="traceGuide">ㄱ</div><svg id="traceStrokeSvg" viewBox="0 0 100 100"></svg><canvas id="traceCanvas"></canvas></div>
@@ -515,7 +490,9 @@ function resumeAdventure(){
   if(nb&&nb.style.display!=='none'&&typeof goNextLetter==='function'){goNextLetter();return;}
   click('mrowLetter');
 }
-function openTodayLetter(){if(typeof accessAllowed==='function'&&!accessAllowed()){openUnlockModal();return;}var oep=(typeof curEpisode==='function')?curEpisode():null;if(oep&&oep.type==='combine'){if(typeof openCombine==='function')openCombine();return;}if(oep&&oep.type==='sentence'){if(typeof openStory==='function')openStory();return;}var isV=VOWS.indexOf(todayLetter)>=0;lettersTab=isV?'vow':'con';var tabs=document.querySelectorAll('#letterTabs button');tabs.forEach(function(x){x.classList.remove('con-on','vow-on');});if(tabs[isV?1:0])tabs[isV?1:0].classList.add(lettersTab+'-on');renderLetters();openLetterDetail(todayLetter);}
+function openTodayLetter(){if(typeof accessAllowed==='function'&&!accessAllowed()){openUnlockModal();return;}var oep=(typeof curEpisode==='function')?curEpisode():null;if(oep&&oep.type==='combine'){if(typeof openCombine==='function')openCombine();return;}if(oep&&oep.type==='sentence'){if(typeof openStory==='function')openStory();return;}/* lettersTab은 openLetterDetail이 자음/모음 표시(글리프 색·부제)를 고르는 데 쓴다.
+   옛 '글자 친구들' 목록 화면은 제거됐으므로 탭 DOM 조작 없이 값만 맞춘다. */
+var isV=VOWS.indexOf(todayLetter)>=0;lettersTab=isV?'vow':'con';openLetterDetail(todayLetter);}
 /* 부모 잠금 + 리포트 */
 var parentUnlocked=false,gateAns=0;
 var gateModal=document.getElementById('gateModal');
