@@ -68,6 +68,17 @@ function isVowelCh(ch){
   return (typeof VOWS!=='undefined'&&VOWS.some(function(v){return v.ch===ch;}))
       ||(typeof VOWS_COMPLEX!=='undefined'&&VOWS_COMPLEX.some(function(v){return v.ch===ch;}));
 }
+// 지금까지 여정에서 배운 낱자 — 조립판(단어 동산·글자 공방)의 방해 카드 풀.
+// 이전에는 CHO/JUNG 배열을 인덱스로 잘라 써서 4막 조립판에 ㄲ(5막)·ㅐ(6막)처럼
+// 아직 배우지 않은 자모가 카드로 나왔다.
+function taughtJamo(){
+  var ep=(typeof curEpisode==='function')?curEpisode():null;
+  var act=ep?ep.act:8;
+  var out=[];
+  for(var ch in LETTER_FIRST_ACT){if(LETTER_FIRST_ACT[ch]<=act)out.push(ch);}
+  return out.length?out:CONS.map(function(c){return c.ch;}).concat(VOWS.map(function(v){return v.ch;}));
+}
+
 // 게임 오답 후보 규칙(듣고찾기·복습 공용) — 2026-07-22 정합성 수정.
 //  ① 정답과 같은 계열(자음/모음)만. 계열이 다르면 색·모양으로 티가 나 소리를 안 듣고도 맞힌다.
 //  ② 여정에서 이미 지나온 글자만. 아직 안 배운 글자가 오답이면 혼란스럽다.

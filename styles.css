@@ -65,7 +65,7 @@ header .sub{font-family:'Gowun Dodum',sans-serif;font-weight:400;font-size:1.05r
 .card:active{transform:translateY(5px);box-shadow:0 1px 0 var(--shadow,#e6cdb0),0 3px 8px rgba(120,80,40,.18);}
 .card .big{font-size:2.7rem;line-height:1;}
 .card .nm{margin-top:6px;font-size:.95rem;display:inline-block;padding:2px 10px;border-radius:20px;color:#fff;}
-.card .ex{margin-top:8px;font-size:.85rem;font-family:'Gaegu',cursive;font-weight:700;color:#8a715a;display:flex;gap:3px;align-items:center;justify-content:center;}
+.card .ex{margin-top:8px;font-size:.85rem;font-family:'Gaegu',cursive;font-weight:700;color:#7C6551;display:flex;gap:3px;align-items:center;justify-content:center;}
 .card .ex .em{font-size:1.15rem;}
 .card .spk{position:absolute;top:8px;right:9px;font-size:.95rem;opacity:.55;}
 #con .card .nm{background:var(--con);} #con .card{--shadow:#f4b59c;} #con .card .big{color:var(--con-d);}
@@ -85,7 +85,7 @@ header .sub{font-family:'Gowun Dodum',sans-serif;font-weight:400;font-size:1.05r
 @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
 .playbtn{margin-top:16px;font-family:'Jua',sans-serif;font-size:1.1rem;color:#fff;background:var(--syl);border:none;border-radius:30px;padding:12px 26px;box-shadow:0 5px 0 var(--syl-d);cursor:pointer;}
 .playbtn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--syl-d);}
-.picker h4{margin:18px 0 8px;font-size:1.05rem;color:#8a715a;text-align:center;}
+.picker h4{margin:18px 0 8px;font-size:1.05rem;color:#7C6551;text-align:center;}
 .chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
 .chip{font-family:'Jua',sans-serif;font-size:1.3rem;width:50px;height:50px;border-radius:16px;border:none;cursor:pointer;background:#fff;color:var(--ink);box-shadow:0 4px 0 #e6cdb0;}
 .chip:active{transform:translateY(3px);box-shadow:0 1px 0 #e6cdb0;}
@@ -117,7 +117,7 @@ header .sub{font-family:'Gowun Dodum',sans-serif;font-weight:400;font-size:1.05r
 .modal{position:fixed;inset:0;z-index:40;background:rgba(60,40,25,.45);display:none;align-items:center;justify-content:center;padding:24px;}
 .modal.show{display:flex;animation:pop .3s ease;}
 .modal-card{background:#fffdf8;border-radius:30px;padding:28px 22px 24px;max-width:340px;width:100%;text-align:center;position:relative;box-shadow:0 14px 34px rgba(0,0,0,.28);}
-.modal-x{position:absolute;top:12px;right:12px;border:none;background:#f1e3d3;width:38px;height:38px;border-radius:50%;font-size:1rem;cursor:pointer;color:#8a715a;}
+.modal-x{position:absolute;top:12px;right:12px;border:none;background:#f1e3d3;width:38px;height:38px;border-radius:50%;font-size:1rem;cursor:pointer;color:#7C6551;}
 .m-emoji{font-size:4.5rem;line-height:1;}
 .m-word{font-size:2rem;margin:6px 0 16px;color:var(--word-d);display:inline-block;}
 .m-word.go{animation:wob .4s ease;}
@@ -144,7 +144,7 @@ header .sub{font-family:'Gowun Dodum',sans-serif;font-weight:400;font-size:1.05r
 
 .m-set{background:#8a93a6;box-shadow:0 6px 0 #6c7689;}
 .setbox{background:var(--card);border-radius:24px;padding:20px;text-align:center;margin-bottom:16px;box-shadow:0 6px 0 #e6cdb0;}
-.setbox h4{margin:0 0 12px;font-size:1.1rem;color:#8a715a;}
+.setbox h4{margin:0 0 12px;font-size:1.1rem;color:#7C6551;}
 .cat-pills.voice button{color:#a544a7;box-shadow:0 4px 0 #ecc8ea;}
 .cat-pills.voice button.on{background:var(--sent);color:#fff;box-shadow:0 4px 0 var(--sent-d);}
 .cat-pills.speed button{color:#5b7fb5;box-shadow:0 4px 0 #cdd9ef;}
@@ -160,12 +160,12 @@ header .sub{font-family:'Gowun Dodum',sans-serif;font-weight:400;font-size:1.05r
 .ld-glyph{width:150px;height:150px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:2px;
   filter:drop-shadow(0 10px 14px rgba(82,116,151,.24));}
 .ld-glyph svg,.ld-glyph .jamo-char{width:100%;height:100%;display:block;overflow:visible;}
-.ld-name{font-size:1.4rem;margin-top:8px;color:#8a715a;}
+.ld-name{font-size:1.4rem;margin-top:8px;color:#7C6551;}
 .ld-sound{margin-top:18px;font-family:'Jua',sans-serif;font-size:1.15rem;color:#fff;background:#5E8C7A;border:none;border-radius:30px;padding:13px 30px;box-shadow:0 5px 0 #46695B;cursor:pointer;}
 .ld-sound:active{transform:translateY(4px);box-shadow:0 1px 0 #46695B;}
 .ld-right{display:flex;flex-direction:column;gap:16px;}
 .ld-panel{background:var(--card);border-radius:30px;padding:16px 16px 18px;box-shadow:0 8px 0 #ffd0e1,0 12px 18px rgba(180,60,110,.14);}
-.ld-panel h4{margin:2px 0 8px;text-align:center;font-size:1.05rem;color:#8a715a;}
+.ld-panel h4{margin:2px 0 8px;text-align:center;font-size:1.05rem;color:#7C6551;}
 .mt-stage{position:relative;display:flex;gap:10px;justify-content:center;align-items:flex-start;flex-wrap:nowrap;width:100%;margin:6px auto 12px;}
 .mt-cell{position:relative;flex:1 1 0;min-width:0;max-width:280px;aspect-ratio:1/1;background:#FFFAEE;border-radius:22px;box-shadow:inset 0 0 0 3px #EAD9B8;overflow:hidden;container-type:size;}
 .mt-stage.mt-multi .mt-cell{max-width:240px;}
@@ -265,7 +265,7 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .mission .review-card .rc-go{font-size:1.2rem;color:#c6772e;flex:0 0 auto;}
 .story-world{margin-top:12px;background:#fff8eb;border-radius:22px;padding:13px 14px;box-shadow:inset 0 0 0 2px rgba(255,176,46,.18);}
 .story-world h4{margin:0 0 4px;color:var(--bat-d);font-size:1.05rem;}
-.story-world p{margin:0 0 10px;font-family:'Gaegu',cursive;font-weight:700;color:#8a715a;font-size:.95rem;line-height:1.22;}
+.story-world p{margin:0 0 10px;font-family:'Gaegu',cursive;font-weight:700;color:#7C6551;font-size:.95rem;line-height:1.22;}
 .story-prologue{background:#fffdf8;border-radius:16px;padding:9px 10px;box-shadow:inset 0 0 0 2px rgba(232,121,75,.10);}
 /* 막 단위 줄기 한 줄 — 지금 어느 막이고 무엇을 되찾는지(부모가 읽어 주는 안내). */
 .story-act-arc{font-family:'Gaegu',cursive;font-weight:700;font-size:1rem;color:#7a6144;
@@ -275,27 +275,27 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .story-arc summary{cursor:pointer;color:var(--con-d);font-size:.95rem;list-style:none;}
 .story-arc summary::-webkit-details-marker{display:none;}
 .story-arc ol{margin:7px 0 0;padding:0;display:grid;gap:5px;}
-.story-arc li{list-style:none;font-family:'Gaegu',cursive;font-weight:700;color:#8a715a;font-size:.86rem;line-height:1.12;}
+.story-arc li{list-style:none;font-family:'Gaegu',cursive;font-weight:700;color:#7C6551;font-size:.86rem;line-height:1.12;}
 .story-arc li b{font-family:'Jua',sans-serif;color:#e8794b;margin-right:4px;}
-.story-scene,.story-clue{font-family:'Gaegu',cursive;font-weight:700;color:#8a715a;font-size:.92rem;line-height:1.18;margin:0 0 7px;}
+.story-scene,.story-clue{font-family:'Gaegu',cursive;font-weight:700;color:#7C6551;font-size:.92rem;line-height:1.18;margin:0 0 7px;}
 .story-clue{color:#9b6a38;}
 .story-bible{display:grid;grid-template-columns:1fr;gap:6px;margin:8px 0 10px;}
-.story-bible-item{background:#fffdf8;border-radius:14px;padding:8px 10px;font-family:'Gaegu',cursive;font-weight:700;color:#8a715a;font-size:.88rem;line-height:1.15;box-shadow:inset 0 0 0 2px rgba(255,176,46,.14);}
+.story-bible-item{background:#fffdf8;border-radius:14px;padding:8px 10px;font-family:'Gaegu',cursive;font-weight:700;color:#7C6551;font-size:.88rem;line-height:1.15;box-shadow:inset 0 0 0 2px rgba(255,176,46,.14);}
 .story-bible-item b{display:block;font-family:'Jua',sans-serif;color:var(--con-d);font-size:.88rem;margin-bottom:2px;}
 .hani-reaction{background:linear-gradient(135deg,#fff7d6,#ffe6dd);border-radius:18px;padding:10px 12px;margin:8px 0 10px;box-shadow:0 4px 0 #f0c795;transition:transform .18s,box-shadow .18s;}
 .hani-reaction.reaction-lit{transform:translateY(-2px);box-shadow:0 7px 0 #f0b86f;}
 .hani-reaction.reaction-complete{background:linear-gradient(135deg,#fff1b8,#d6f5dd);}
 .hani-reaction b{display:block;color:#d56f2a;font-size:.9rem;margin-bottom:3px;}
-.hani-reaction span{display:block;font-family:'Gaegu',cursive;font-weight:700;color:#8a715a;font-size:.95rem;line-height:1.16;}
+.hani-reaction span{display:block;font-family:'Gaegu',cursive;font-weight:700;color:#7C6551;font-size:.95rem;line-height:1.16;}
 .hani-reaction small{display:block;margin-top:4px;font-family:'Gaegu',cursive;font-weight:700;color:#b27a32;font-size:.85rem;}
 .story-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:9px;}
 .story-pieces{display:inline-block;background:#fff2cc;color:#c27a00;border-radius:999px;padding:5px 10px;font-size:.86rem;}
 .copy-story{border:none;border-radius:999px;background:#e9f8ec;color:var(--word-d);font-family:'Jua',sans-serif;padding:6px 11px;box-shadow:0 3px 0 #a9dcb4;cursor:pointer;}
 .copy-story:active{transform:translateY(2px);box-shadow:0 1px 0 #a9dcb4;}
-.copy-status{font-family:'Gaegu',cursive;font-weight:700;color:#8a715a;font-size:.88rem;}
+.copy-status{font-family:'Gaegu',cursive;font-weight:700;color:#7C6551;font-size:.88rem;}
 .story-chapters{display:flex;flex-direction:column;gap:7px;}
-.chapter-step{border:none;border-radius:16px;background:#f4e5cf;color:#8a715a;text-align:left;font-family:'Jua',sans-serif;padding:9px 11px;box-shadow:0 3px 0 #dcc5a6;}
-.chapter-note{display:block;font-family:'Gaegu',cursive;font-weight:700;font-size:.82rem;line-height:1.1;margin-top:3px;color:#8a715a;}
+.chapter-step{border:none;border-radius:16px;background:#f4e5cf;color:#7C6551;text-align:left;font-family:'Jua',sans-serif;padding:9px 11px;box-shadow:0 3px 0 #dcc5a6;}
+.chapter-note{display:block;font-family:'Gaegu',cursive;font-weight:700;font-size:.82rem;line-height:1.1;margin-top:3px;color:#7C6551;}
 .chapter-step.chapter-current{background:#ffe4a9;color:var(--quiz-d);box-shadow:0 3px 0 #ffc45d;}
 .chapter-step.chapter-done{background:#d9f4df;color:var(--word-d);box-shadow:0 3px 0 #a9dcb4;}
 .home-workbench{display:grid;grid-template-columns:1fr;gap:16px;align-items:start;}
@@ -307,7 +307,7 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .ipad-note{display:inline-block;margin-top:7px;font-family:'Gowun Dodum',sans-serif;color:var(--gold);background:rgba(245,205,130,.16);border-radius:999px;padding:4px 12px;font-size:.84rem;}
 .map-light{position:relative;z-index:1;flex:0 0 auto;background:rgba(245,205,130,.18);color:var(--gold);border-radius:18px;padding:7px 12px;font-size:.92rem;box-shadow:inset 0 0 0 2px rgba(245,205,130,.35);}
 .quest-route{position:relative;z-index:2;display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.09);border-radius:20px;padding:10px;margin:4px 0 14px;box-shadow:inset 0 0 0 2px rgba(245,205,130,.22);}
-.route-step{min-height:46px;display:inline-flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;border:none;border-radius:16px;background:var(--cream2);color:#8a715a;padding:9px 12px;white-space:nowrap;box-shadow:0 3px 0 #cbb59a;cursor:pointer;}
+.route-step{min-height:46px;display:inline-flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;border:none;border-radius:16px;background:var(--cream2);color:#7C6551;padding:9px 12px;white-space:nowrap;box-shadow:0 3px 0 #cbb59a;cursor:pointer;}
 .route-line{height:4px;flex:1;border-radius:99px;background:rgba(245,205,130,.35);min-width:12px;}
 .route-step.route-lit{background:#d9f4df;color:var(--word-d);box-shadow:0 3px 0 #a9dcb4;}
 .route-step.route-current{background:var(--gold);color:#6B4A12;box-shadow:0 3px 0 #D89A2E;animation:pulse 1.8s ease-in-out infinite;}
@@ -466,7 +466,7 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .unlock-card input{display:block;font-family:'Jua',sans-serif;font-size:1.15rem;text-align:center;width:100%;max-width:220px;margin:8px auto 0;padding:10px;border-radius:14px;border:3px solid #e7d6bd;outline:none;color:var(--ink);}
 /* 약관·정책 링크 — 부모가 읽는 문서라 아이용 큰 버튼 톤이 아닌 차분한 알약으로. */
 .legal-links{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
-.legal-links a{font-family:'Jua',sans-serif;font-size:.95rem;text-decoration:none;color:#8a715a;background:#fff;padding:9px 16px;border-radius:20px;box-shadow:0 3px 0 #e6cdb0;}
+.legal-links a{font-family:'Jua',sans-serif;font-size:.95rem;text-decoration:none;color:#7C6551;background:#fff;padding:9px 16px;border-radius:20px;box-shadow:0 3px 0 #e6cdb0;}
 /* 결제 모달 하단 고지 — 작지만 읽을 수 있어야 한다(전자상거래법 고지 의무). */
 .legal-note{margin-top:14px;font-size:.88rem;line-height:1.6;color:#7C6D57;text-align:center;}
 .legal-note a{color:var(--pri-d);text-decoration:underline;}
@@ -529,7 +529,7 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .parent-zone{margin-top:10px;border-top:2px dashed #e9d6b8;padding-top:8px;}
 .parent-zone>summary{cursor:pointer;list-style:none;font-size:.95rem;color:#806C4C;padding:6px 4px;}
 .parent-zone>summary::-webkit-details-marker{display:none;}
-.parent-zone[open]>summary{color:#8a7250;margin-bottom:6px;}
+.parent-zone[open]>summary{color:#7C6549;margin-bottom:6px;}
 /* ===== 인트로 = 별빛 그림책 '영상' (밤하늘 시네마 프레임 + 무빙 + 자막 + 플레이어 바) ===== */
 #intro.active{display:flex;align-items:center;justify-content:center;min-height:82vh;}
 .intro-cinema{width:100%;max-width:860px;text-align:center;position:relative;
@@ -718,7 +718,7 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .recap-words{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:8px 0 6px;}
 .recap-words .recap-w{display:flex;flex-direction:column;align-items:center;font-size:.95rem;color:#7a6248;}
 .recap-words .recap-w i{font-size:2rem;font-style:normal;}
-.recap-review{margin:10px 0 4px;font-size:1rem;color:#8a7250;background:rgba(255,255,255,.55);border-radius:16px;padding:8px 12px;}
+.recap-review{margin:10px 0 4px;font-size:1rem;color:#7C6549;background:rgba(255,255,255,.55);border-radius:16px;padding:8px 12px;}
 .recap-review b{font-size:1.3rem;color:var(--vow-d);}
 .recap-next{margin-top:16px;font-family:'Jua',sans-serif;font-size:1.35rem;color:#fff;background:linear-gradient(180deg,#F2A95C,var(--pri));border:none;border-radius:999px;padding:15px 34px;box-shadow:0 6px 0 var(--pri-d),0 10px 18px rgba(198,119,46,.35);cursor:pointer;}
 .recap-next:active{transform:translateY(5px);box-shadow:0 1px 0 var(--pri-d);}
@@ -727,7 +727,7 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .recap-actions{margin-top:14px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
 .recap-home{font-family:'Jua',sans-serif;font-size:1.3rem;color:#fff;background:linear-gradient(180deg,#7f8fd6,#5a6cc0);border:none;border-radius:999px;padding:15px 30px;box-shadow:0 6px 0 #4a5aa8,0 10px 18px rgba(70,80,160,.32);cursor:pointer;}
 .recap-home:active{transform:translateY(5px);box-shadow:0 1px 0 #4a5aa8;}
-.recap-more{font-family:'Jua',sans-serif;font-size:1.05rem;color:#8a7250;background:var(--cream2);border:none;border-radius:999px;padding:13px 22px;box-shadow:0 5px 0 #e6d8bd;cursor:pointer;}
+.recap-more{font-family:'Jua',sans-serif;font-size:1.05rem;color:#7C6549;background:var(--cream2);border:none;border-radius:999px;padding:13px 22px;box-shadow:0 5px 0 #e6d8bd;cursor:pointer;}
 .recap-more:active{transform:translateY(4px);box-shadow:0 1px 0 #e6d8bd;}
 /* ===== 단어 동산: 가로 와이드 2존(왼쪽 세로 스택 / 오른쪽 큰 카드) ===== */
 #wordBuild .wb-wrap{max-width:1060px;margin:0 auto;display:flex;flex-direction:row;align-items:stretch;justify-content:center;gap:22px;padding:6px 14px 20px;min-height:76vh;}
@@ -776,7 +776,7 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 /* 별빛 그림책 Phase2b: 단어 동산/글자 공방 도구 버튼 = 부드러운 초록(써보기는 인라인 핑크 유지) */
 .wb-tool{min-height:48px;display:inline-flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:1.05rem;color:#fff;background:var(--word);border:none;border-radius:22px;padding:13px 20px;box-shadow:0 4px 0 var(--word-d);cursor:pointer;}
 .wb-tool:active{transform:translateY(3px);box-shadow:0 1px 0 var(--word-d);}
-.wb-feedback{font-family:'Gaegu',cursive;font-weight:700;font-size:1.15rem;color:#8a715a;min-height:1.4em;}
+.wb-feedback{font-family:'Gaegu',cursive;font-weight:700;font-size:1.15rem;color:#7C6551;min-height:1.4em;}
 .wb-tray{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
 .wb-card{width:60px;height:70px;font-size:2.1rem;border:none;cursor:pointer;border-radius:16px;}
 .wb-card.used{opacity:.35;}

@@ -54,7 +54,13 @@ function updateAdventureMap(){
 function updateQuestRoute(){
   if(!mission)return;
   var current=missionCurrentPart();
-  [['routeLetter','letter'],['routeWord','word'],['routePlay','play']].forEach(function(pair){
+  // 합치기(3막)·문장(8막) 막은 단일 트립이라 4번째 단계가 없다 → 그때는 감춘다.
+  var parts=missionParts();
+  var fs=document.getElementById('routeFind'),fl=document.getElementById('routeLineFind');
+  var hasFind=parts.indexOf('find')>=0;
+  if(fs)fs.style.display=hasFind?'':'none';
+  if(fl)fl.style.display=hasFind?'':'none';
+  [['routeLetter','letter'],['routeWord','word'],['routePlay','play'],['routeFind','find']].forEach(function(pair){
     var el=document.getElementById(pair[0]);if(!el)return;
     var key=pair[1],lit=!!mission[key];
     el.classList.toggle('route-lit',lit);
@@ -171,5 +177,7 @@ function initAdventureHome(){
   document.getElementById('routeLetter').addEventListener('click',openTodayLetter);
   document.getElementById('routeWord').addEventListener('click',function(){openWordBuild(todayWord[0],todayWord[1]);});
   document.getElementById('routePlay').addEventListener('click',function(){go('listen');});
+  var rf=document.getElementById('routeFind');
+  if(rf)rf.addEventListener('click',function(){if(typeof openFind==='function')openFind();});
   document.getElementById('copyStoryText').addEventListener('click',handleStoryCopy);
 }

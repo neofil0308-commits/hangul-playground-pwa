@@ -141,6 +141,18 @@ try { w.go('home'); w.openTodayLetter();
      || w.document.getElementById('story').classList.contains('active'));
 } catch (e) { ok('openTodayLetter 동작', false, e.message); }
 
+// 조립판 방해 카드는 '이미 배운 자모'만이어야 한다(4막 조립판에 6막 ㅐ가 나오던 문제).
+try {
+  w.eval(`unlockPremium();
+    progress.idx = EPISODE_PATH.findIndex(e => e.act === 4 && e.type === 'combine');
+    loadMission(); renderMission();`);
+  const pool = w.eval('taughtJamo()');
+  const laterAct = w.eval(`Object.keys(LETTER_FIRST_ACT).filter(c => LETTER_FIRST_ACT[c] > 4)`);
+  const leaked = pool.filter(c => laterAct.includes(c));
+  ok('4막 조립 카드 풀에 안 배운 자모 없음', leaked.length === 0, leaked.join(' '));
+  ok('4막 조립 카드 풀이 비지 않음', pool.length >= 10, String(pool.length));
+} catch (e) { ok('조립 카드 풀', false, e.message); }
+
 // 피날레(4단계) — 마지막 화가 오프닝의 편지이고, 이야기 책 화면으로 열리며,
 // 졸업이 여기서만 뜨는지. 진행 포인터를 끝으로 옮겨 실제로 눌러 본다.
 try {

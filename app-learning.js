@@ -69,7 +69,9 @@ function openWordBuild(word,emoji){
   var tgt=document.getElementById('wbTarget');tgt.innerHTML='';
   groups.forEach(function(g,si){var blk=document.createElement('div');blk.className='wb-syl';var head=document.createElement('div');head.className='wb-syl-head';head.textContent=g.join(' + ');head.setAttribute('data-syl',word[si]||'');blk.appendChild(head);g.forEach(function(j){wbExpected.push(j);var s=document.createElement('div');s.className='wb-slot';blk.appendChild(s);});tgt.appendChild(blk);});
   wbPos=0;
-  var need=wbExpected.slice();var distract=[];var pool=CHO.concat(JUNG);var tries=0;
+  // 방해 카드는 '이미 배운 자모'에서만 — 안 배운 글자가 카드로 나오면 아이가 헤맨다.
+  var need=wbExpected.slice();var distract=[];
+  var pool=(typeof taughtJamo==='function')?taughtJamo():CHO.concat(JUNG);var tries=0;
   var distractN=Math.min(7,Math.max(4,9-need.length)); // 총 8~10장
   while(distract.length<distractN&&tries<120){tries++;var r=pool[Math.floor(Math.random()*pool.length)];if(need.indexOf(r)<0&&distract.indexOf(r)<0)distract.push(r);}
   var trayEl=document.getElementById('wbTray');trayEl.innerHTML='';
@@ -155,7 +157,7 @@ function openCombine(){
   // 방해 카드: 이미 익힌 자모에서 1~2장(없으면 기본 자모로 폴백)
   var need=cbExpected.slice();var distract=[];
   var pool=(typeof masteredLetters==='function'?masteredLetters():[]).filter(function(c){return CHO.indexOf(c)>=0||JUNG.indexOf(c)>=0;});
-  if(pool.length<3)pool=CHO.slice(0,9).concat(JUNG.slice(0,6));
+  if(pool.length<3)pool=(typeof taughtJamo==='function')?taughtJamo():CHO.slice(0,9).concat(JUNG.slice(0,6));
   var tries=0;while(distract.length<2&&tries<200){tries++;var r=pool[Math.floor(Math.random()*pool.length)];if(need.indexOf(r)<0&&distract.indexOf(r)<0)distract.push(r);}
   var trayEl=document.getElementById('cbTray');trayEl.innerHTML='';
   shuffle(need.concat(distract)).forEach(function(j){var isV=CHO.indexOf(j)<0;var b=document.createElement('button');b.className='wb-card jchip jrole-'+(isV?'v':'c');b.innerHTML=jamoCharSVG(j,isV);b.addEventListener('pointerdown',function(e){cbDragStart(e,b,j);});trayEl.appendChild(b);});
