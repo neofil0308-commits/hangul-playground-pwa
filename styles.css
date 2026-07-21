@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Jua&family=Gaegu:wght@400;700&display=swap');
+/* 웹폰트는 자체 호스팅(assets/fonts/fonts.css)이며 index.html에서 먼저 로드한다.
+   Google Fonts CDN @import는 아동 IP가 제3자로 전송되고 오프라인에서 깨지므로 제거함. */
 :root{
   /* 별빛 그림책 팔레트 — 따뜻한 크림 패널 + 탄 배경, 밤 보라 여정 패널 */
   --bg1:#D8C7A6; --bg2:#C3B092; --ink:#4A3524;

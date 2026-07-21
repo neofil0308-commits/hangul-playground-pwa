@@ -1,6 +1,6 @@
 # 한글 놀이터 작업일지
 
-> 마지막 업데이트: 2026-07-12 (막별 게임 정합성 — 듣고찾기·복습·7막을 낱자 기준으로 정렬. 아래 [오답노트](#오답노트-버그교훈) 신설)
+> 마지막 업데이트: 2026-07-21 (유료배포 1단계 — 웹폰트 자체 호스팅, 제3자 전송 0건)
 >
 > 📌 개발 목적·방향은 [`README.md`](README.md), 구조·내용(현재 플로우 vs 잔재 화면)은 [`ARCHITECTURE.md`](ARCHITECTURE.md) 참고.
 
@@ -99,6 +99,25 @@
   4. 새 막/유형 추가 시 **`EPISODE_PATH` 전체를 로드해 각 게임의 대상이 유효 낱자인지 시뮬레이션**하는 검증을 돌린다.
 
 ## 작업 이력
+
+### 2026-07-21 (Claude Code) — 유료배포 1단계: 웹폰트 자체 호스팅 (제3자 전송 제거)
+
+- **배경**: 유료화는 2026-07-08 클라이언트 프리미엄 구조(1단계)에서 멈춘 상태였고, 이후 커밋은 콘텐츠·정합성 트랙이었음. `유료배포_검토.md` 로드맵 순서대로 재개 — 가장 싸고 효과 큰 폰트 self-host부터.
+- **문제**: `styles.css` 첫 줄의 `@import url('https://fonts.googleapis.com/css2?…')` → ① 아동 사용자 IP가 구글로 전송되어 개인정보처리방침에 "제3자 전송 없음"을 쓸 수 없음 ② 오프라인에서 폰트 깨짐 ③ `@import`라 렌더링 차단.
+- **조치**:
+  - Google Fonts css2 API가 서빙하는 **woff2 서브셋 360개(3.6MB)를 원본 그대로** `assets/fonts/`에 고정. 재서브셋·재생성하지 않음 — 획순 정렬(`glyphInkBox`/`calibrateStrokes`)이 Jua 글리프 메트릭 실측에 의존하므로 바이너리가 바뀌면 획순이 글자와 어긋난다.
+  - `assets/fonts/fonts.css` = 구글 CSS의 `url()`만 `./NAME.woff2`로 치환(unicode-range 서브셋 lazy load 그대로 유지).
+  - `index.html`이 `assets/fonts/fonts.css`를 `styles.css`보다 **먼저** 로드. `styles.css`의 `@import` 제거.
+  - 재현 스크립트 `tools/fetch_fonts.py`(woff2를 받으려면 모던 UA 필수 — 기본 UA는 구형 ttf CSS를 준다), 라이선스 `assets/fonts/OFL.txt`(3종 모두 OFL 1.1, 상업·임베드 허용).
+  - SW `v81`로 범프 + `./assets/fonts/fonts.css` precache 추가.
+- **검증**:
+  - 360개 전부 유효 WOFF2 시그니처(`wOF2`), 손상 0.
+  - unicode-range 합집합이 **3종 모두** 한글 음절 전체(가~힣 11,172자)·호환 자모(ㄱ~ㅣ)·ASCII 영숫자를 전부 커버.
+  - 로컬 서버에서 `fonts.css`(text/css)·woff2(font/woff2) 200 서빙 확인.
+  - **런타임 파일(index.html·styles.css·sw.js·manifest.json·app-*.js)의 외부 URL 0건** — 남은 건 SVG 네임스페이스 문자열 `w3.org` 9개뿐(네트워크 요청 아님).
+  - 정적 회귀 **182개 통과**(신규 `tests/selfhosted_fonts_check.py` 7개 — CDN 재유입·로드 순서·`@import` 부활·woff2 실존·3패밀리 선언·OFL 동봉·SW precache).
+- **다음**: 법적 문서 3종(개인정보처리방침·이용약관·환불정책) → 잔재 화면 정리 → TWA 패키징 + 스토어 인앱결제.
+- 참고: 헤드리스 Chrome이 이 환경에서 기동하지 않아 브라우저 렌더 스모크는 미실시. 실기기/브라우저에서 폰트 3종 적용 육안 확인 필요.
 
 ### 2026-07-12 (Claude Code) — 막별 게임 정합성: 듣고찾기·복습·7막을 낱자 기준으로 정렬
 

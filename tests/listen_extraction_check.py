@@ -35,4 +35,4 @@ def test_listen_game_logic_lives_in_external_listen_file():
 
 def test_service_worker_precaches_external_listen_file_with_new_cache_version():
     assert "./app-listen.js" in SW
-    assert "hangul-playground-v80" in SW
+    assert "hangul-playground-v81" in SW
