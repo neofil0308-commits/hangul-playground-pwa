@@ -32,7 +32,7 @@ JONG = ["", "ㄱ", "ㄲ", "ㄳ", "ㄴ", "ㄵ", "ㄶ", "ㄷ", "ㄹ", "ㄺ", "ㄻ"
 # app-data.js에서 꺼내올 상수. 앱이 실제로 쓰는 이름 그대로.
 _EXPORTS = ("CURRICULUM EPISODE_PATH CONS VOWS VOWS_COMPLEX CONS_DOUBLE FINALS "
             "LETTER_WORDS FINAL_WORDS WORDS STORY_MILESTONES PRESET_SENTS "
-            "SUBJ OBJ VERB BATCHIM_SYLL TRACE_WORDS ALL_LETTER_OBJS").split()
+            "SUBJ OBJ VERB BATCHIM_SYLL TRACE_WORDS ALL_LETTER_OBJS SPOKEN_UI_TEXTS").split()
 
 _DUMPER = """
 const fs=require('fs'), vm=require('vm');
@@ -225,6 +225,8 @@ def check_audio_coverage(d):
     for words in d["WORDS"].values():
         for w, _ in words:
             put(w, "단어뱅크")
+    for phrase in d.get("SPOKEN_UI_TEXTS", []):
+        put(phrase, "UI 문구")
     for s in d["BATCHIM_SYLL"]:
         put(s, "받침 음절")
     for s in d["TRACE_WORDS"]:

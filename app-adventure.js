@@ -100,6 +100,11 @@ function updateStoryBible(active){
 function updateStoryWorld(){
   if(!mission)return;
   var done=missionDoneCount(),current=missionCurrentPart();
+  // 막 단위 줄기: 지금 어느 막이고 무엇을 되찾는지, 다음은 어디인지.
+  var arcEl=document.getElementById('storyActArc');
+  if(arcEl){var ep=(typeof curEpisode==='function')?curEpisode():null;
+    var arc=(ep&&typeof ACT_ARC!=='undefined')?ACT_ARC[ep.act]:null;
+    arcEl.textContent=arc?('제 '+ep.act+'막 · '+ep.place+' — '+arc.gain+' '+arc.next):'';}
   var copy=document.getElementById('storyChapterText');
   if(copy){
     if(done===0)copy.textContent='하니와 함께 첫 빛 조각을 찾으러 글자 숲으로 떠나요.';

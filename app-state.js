@@ -105,7 +105,7 @@ function combineTarget(ep){
 // 문장형 막(8막) → 문장 텍스트 + 토큰화한 단어 + 그림 단서를 담은 합성 객체.
 // ch:'📖'를 둬서 todayLetter.ch를 참조하는 코드가 깨지지 않게 함(랜덤 글자 폴백 방지).
 function sentenceTarget(ep){
-  if(!ep||ep.type!=='sentence'||!ep.sent)return null;
+  if(!ep||(ep.type!=='sentence'&&ep.type!=='finale')||!ep.sent)return null;
   var words=(ep.words&&ep.words.length)?ep.words.slice():ep.sent.split(' ');
   var cues=(ep.cues&&ep.cues.length)?ep.cues.slice():((typeof sentCues==='function')?sentCues(words):[]);
   return {ch:'📖',sound:ep.sent,sentence:true,sent:ep.sent,words:words,cues:cues,word:words[0]||'',emoji:cues[0]||''};
@@ -120,10 +120,11 @@ function finalLetterObj(ep){var base=ALL_LETTER_OBJS[ep.ch]||null;if(!base)retur
 function curLetterObj(){var ep=curEpisode();if(!ep)return null;
   if(ep.type==='letter')return ep.final?finalLetterObj(ep):(ALL_LETTER_OBJS[ep.ch]||null);
   if(ep.type==='combine')return combineTarget(ep);
-  if(ep.type==='sentence')return sentenceTarget(ep);
+  if(ep.type==='sentence'||ep.type==='finale')return sentenceTarget(ep);
   return null;}
 // 진행/앨범 키: 보통은 글자, 4막 받침은 'F:'+글자, 7막은 'W:'+단어(첫 낱자가 겹쳐도 화가 구분되게).
 function progKey(ep){if(!ep)return '';
+  if(ep.type==='finale')return 'FIN';
   if(ep.type==='word'&&ep.word)return 'W:'+ep.word;
   return (ep.final?'F:':'')+(ep.ch||'');}
 // 마스터 목록은 낱자만 — 받침 키('F:')와 7막 단어 키('W:')는 게임/복습 풀을 더럽히지 않게 제외.
@@ -256,7 +257,7 @@ function pickToday(){
 // "다 했는데 불이 안 켜지는" 상태였다.
 function missionParts(){
   var ep=(typeof curEpisode==='function')?curEpisode():null;
-  var single=!!(ep&&(ep.type==='combine'||ep.type==='sentence'));
+  var single=!!(ep&&(ep.type==='combine'||ep.type==='sentence'||ep.type==='finale'));
   return single?['letter','word','play']:['letter','word','play','find'];
 }
 function missionDoneCount(){var m=(typeof mission!=='undefined'&&mission)||{};
@@ -281,7 +282,7 @@ function completeCombine(){var ep=curEpisode();if(!ep||ep.type!=='combine'||!mis
   if(typeof renderMission==='function')renderMission();}
 // 이야기 책(8막·졸업): 문장을 스스로 읽으면 단일 미션이 한 번에 끝난다.
 // 문장은 단일 글자(ch)가 아니므로 mastery/album을 더럽히지 않고, 미션 플래그만 채워 n===3 보상 게이트를 연다.
-function completeStory(){var ep=curEpisode();if(!ep||ep.type!=='sentence'||!mission||mission.letter)return;
+function completeStory(){var ep=curEpisode();if(!ep||(ep.type!=='sentence'&&ep.type!=='finale')||!mission||mission.letter)return;
   mission.letter=true;mission.word=true;mission.play=true;mission.lastReaction='all';saveMission();
   if(typeof showHaniReaction==='function')showHaniReaction('all');
   if(typeof renderMission==='function')renderMission();}

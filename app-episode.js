@@ -49,6 +49,12 @@ function renderEpisodeBanner(){
       +'<span class="book-pic">'+cpic+'</span>'
       +'<span class="book-hear-label">🔊 하니가 알려줄게</span>'
     +'</button>';
+  }else if(ep.type==='finale'){
+    el.innerHTML='<button class="book-page book-page-sent book-page-finale" id="epHearBtn" aria-label="별빛 우체국의 편지를 읽어요">'
+      +'<span class="book-ch">💌</span>'
+      +'<span class="book-sent">'+ep.sent+'</span>'
+      +'<span class="book-hear-label">💌 되찾은 편지를 읽어요</span>'
+    +'</button>';
   }else if(ep.type==='sentence'){
     el.innerHTML='<button class="book-page book-page-sent" id="epHearBtn" aria-label="이야기 책에서 문장을 읽어요">'
       +'<span class="book-ch">📖</span>'
@@ -135,7 +141,9 @@ function showMilestone(m){
   el.innerHTML='<div class="ms-word">'+m.word+'</div><div class="ms-note">'+m.note+'</div>';
   el.style.display='block';el.classList.remove('show');void el.offsetWidth;el.classList.add('show');
   if(typeof twemojify==='function')twemojify(el);
-  try{if(typeof speak==='function')speak(m.say);}catch(e){}
+  // 글을 못 읽는 아이에게도 성취가 전달되도록 소리로 알린다(화면의 note는 부모용 보조).
+  try{if(typeof speakSeq==='function')speakSeq([m.say,SPOKEN_UI.read]);
+    else if(typeof speak==='function')speak(m.say);}catch(e){}
   setTimeout(function(){el.classList.remove('show');setTimeout(function(){el.style.display='none';},400);},2800);
 }
 // 한 글자(에피소드)를 다 깬 순간: 별 추가 + 그림길 갱신 + 맛보기 검사.
@@ -170,15 +178,16 @@ function showRecap(){
 function showGraduation(){
   var ep=curEpisode();var sent=(ep&&ep.sent)||'';
   var el=document.getElementById('recapPop');if(!el)return;
-  var html='<div class="recap-card grad-card"><div class="recap-title">스스로 읽었어요! 🎓</div>'
+  var html='<div class="recap-card grad-card"><div class="recap-title">편지를 스스로 읽었어요! 🎓</div>'
     +'<div class="grad-emoji">✨ 💌 ✨</div>'
     +'<div class="grad-sent">'+sent+'</div>'
-    +'<div class="recap-review">글자들이 다시 반짝— 별빛 편지가 살아났어요! 이제 하니가 이 편지를 배달하러 가요. ✉️🐥</div>'
+    +'<div class="recap-review">하얗게 비었던 그 편지예요. 글자가 모두 돌아와 다시 반짝여요!<br>'
+    +'별빛 편지 💌 를 얻어 보물 여덟 개를 다 모았어요. 이제 하니가 이 편지를 배달하러 가요. ✉️🐥</div>'
     +'<button class="recap-next" id="recapNext">여정 마치기 🎓</button></div>';
   el.innerHTML=html;el.style.display='flex';if(typeof twemojify==='function')twemojify(el);
   try{if(typeof confetti==='function')confetti();}catch(e){}
-  try{if(typeof speakSeq==='function')setTimeout(function(){speakSeq([sent,'스스로 읽었어요','별빛 편지가 살아났어요','하니가 편지를 배달할게요']);},400);
-    else if(typeof speak==='function')speak('스스로 읽었어요');}catch(e){}
+  try{if(typeof speakSeq==='function')setTimeout(function(){speakSeq([sent,SPOKEN_UI.finaleRead,SPOKEN_UI.finaleAlive,SPOKEN_UI.finaleDeliver]);},400);
+    else if(typeof speak==='function')speak(SPOKEN_UI.finaleRead);}catch(e){}
   var nb=document.getElementById('recapNext');if(nb)nb.addEventListener('click',function(){el.style.display='none';finishJourney();});
 }
 // 여정의 끝 — 더 갈 곳이 없으므로 별빛 앨범(지나온 길)을 보여주고 홈으로 돌아간다.
@@ -187,23 +196,34 @@ function finishJourney(){
   if(typeof go==='function')go('home');
   try{window.scrollTo({top:0,behavior:'smooth'});}catch(e){}
 }
-// 막 클리어 보물 획득 연출: ○막 클리어! + 큰 보물 이모지 + 보물 이름 + 하니 칭찬.
+// 보물 화면에 넣을 도우미 그림. 장면용 SVG 빌더(aiFirefly 등)는 400x280 좌표계를 쓰므로
+// 그 캐릭터 자리만 잘라내 작은 원판에 담는다. 빌더가 없으면(8막 하니) 그림 없이 대사만.
+function helperArt(helper){
+  try{
+    if(!helper||typeof helper.art!=='function')return '';
+    return '<span class="relic-bye-art"><svg viewBox="150 120 100 100" width="64" height="64">'
+      +helper.art(200,175,'',44)+'</svg></span>';
+  }catch(e){return '';}
+}
+// 막 클리어 보물 획득 연출: ○막 클리어! + 큰 보물 이모지 + 보물 이름 + 도우미 작별 + 하니 칭찬.
 // recap/graduation과 같은 #relicPop(=recap-pop 오버레이) 구조·쇼/디스미스 패턴을 그대로 따른다.
 function showRelic(act){
   var info=(typeof relicForAct==='function')?relicForAct(act):null;
   var el=document.getElementById('relicPop');if(!el)return;
   var emoji=info?info.emoji:'⭐';var name=info?info.relic:'보물';
   var atEnd=(progress.idx>=EPISODE_PATH.length-1);
+  var helper=(typeof ACT_HELPERS!=='undefined')?ACT_HELPERS[act]:null;
   var html='<div class="recap-card relic-card">'
     +'<div class="recap-title">'+act+'막 클리어! 🎉</div>'
     +'<div class="relic-emoji">'+emoji+'</div>'
     +'<div class="relic-name">'+name+'</div>'
-    +'<div class="recap-review">편지 조각 <b>'+name+'</b>을(를) 되찾았어요! 별빛 우체국 편지가 조금씩 살아나요. ✉️</div>'
+    +'<div class="recap-review"><b>'+name+'</b>'+josaEul(name)+' 되찾았어요! 별빛 우체국 편지가 조금씩 살아나요. ✉️</div>'
+    +(helper?'<div class="relic-bye">'+helperArt(helper)+'<span>'+helper.bye+'</span></div>':'')
     +'<button class="recap-next" id="relicNext">'+(atEnd?'여정 마치기 🎓':'다음 막으로 ➡️')+'</button></div>';
   el.innerHTML=html;el.style.display='flex';if(typeof twemojify==='function')twemojify(el);
   try{if(typeof confetti==='function')confetti();}catch(e){}
-  try{if(typeof speakSeq==='function')setTimeout(function(){speakSeq([act+'막 클리어','편지 조각 '+name+'을 되찾았어요','정말 잘했어요']);},400);
-    else if(typeof speak==='function')speak('보물을 얻었어요');}catch(e){}
+  try{if(typeof speakSeq==='function')setTimeout(function(){speakSeq([SPOKEN_UI.actClear(act),SPOKEN_UI.relicGot(name),SPOKEN_UI.praise]);},400);
+    else if(typeof speak==='function')speak(SPOKEN_UI.praise);}catch(e){}
   var nb=document.getElementById('relicNext');if(nb)nb.addEventListener('click',function(){el.style.display='none';goNextLetter();});
 }
 function onEpisodeComplete(){
@@ -212,9 +232,9 @@ function onEpisodeComplete(){
   // 방금 깬 에피소드가 그 막의 마지막이면 막 번호(아니면 0). 막 클리어면 보물 적립.
   var actDone=(typeof actCompletedAt==='function')?actCompletedAt(progress.idx):0;
   if(actDone&&typeof awardRelic==='function')awardRelic(actDone);
-  // 8막(문장)은 문장을 읽을 때마다 recap을 띄우고, 졸업은 여정의 마지막에서 딱 한 번만.
-  // 이전에는 문장 14개마다 졸업이 떠서 '한글을 뗐다'는 순간이 14번 소모됐다.
-  if(ep&&ep.type==='sentence'&&isLastEpisode()){renderStarAlbum();setTimeout(showGraduation,900);return;}
+  // 졸업은 마지막 화(피날레 — 오프닝의 그 편지)에서 딱 한 번만.
+  // 이전에는 8막 문장 14개마다 졸업이 떠서 '한글을 뗐다'는 순간이 14번 소모됐다.
+  if(ep&&ep.type==='finale'){renderStarAlbum();setTimeout(showGraduation,900);return;}
   addAlbumStar();
   renderStarAlbum();
   var m=checkMilestone();

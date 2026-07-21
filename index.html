@@ -69,6 +69,7 @@
         <details class="parent-zone"><summary>👨‍👩‍👧 부모님 보기 · 이야기와 진행 설명</summary>
         <h4>한글 마을 이야기</h4>
         <p class="story-prologue" id="storyPrologue">어느 아침, 한글 마을의 별빛 우체국에 도착한 편지가 모두 하얗게 변했어요. 하니는 잃어버린 숨은 이름표와 빛 조각을 찾아 마을의 주문을 다시 깨우려 해요.</p>
+        <p class="story-act-arc" id="storyActArc"></p>
         <details class="story-arc" id="storyArc" open>
           <summary>오늘의 이야기 줄기</summary>
           <ol id="storyArcList"></ol>
@@ -491,7 +492,7 @@ function resumeAdventure(){
   if(nb&&nb.style.display!=='none'&&typeof goNextLetter==='function'){goNextLetter();return;}
   click('mrowLetter');
 }
-function openTodayLetter(){if(typeof accessAllowed==='function'&&!accessAllowed()){openUnlockModal();return;}var oep=(typeof curEpisode==='function')?curEpisode():null;if(oep&&oep.type==='combine'){if(typeof openCombine==='function')openCombine();return;}if(oep&&oep.type==='sentence'){if(typeof openStory==='function')openStory();return;}/* lettersTab은 openLetterDetail이 자음/모음 표시(글리프 색·부제)를 고르는 데 쓴다.
+function openTodayLetter(){if(typeof accessAllowed==='function'&&!accessAllowed()){openUnlockModal();return;}var oep=(typeof curEpisode==='function')?curEpisode():null;if(oep&&oep.type==='combine'){if(typeof openCombine==='function')openCombine();return;}if(oep&&(oep.type==='sentence'||oep.type==='finale')){if(typeof openStory==='function')openStory();return;}/* lettersTab은 openLetterDetail이 자음/모음 표시(글리프 색·부제)를 고르는 데 쓴다.
    옛 '글자 친구들' 목록 화면은 제거됐으므로 탭 DOM 조작 없이 값만 맞춘다. */
 var isV=VOWS.indexOf(todayLetter)>=0;lettersTab=isV?'vow':'con';openLetterDetail(todayLetter);}
 /* 부모 잠금 + 리포트 */

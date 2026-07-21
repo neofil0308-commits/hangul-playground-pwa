@@ -231,7 +231,7 @@ function initCombine(){
 var stSent='',stWords=[],stCues=[];
 function openStory(){
   var ep=(typeof curEpisode==='function')?curEpisode():null;
-  if(!ep||ep.type!=='sentence')return;
+  if(!ep||(ep.type!=='sentence'&&ep.type!=='finale'))return;
   var lo=(typeof curLetterObj==='function')?curLetterObj():null;
   stSent=ep.sent||(lo&&lo.sent)||'';
   stWords=(ep.words&&ep.words.length)?ep.words.slice():((lo&&lo.words&&lo.words.length)?lo.words.slice():stSent.split(' '));
@@ -295,7 +295,7 @@ function fdSayText(){return fdSay||fdCh;}
 function openFind(){
   var ep=(typeof curEpisode==='function')?curEpisode():null;
   // 글자(letter) 막 전용 — 합치기/문장 막은 이 게임을 쓰지 않음.
-  if(ep&&(ep.type==='combine'||ep.type==='sentence')){go('home');return;}
+  if(ep&&(ep.type==='combine'||ep.type==='sentence'||ep.type==='finale')){go('home');return;}
   var lo=(typeof curLetterObj==='function')?curLetterObj():null;
   if((!lo||!lo.ch)&&typeof todayLetter!=='undefined')lo=todayLetter;
   if(!lo||!lo.ch){go('home');return;}
@@ -394,7 +394,15 @@ function initWordGarden(){
 }
 
 function initLearningScreens(){
-  ldSound.addEventListener('click',()=>{if(curLetter)sayJamo(curLetter.ch);});
+  ldSound.addEventListener('click',()=>{
+    if(!curLetter)return;
+    // 4막 받침 화면은 이름만 읽으면 초성 수업과 구분이 안 된다 → '기역 받침' + 예시 낱말.
+    if(curLetter.final&&typeof speakSeq==='function'){
+      var fw=(curLetter.words&&curLetter.words[0])?curLetter.words[0][0]:'';
+      speakSeq([jamoSay(curLetter.ch),SPOKEN_UI.batchim,fw].filter(Boolean));return;
+    }
+    sayJamo(curLetter.ch);
+  });
   document.getElementById('ldBack').addEventListener('click',()=>go('home'));
   initWordGarden();
   initCombine();

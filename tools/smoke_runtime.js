@@ -141,6 +141,29 @@ try { w.go('home'); w.openTodayLetter();
      || w.document.getElementById('story').classList.contains('active'));
 } catch (e) { ok('openTodayLetter 동작', false, e.message); }
 
+// 피날레(4단계) — 마지막 화가 오프닝의 편지이고, 이야기 책 화면으로 열리며,
+// 졸업이 여기서만 뜨는지. 진행 포인터를 끝으로 옮겨 실제로 눌러 본다.
+try {
+  const path = w.eval('EPISODE_PATH');
+  const last = path[path.length - 1];
+  ok('마지막 화가 피날레', last.type === 'finale', last.type);
+  ok('피날레 문장이 오프닝의 편지', last.sent === '안녕 하니 사랑해 또 보자', last.sent);
+  ok('피날레 단어마다 그림 단서', last.words.length === last.cues.filter(Boolean).length);
+  ok('졸업은 피날레에서만',
+     /ep\.type==='finale'/.test(w.eval('String(onEpisodeComplete)')));
+
+  // 8막은 유료 구간이라 잠겨 있다 — 스모크에서는 이용권을 열고 콘텐츠를 검사한다.
+  w.eval('unlockPremium(); progress.idx = EPISODE_PATH.length - 1; loadMission(); renderMission(); renderEpisodeBanner();');
+  ok('이용권을 열면 유료 구간 접근 가능', w.eval('accessAllowed()') === true);
+  ok('피날레에서 마지막 화로 판정', w.eval('isLastEpisode()') === true);
+  ok('피날레는 단일 트립(3단계)', w.eval('missionTotal()') === 3, String(w.eval('missionTotal()')));
+  w.eval('openTodayLetter()');
+  ok('피날레가 이야기 책 화면으로 열린다',
+     w.document.getElementById('story').classList.contains('active'));
+  const chips = [...w.document.querySelectorAll('#stSentence .st-word')];
+  ok('편지 단어 5개가 칩으로 뜬다', chips.length === 5, `실제 ${chips.length}개`);
+} catch (e) { ok('피날레 동작', false, e.message); }
+
 console.log('\n=== 런타임 스모크 ===');
 let fail = 0;
 for (const [cond, name, detail] of checks) {
