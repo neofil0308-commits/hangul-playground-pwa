@@ -17,8 +17,8 @@
 </head>
 <body>
 <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
-<button class="homebtn" id="homeBtn" style="display:none">🏠</button>
-<button class="homebtn" id="stickerBtn">🏅 0</button>
+<button class="homebtn" id="homeBtn" style="display:none" aria-label="한글 마을(홈)으로 가기">🏠</button>
+<button class="homebtn" id="stickerBtn" aria-label="내 스티커 보기">🏅 0</button>
 <div class="toast" id="toast"><div class="te" id="toastE">⭐</div><div class="tt" id="toastT">참 잘했어요!</div></div>
 
 <div class="wrap">
@@ -266,7 +266,7 @@
     <div class="setbox"><h4>말하기 속도</h4><div class="cat-pills speed" id="speedPick"></div><button class="playbtn" id="speedTest" style="background:#7aa0d6;box-shadow:0 5px 0 #5b7fb5">🔊 소리 들어보기</button></div>
     <div class="setbox"><h4>도장</h4><div class="hint" id="setStickerCount" style="margin:0 0 12px">모은 도장: 0개</div><button class="mbtn" id="resetStickers" style="background:#d98a8a;box-shadow:0 4px 0 #c06a6a">도장 초기화</button></div>
     <div class="setbox"><h4>약관 · 정책 📄</h4><div class="hint" style="margin:0 0 12px">부모님을 위한 안내 문서예요</div><div class="legal-links"><a href="legal/privacy.html" target="_blank" rel="noopener">개인정보처리방침</a><a href="legal/terms.html" target="_blank" rel="noopener">이용약관</a><a href="legal/refund.html" target="_blank" rel="noopener">환불정책</a></div></div>
-    <div class="setbox" style="text-align:center"><div class="hint" style="font-size:.82rem;color:#b3a591;line-height:1.55;margin:0">그림: Twemoji (CC-BY 4.0)<br>© Twitter, Inc and contributors<br>글꼴: Gowun Dodum · Jua · Gaegu (SIL OFL 1.1)</div></div>
+    <div class="setbox" style="text-align:center"><div class="hint" style="font-size:.9rem;color:#807059;line-height:1.55;margin:0">그림: 직접 그린 SVG + 기기 기본 이모지<br>글꼴: Gowun Dodum · Jua · Gaegu (SIL OFL 1.1)</div></div>
   </section>
 </div>
 
@@ -630,6 +630,9 @@ twemojify(document.body);
 (function(){try{if(typeof aiHaniSVG!=='function')return;
   var m=document.querySelector('header .mascot');if(m)m.innerHTML=aiHaniSVG();
   var sf=document.querySelector('#storyHero .story-face');if(sf)sf.innerHTML=aiHaniSVG();
+  // 게임 화면(소리 동굴·복습·글자 찾기)의 하니도 같은 손그림으로 — 주인공이 화면마다
+  // 다른 생김새로 보이면 4세는 같은 친구로 인지하지 못한다.
+  document.querySelectorAll('.lc-hani').forEach(function(el){el.innerHTML=aiHaniSVG();});
 }catch(e){}})();
 </script>
 <script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
