@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>feature graphic 원본 · 하니의 한글 모험</title>
+<!--
+  Play 스토어 feature graphic(1024×500)의 원본.
+  tools/make_feature_graphic.js가 이 페이지를 Chrome으로 열어 #fg 요소만 PNG로 찍는다.
+
+  왜 HTML인가: 앱과 같은 폰트(자체 호스팅 Jua/Gowun Dodum)와 같은 색 변수를 쓰고,
+  하니 캐릭터도 app-data.js의 aiHaniSVG()를 그대로 재사용하기 위해서다.
+  이미지 편집기로 따로 그리면 앱과 미묘하게 달라진다.
+-->
+<link rel="stylesheet" href="../assets/fonts/fonts.css">
+<style>
+  /* 앱 styles.css의 색 변수를 그대로 옮겼다(값이 바뀌면 여기도 맞출 것). */
+  :root{
+    --bg1:#D8C7A6; --bg2:#C3B092; --ink:#4A3524;
+    --cream2:#FFFAEE; --pri-d:#C6772E; --gold:#F5CD82;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#555;display:flex;align-items:center;justify-content:center;min-height:100vh;}
+
+  #fg{
+    width:1024px;height:500px;position:relative;overflow:hidden;
+    /* 앱 body와 같은 배경 */
+    background:radial-gradient(circle at 50% 0%, var(--bg1), var(--bg2));
+    font-family:'Gowun Dodum','Jua',sans-serif;color:var(--ink);
+    display:flex;align-items:center;gap:56px;padding:0 78px;
+  }
+
+  /* 앱 홈의 .blob과 같은 부드러운 빛방울 */
+  .blob{position:absolute;border-radius:50%;filter:blur(2px);opacity:.4;}
+  .b1{width:230px;height:230px;background:#F6E6C8;left:-70px;top:-80px;}
+  .b2{width:170px;height:170px;background:#EADFF2;right:60px;bottom:-70px;}
+  .b3{width:120px;height:120px;background:#FBEAC0;right:250px;top:-40px;opacity:.35;}
+
+  .avatar{width:236px;height:236px;flex:0 0 auto;position:relative;z-index:1;
+          filter:drop-shadow(0 12px 18px rgba(120,80,40,.25));}
+  .avatar svg{width:100%;height:100%;display:block;}
+
+  .copy{position:relative;z-index:1;}
+  .title{font-family:'Jua',sans-serif;font-size:76px;line-height:1.12;letter-spacing:1px;
+         text-shadow:0 3px 0 rgba(255,255,255,.35);}
+  .title b{color:var(--pri-d);font-weight:400;}
+  .sub{font-family:'Gowun Dodum',sans-serif;font-size:27px;color:#65503C;margin-top:14px;}
+
+  /* 앱의 .hani-hello 말풍선과 같은 모양 */
+  .pill{display:inline-block;margin-top:24px;background:var(--cream2);color:var(--pri-d);
+        font-family:'Jua',sans-serif;font-size:23px;padding:12px 24px;border-radius:999px;
+        box-shadow:0 5px 0 #E9C899;}
+
+  /* 오른쪽 아래 자모 악센트 — 앱의 모음/자음 색을 그대로 썼다 */
+  .jamo{position:absolute;right:56px;bottom:40px;display:flex;gap:12px;z-index:1;}
+  .jamo span{width:62px;height:62px;border-radius:20px;display:flex;align-items:center;
+             justify-content:center;font-family:'Jua',sans-serif;font-size:34px;color:#fff;
+             box-shadow:0 5px 0 rgba(0,0,0,.14);}
+  .v{background:#E39FAD;} .c{background:#6E9AC2;}
+</style>
+</head>
+<body>
+<div id="fg">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+
+  <div class="avatar" id="avatar"></div>
+
+  <div class="copy">
+    <div class="title">하니의 한<b>글</b> 모험</div>
+    <div class="sub">그림과 소리로 떼는 아이의 첫 한글</div>
+    <div class="pill">안녕! 오늘도 모험 갈까?</div>
+  </div>
+
+  <div class="jamo">
+    <span class="v">ㅏ</span><span class="c">ㄱ</span><span class="v">ㅗ</span>
+  </div>
+</div>
+
+<script src="../app-data.js"></script>
+<script>
+  // 하니 캐릭터는 앱과 동일한 것을 써야 한다 — app-data.js의 함수를 그대로 부른다.
+  var box = document.getElementById('avatar');
+  if (typeof aiHaniSVG === 'function') {
+    box.innerHTML = aiHaniSVG();
+    document.documentElement.dataset.hani = 'ok';
+  } else {
+    document.documentElement.dataset.hani = 'missing';
+  }
+</script>
+</body>
+</html>
