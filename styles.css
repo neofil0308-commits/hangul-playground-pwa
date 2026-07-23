@@ -73,6 +73,8 @@ header .sub{font-family:'Gowun Dodum',sans-serif;font-weight:400;font-size:1.05r
 .sticker-slot{--shadow:#ffe0a0;cursor:default;}
 .sticker-slot .big{font-size:2.6rem;}
 .sticker-slot:not(.got){opacity:.4;}
+/* D4: 스티커 화면은 콘텐츠(제목+격자)가 상단에만 쏠려 하단 절반이 비었다 → 세로 중앙 정렬로 균형. */
+#sticker.active{display:flex;flex-direction:column;justify-content:center;min-height:78vh;}
 .cat-pills{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;}
 .cat-pills button{font-family:'Jua',sans-serif;font-size:1rem;border:none;cursor:pointer;padding:13px 20px;min-height:46px;display:inline-flex;align-items:center;justify-content:center;border-radius:24px;background:#fff;color:var(--word-d);box-shadow:0 4px 0 #cdeacf;}
 .cat-pills button.on{background:var(--word);color:#fff;box-shadow:0 4px 0 var(--word-d);}
@@ -801,7 +803,8 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .wb-card.bad{animation:shake .4s;}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 /* 이야기 책(8막 sentence·졸업): 읽기 우선 — 문장을 크게 보여주고 단어 칩을 눌러 소리 도움 */
-.story-read{max-width:880px;margin:0 auto;padding:8px 12px 28px;display:flex;flex-direction:column;align-items:center;gap:18px;}
+/* D4: 이야기책도 콘텐츠가 상단에만 쏠려 하단이 비었다 → 읽기 블록을 세로 중앙 정렬(⬅뒤로 버튼은 위에 그대로). */
+.story-read{max-width:880px;margin:0 auto;padding:8px 12px 28px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;min-height:70vh;}
 .story-read-head{font-family:'Jua',sans-serif;font-size:1.25rem;color:var(--sent-d,#5a8);background:linear-gradient(180deg,#fffdf6,#fff3da);border:3px solid #ffe1ab;border-radius:22px;padding:8px 22px;box-shadow:0 4px 0 #f0d3a6;}
 .st-sentence{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin:6px 0;}
 .st-word{font-family:'Jua',sans-serif;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;border:3px solid #ffe1ab;border-radius:22px;background:linear-gradient(180deg,#fffef9,#fff5e2);padding:12px 18px 10px;box-shadow:0 6px 0 #f0d3a6,0 9px 14px rgba(150,110,50,.14);transition:transform .1s,box-shadow .1s,background .15s;}
@@ -924,7 +927,9 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
   .chips.col{max-height:46vh;}
   .ld-back{margin-bottom:4px;}
   /* D2: 저높이에서 이야기책 하단 버튼(하니가 읽어줄게/읽었어요!)이 화면 밖으로 잘리지 않게 압축 */
-  .story-read{gap:8px;padding-top:2px;padding-bottom:12px;}
+  /* 저높이에서는 D4 세로 중앙 정렬 강제를 풀어 자연 흐름 유지(하단 버튼 잘림 방지). */
+  .story-read{gap:8px;padding-top:2px;padding-bottom:12px;min-height:0;}
+  #sticker.active{min-height:0;justify-content:flex-start;}
   .story-read-head{padding:4px 16px;font-size:1.05rem;}
   .st-sentence{gap:8px;margin:2px 0;}
   .st-word{padding:7px 12px 6px;}
