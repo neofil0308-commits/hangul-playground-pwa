@@ -261,13 +261,12 @@
     <div class="setbox"><h4>학습 대시보드 👨‍👩‍👧</h4><div class="parent-dash" id="parentDash"></div></div>
     <div class="setbox"><h4>학습 리포트</h4><div class="report" id="report"></div><div class="hint" id="reportStreak" style="margin:10px 0 0"></div></div>
     <div class="setbox"><h4>하루 목표 🌙</h4><div class="hint" style="margin:0 0 10px">목표를 채우면 '오늘은 여기까지' 쉬어가기 넛지가 떠요 (강제 아님)</div><div class="cat-pills goal" id="goalPick"></div></div>
-    <div class="setbox"><h4>이용권 💛</h4><div class="hint" id="unlockStatus" style="margin:0 0 12px"></div><button class="mbtn" id="setUnlockBtn" type="button" onclick="openUnlockModal()" style="background:var(--word);box-shadow:0 4px 0 var(--word-d)">이용권 열기</button></div>
     <div class="setbox"><h4>소리</h4><button class="mbtn toggle" id="bgmToggle">배경음악: 켜짐</button><button class="mbtn toggle" id="sfxToggle">효과음: 켜짐</button></div>
     <div class="setbox"><h4>음량</h4><label class="vrow">목소리<input type="range" id="volVoice" min="0" max="100" step="5"></label><label class="vrow">효과음<input type="range" id="volSfx" min="0" max="100" step="5"></label><label class="vrow">배경음악<input type="range" id="volBgm" min="0" max="100" step="5"></label></div>
     <div class="setbox"><h4>성우(목소리)</h4><div class="cat-pills voice" id="voicePick"></div></div>
     <div class="setbox"><h4>말하기 속도</h4><div class="cat-pills speed" id="speedPick"></div><button class="playbtn" id="speedTest" style="background:#7aa0d6;box-shadow:0 5px 0 #5b7fb5">🔊 소리 들어보기</button></div>
     <div class="setbox"><h4>도장</h4><div class="hint" id="setStickerCount" style="margin:0 0 12px">모은 도장: 0개</div><button class="mbtn" id="resetStickers" style="background:#d98a8a;box-shadow:0 4px 0 #c06a6a">도장 초기화</button></div>
-    <div class="setbox"><h4>약관 · 정책 📄</h4><div class="hint" style="margin:0 0 12px">부모님을 위한 안내 문서예요</div><div class="legal-links"><a href="legal/privacy.html" target="_blank" rel="noopener">개인정보처리방침</a><a href="legal/terms.html" target="_blank" rel="noopener">이용약관</a><a href="legal/refund.html" target="_blank" rel="noopener">환불정책</a></div></div>
+    <div class="setbox"><h4>약관 · 정책 📄</h4><div class="hint" style="margin:0 0 12px">부모님을 위한 안내 문서예요</div><div class="legal-links"><a href="legal/privacy.html" target="_blank" rel="noopener">개인정보처리방침</a><a href="legal/terms.html" target="_blank" rel="noopener">이용약관</a></div></div>
     <div class="setbox" style="text-align:center"><div class="hint" style="font-size:.9rem;color:#807059;line-height:1.55;margin:0">그림: 직접 그린 SVG + 기기 기본 이모지<br>글꼴: Gowun Dodum · Jua · Gaegu (SIL OFL 1.1)</div></div>
   </section>
 </div>
@@ -539,11 +538,7 @@ function closeUnlockModal(){var m=document.getElementById('unlockModal');if(m)m.
   });
   var cl=document.getElementById('unlockCancel');if(cl)cl.addEventListener('click',closeUnlockModal);
   m.addEventListener('click',function(e){if(e.target===m)closeUnlockModal();});})();
-function renderReport(){var r=document.getElementById('report');if(!r)return;var acc=listenTry>0?Math.round(listenCorrect/listenTry*100):0;r.innerHTML='<div class="rcell"><b>'+seenLetters.length+'</b><span>배운 글자</span></div><div class="rcell"><b>'+seenWords.length+'</b><span>배운 단어</span></div><div class="rcell"><b>'+acc+'%</b><span>듣고찾기 정답률</span></div><div class="rcell"><b>'+stickerCount+'</b><span>모은 도장</span></div>';var rs=document.getElementById('reportStreak');if(rs)rs.textContent='연속 출석: '+streak+'일 🔥';renderParentDashboard();
-  var us=document.getElementById('unlockStatus'),ub=document.getElementById('setUnlockBtn');
-  if(us){var unlocked=(typeof isUnlocked==='function')&&isUnlocked();
-    us.textContent=unlocked?'전체 이용권이 열려 있어요 ✅ (3~8막 · 다자녀)':'무료 체험 중 — 1~2막까지 열려 있어요. 3막부터·둘째 아이부터는 이용권이 필요해요.';
-    if(ub)ub.style.display=unlocked?'none':'inline-block';}}
+function renderReport(){var r=document.getElementById('report');if(!r)return;var acc=listenTry>0?Math.round(listenCorrect/listenTry*100):0;r.innerHTML='<div class="rcell"><b>'+seenLetters.length+'</b><span>배운 글자</span></div><div class="rcell"><b>'+seenWords.length+'</b><span>배운 단어</span></div><div class="rcell"><b>'+acc+'%</b><span>듣고찾기 정답률</span></div><div class="rcell"><b>'+stickerCount+'</b><span>모은 도장</span></div>';var rs=document.getElementById('reportStreak');if(rs)rs.textContent='연속 출석: '+streak+'일 🔥';renderParentDashboard();}
 // 부모 대시보드: 아이가 무엇을 뗐고 어디쯤인지 · 주간 출석 · 복습 현황 · 추천 페이스.
 function renderParentDashboard(){
   var host=document.getElementById('parentDash');if(!host)return;

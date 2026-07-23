@@ -6,7 +6,10 @@ HTML = (ROOT / "index.html").read_text(encoding="utf-8")
 CSS = (ROOT / "styles.css").read_text(encoding="utf-8")
 
 
+# NOTE: 무료 배포로 전환됨 — 프리미엄 훅/상수는 비활성 상태로 잔존하고,
+# 콘텐츠·프로필 게이트는 항상 개방(return true)이다. 아래 테스트는 그 계약을 핀한다.
 def test_premium_config():
+    # 상수는 (유료 복원 대비) 잔존하되 현재는 비활성.
     assert "const FREE_MAX_ACT=2" in DATA
     assert "UNLOCK_CODE" in DATA and "PREMIUM_PRICE" in DATA
 
@@ -17,12 +20,12 @@ def test_premium_hooks_device_global():
         assert fn in STATE, fn
     # 기기/가정 단위: 프로필 접두 없는 전역 키(raw).
     assert "_rawGet('hp_unlocked')" in STATE and "_rawSet('hp_unlocked','1')" in STATE
-    # 콘텐츠 게이트는 FREE_MAX_ACT 기준.
+    # 무료 배포: 콘텐츠 게이트는 무조건 개방.
     ai = STATE.index("function accessAllowed")
-    assert "FREE_MAX_ACT" in STATE[ai:ai + 200]
-    # 프로필 게이트: 첫 아이 무료(미구매면 1개 미만일 때만 추가).
+    assert "return true" in STATE[ai:ai + 60]
+    # 무료 배포: 프로필 게이트는 무조건 허용(무제한 프로필).
     ci = STATE.index("function canAddProfile")
-    assert "getProfiles().length<1" in STATE[ci:ci + 120]
+    assert "return true" in STATE[ci:ci + 60]
 
 
 def test_content_gate_and_paywall_in_home():
