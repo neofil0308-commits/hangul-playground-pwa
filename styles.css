@@ -733,8 +733,10 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .recap-home:active{transform:translateY(5px);box-shadow:0 1px 0 #4a5aa8;}
 .recap-more{font-family:'Jua',sans-serif;font-size:1.05rem;color:#7C6549;background:var(--cream2);border:none;border-radius:999px;padding:13px 22px;box-shadow:0 5px 0 #e6d8bd;cursor:pointer;}
 .recap-more:active{transform:translateY(4px);box-shadow:0 1px 0 #e6d8bd;}
-/* ===== 단어 동산: 가로 와이드 2존(왼쪽 세로 스택 / 오른쪽 큰 카드) ===== */
-#wordBuild .wb-wrap{max-width:1060px;margin:0 auto;display:flex;flex-direction:row;align-items:stretch;justify-content:center;gap:22px;padding:6px 14px 20px;min-height:76vh;}
+/* ===== 단어 동산·글자 공방: 가로 와이드 2존(왼쪽 세로 스택 / 오른쪽 큰 카드) ===== */
+/* combine도 wordBuild와 동일한 2단 구조로 통일 — 세로 스택일 때 자모 트레이가 폴드 아래로
+   밀리던 문제 해소(특히 가로폰) + 초록 패널의 과도한 세로 여백도 함께 정리. */
+#wordBuild .wb-wrap,#combine .wb-wrap{max-width:1060px;margin:0 auto;display:flex;flex-direction:row;align-items:stretch;justify-content:center;gap:22px;padding:6px 14px 20px;min-height:76vh;}
 .wb-col{display:flex;flex-direction:column;min-width:0;}
 /* 왼쪽: 이미지 → 단어 → 조립판 → 도구, 세로로 꽉 */
 .wb-left{flex:1 1 0;align-items:center;justify-content:space-evenly;gap:8px;background:linear-gradient(180deg,#f5fbef,#e7f5dd);border-radius:28px;padding:18px 16px 22px;box-shadow:inset 0 0 0 3px #d6ecc4;}
@@ -747,6 +749,9 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .wb-tray-label small{color:#946940;font-size:.82rem;}
 #wordBuild .wb-tray{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:14px;align-content:center;flex:1;}
 #wordBuild .wb-tray .wb-card{width:auto;height:116px;}
+/* combine 트레이도 오른쪽 패널을 채우는 격자로(자모 4~6개 → 한 줄, 세로 가운데 정렬) */
+#combine .wb-tray{display:grid;grid-template-columns:repeat(auto-fit,minmax(84px,1fr));gap:14px;align-content:center;flex:1;}
+#combine .wb-tray .wb-card{width:auto;height:96px;}
 /* 조립판/빈칸 크게 */
 #wordBuild .wb-target{display:flex;gap:22px;flex-wrap:wrap;justify-content:center;min-height:96px;border-radius:20px;padding:6px;transition:background .12s,box-shadow .12s;margin-top:40px;row-gap:48px;}
 /* 여러 음절이 줄바꿈될 때 떠있는 수식 라벨(.wb-syl-head top:-36px)이 윗줄/단어와 겹치지 않게 위 여백·줄간격 확보 */
@@ -768,7 +773,7 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 .wb-big-correct.show .wb-big-inner{transform:scale(1) rotate(0);}
 .wb-big-word{font-family:'Jua',sans-serif;font-size:4.6rem;color:var(--word-d);letter-spacing:5px;}
 .wb-big-label{font-family:'Jua',sans-serif;font-size:1.9rem;color:#e0822a;margin-top:6px;}
-@media (max-width:760px){#wordBuild .wb-wrap{flex-direction:column;align-items:center;min-height:0;}.wb-right{width:100%;}}
+@media (max-width:760px){#wordBuild .wb-wrap,#combine .wb-wrap{flex-direction:column;align-items:center;min-height:0;}.wb-right{width:100%;}}
 
 .wb-target{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;}
 .wb-syl{display:flex;align-items:flex-end;gap:6px;background:#fff;border-radius:20px;padding:10px 14px 12px;box-shadow:0 6px 0 #e6cdb0;position:relative;}
@@ -933,6 +938,7 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
   #combine .wb-word{font-size:1.4rem;margin:0 0 4px;}
   #combine .cb-target{margin-top:4px;}
   #combine .wb-target{min-height:44px;row-gap:20px;}
+  #combine .wb-tray .wb-card{height:78px;}
   .wb-feedback{min-height:0;}
   .wb-tools{gap:10px;}
   .wb-tool{min-height:42px;padding:9px 16px;}
@@ -943,7 +949,7 @@ header .mascot .hani-svg,.story-hero .story-face .hani-svg{width:1.15em;height:a
 /* 세로로 들었을 때: 가로 2단 배치를 한 줄로 풀고, 큰 글리프를 줄여 스크롤을 줄인다. */
 @media (orientation:portrait){
   .home-workbench{grid-template-columns:1fr;}
-  .lf-wrap,#wordBuild .wb-wrap,.listen-wrap{flex-direction:column;align-items:center;}
+  .lf-wrap,#wordBuild .wb-wrap,#combine .wb-wrap,.listen-wrap{flex-direction:column;align-items:center;}
   .trace-stage{max-width:min(330px,78vw);height:min(330px,78vw);}
   .trace-guide{font-size:min(15rem,52vw);}
 }
