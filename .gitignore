@@ -22,3 +22,11 @@ package-lock.json
 
 # 화면 캡처 산출물 — 필요할 때 재생성(tools/screenshot.js)
 shots/
+
+# Android(TWA) 빌드 산출물 — 서명 키가 유출되면 앱을 탈취당한다. 절대 커밋 금지.
+# (twa-manifest.json은 빌드 재현을 위해 커밋한다 — 키 자체는 들어 있지 않다)
+*.keystore
+*.jks
+app-release-*.aab
+app-release-*.apk
+/twa/

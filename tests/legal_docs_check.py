@@ -1,10 +1,12 @@
-"""법적 문서 3종(개인정보처리방침·이용약관·환불정책) 검증.
+"""법적 문서 3종(개인정보처리방침·이용약관·결제 및 환불 안내) 검증.
 
-스토어 심사와 전자상거래법이 요구하는 항목들이다. 결제 진입 지점에서 약관·환불정책에
-닿을 수 없으면 심사에서 막히므로, 문서 존재뿐 아니라 **앱에서의 연결**까지 확인한다.
+**무료 배포 기준**(2026-07-23 전환). 판매가 없으므로 전자상거래법상 사업자정보 표시 의무는
+없지만, Play 스토어 심사는 개인정보처리방침 게시와 그 내용이 앱의 실제 동작과 일치할 것을
+요구한다. 그래서 문서 존재뿐 아니라 **앱에서의 연결**과 **무료라는 사실의 일관성**을 확인한다.
 
-주의: 판매자 정보는 아직 자리표시자(`[상호]` 등)다. 스토어 등록 전에 반드시 실제 값으로
-교체해야 하며, `test_placeholders_use_known_markers`가 오타 난 마커를 잡아 준다.
+유료 전환 시 되살려야 할 것: 판매자 정보(사업자등록번호·통신판매업 신고번호·주소·판매가),
+청약철회 7일 기준, 구매 복원 조항. 이력은 git에 남아 있다.
+
 남은 자리표시자 목록은 `python tools/check_legal_placeholders.py`로 확인.
 """
 
@@ -20,10 +22,8 @@ DOCS = {name: (LEGAL / f"{name}.html").read_text(encoding="utf-8")
         for name in ("privacy", "terms", "refund")}
 
 # 배포 전 실제 값으로 교체해야 하는 자리표시자. 여기 없는 마커가 문서에 있으면 오타다.
-KNOWN_PLACEHOLDERS = {
-    "[시행일]", "[상호 또는 개발자명]", "[대표자 성명]", "[사업자등록번호]",
-    "[통신판매업 신고번호]", "[사업장 주소]", "[문의 이메일]", "[책임자 성명]", "[판매가]",
-}
+# 무료 배포에서는 개발자명 하나만 남는다(Play Console 표시명 = 개인정보 보호책임자).
+KNOWN_PLACEHOLDERS = {"[개발자명]"}
 
 
 def test_all_three_documents_exist():
@@ -44,9 +44,13 @@ def test_documents_link_back_to_app():
         assert 'href="../index.html"' in html, f"{name}에 앱 복귀 링크 없음"
 
 
-def test_settings_screen_links_all_three_documents():
-    for name in ("privacy", "terms", "refund"):
-        assert f'href="legal/{name}.html"' in INDEX, f"앱에서 legal/{name}.html 링크 없음"
+def test_settings_screen_links_privacy_and_terms():
+    # 무료 배포에서 보호자가 상시 닿아야 하는 건 개인정보처리방침·이용약관 둘이다
+    # (결제·환불 안내는 결제가 없으므로 설정에 노출하지 않고 문서 간 링크로만 닿는다).
+    box = INDEX[INDEX.index('class="legal-links"'):]
+    box = box[:box.index("</div>")]
+    for name in ("privacy", "terms"):
+        assert f'href="legal/{name}.html"' in box, f"설정 화면에 legal/{name}.html 링크 없음"
 
 
 def test_payment_modal_discloses_terms_and_refund():
@@ -66,16 +70,32 @@ def test_privacy_policy_states_no_collection_and_no_third_party():
     assert "개인정보 보호책임자" in p
 
 
-def test_terms_cover_price_payment_and_jurisdiction():
+def test_terms_cover_developer_info_free_pricing_and_jurisdiction():
     t = DOCS["terms"]
-    for token in ("판매자 정보", "무료", "구매 복원", "지적재산권", "준거법"):
+    for token in ("개발자 정보", "이용 요금", "전액 무료", "지적재산권", "준거법"):
         assert token in t, f"이용약관에 '{token}' 항목 없음"
 
 
-def test_refund_covers_store_route_and_withdrawal_period():
+def test_refund_doc_states_app_is_free_and_has_no_payment():
     r = DOCS["refund"]
-    for token in ("Google Play", "App Store", "청약철회", "7일", "미성년자"):
-        assert token in r, f"환불정책에 '{token}' 항목 없음"
+    for token in ("무료", "환불의 대상이 되는 결제도 없습니다", "neofil0308@gmail.com"):
+        assert token in r, f"결제·환불 안내에 '{token}' 항목 없음"
+
+
+def test_documents_never_advertise_a_price():
+    # 무료 배포의 핵심 계약: 법적 문서가 요금을 표시하면 허위 표시이자 스토어 정책 위반이다.
+    # 유료로 되돌릴 때 이 테스트가 먼저 깨져서 "문서도 같이 고쳐라"라고 알려 준다.
+    for name, html in DOCS.items():
+        assert "₩" not in html, f"{name}에 가격 표시(₩)가 남아 있음 — 무료 배포와 모순"
+        assert "1회 구매" not in html, f"{name}에 '1회 구매' 문구가 남아 있음"
+
+
+def test_privacy_data_safety_answer_stays_no_collection():
+    # Play '데이터 보안' 양식에 "수집·공유 없음"으로 제출한다. 문서가 이와 어긋나면 정책 위반이다.
+    p = DOCS["privacy"]
+    assert "결제수단 정보를 수집·저장·열람하지 않으며" in p
+    for token in ("광고 SDK", "추적 픽셀"):
+        assert token in p, f"개인정보처리방침에 '{token}' 미사용 고지 없음"
 
 
 def test_placeholders_use_known_markers():
