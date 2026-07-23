@@ -106,32 +106,52 @@ export BUBBLEWRAP_KEY_PASSWORD="$BUBBLEWRAP_KEYSTORE_PASSWORD"
 bubblewrap build --skipPwaValidation
 ```
 
-### 2-2. 🔴 Digital Asset Links — **이 저장소에 올려선 안 된다** (설계 변경 필요)
+### 2-2. ✅ Digital Asset Links — **해결 (2026-07-24)**, 단 지문 하나 더 필요
 
-TWA가 주소창 없이 뜨려면 웹사이트가 앱을 인증해야 한다. 그런데 Chrome은 assetlinks를
-**오리진(scheme + host) 루트에서만** 찾는다. 경로는 무시한다.
+**무엇이 문제였나** — Chrome은 assetlinks를 **오리진(scheme + host) 루트에서만** 찾고 경로는
+무시한다. 이 저장소는 `/hangul-playground-pwa/` 하위 경로에 배포되므로 여기에 파일을 넣어도
+Chrome이 보지 않는다.
+
+**어떻게 풀었나** — 도메인 뿌리를 담당하는 저장소를 따로 만들었다:
+👉 https://github.com/neofil0308-commits/neofil0308-commits.github.io
+
+| 파일 | 이유 |
+|---|---|
+| `.well-known/assetlinks.json` | 앱 인증. 이 저장소의 존재 이유 |
+| `.nojekyll` | 없으면 Jekyll이 점(.)으로 시작하는 폴더를 무시해 404가 된다 |
+| `index.html` | 도메인 뿌리가 404가 되지 않도록 앱으로 가는 링크 한 장 |
+
+검증 완료:
+```bash
+curl -s https://neofil0308-commits.github.io/.well-known/assetlinks.json   # 200, application/json
+```
+Google 검증 API도 statement를 정상 인식한다:
+```
+https://digitalassetlinks.googleapis.com/v1/statements:list
+  ?source.web.site=https://neofil0308-commits.github.io
+  &relation=delegate_permission/common.handle_all_urls
+```
+앱 배포 경로(`/hangul-playground-pwa/`)는 영향 없이 그대로 200이다.
+
+#### 🔴 남은 일 — Play 앱 서명 키 지문 추가
+
+지금은 **업로드 키** 지문만 들어 있다. AAB를 Play Console에 올리면 Google이 재서명하므로
+(Play 앱 서명), **스토어에서 설치한 앱**은 아직 인증되지 않는다 → 주소창이 뜬다.
 
 ```
-필요:   https://neofil0308-commits.github.io/.well-known/assetlinks.json   ← 현재 404
-안 됨:  https://neofil0308-commits.github.io/hangul-playground-pwa/.well-known/assetlinks.json
+Play Console → 앱 무결성 → 앱 서명 → "앱 서명 키 인증서"의 SHA-256 복사
+→ assetlinks.json의 sha256_cert_fingerprints 배열에 추가 (업로드 키 지문은 지우지 말 것)
 ```
 
-이 저장소는 `/hangul-playground-pwa/` **하위 경로**에 배포되므로, 여기에 파일을 넣어도
-Chrome이 보지 않는다. 도메인 루트는 `neofil0308-commits.github.io`라는 **이름의 별도 저장소**가
-있어야 서빙되는데 **아직 없다**(확인함).
+`sha256_cert_fingerprints`는 배열이라 둘을 함께 둘 수 있다. 업로드 키 지문을 남겨 둬야
+로컬 빌드 APK를 실기기에 설치해 테스트할 때도 주소창이 사라진다.
 
-**선택지 3개:**
-
-| 방법 | 비용 | 결과 |
-|---|---|---|
-| **A. `neofil0308-commits.github.io` 저장소 생성** (권장) | 무료·5분 | 도메인 루트에서 assetlinks 서빙. 다만 이 인증은 **해당 계정의 모든 Pages 사이트**를 포함하는 오리진 전체에 적용된다(개인 계정이면 문제 없음). |
-| **B. 커스텀 도메인 구입** | 연 1~2만원 | 가장 깔끔. 앱 전용 오리진이 생기고 스토어 신뢰도도 올라감. |
-| **C. 검증 생략** | 무료 | 앱 상단에 **주소창이 그대로 노출**된다. 유아용 앱에서 인상이 나쁘고, 아이가 URL을 건드릴 수 있어 권하지 않는다. |
-
-> ⚠️ **지문을 잘못 넣는 실수**: assetlinks에 넣을 SHA-256은 위 2-1의 업로드 키가 **아니라**
-> **Play Console → 앱 서명 → "앱 서명 키 인증서"의 SHA-256**이다. Play 앱 서명을 쓰면 Google이
-> 재서명하므로, 업로드 키 지문을 넣으면 검증이 실패해 주소창이 그대로 뜬다.
-> 이 값은 AAB를 Play Console에 한 번 올린 뒤에야 알 수 있어 **순서상 마지막**이다.
+#### 지금 할 수 있는 검증 — 실기기 사이드로드
+업로드 키 지문이 이미 게시되어 있으므로, **Play에 올리기 전에 TWA가 제대로 도는지 확인할 수 있다.**
+```bash
+adb install twa/app-release-signed.apk
+```
+확인할 것: ① 앱 상단에 주소창이 없는가 ② 가로 전체화면으로 뜨는가 ③ 아이콘이 하니인가
 
 ### 2-2-1. ⚠️ TWA는 첫 실행에 인터넷이 필요하다
 AAB가 1.1MB인 이유는 **앱 안에 콘텐츠가 없기 때문**이다. TWA는 웹사이트를 띄우는 껍데기이고,
@@ -204,14 +224,16 @@ Families 정책상 **필수**. 이미 게시되어 있고 자리표시자만 채
 
 ## 4. 진행 순서 요약
 
-1. ~~**[사용자]** 개발자명 확정 → 자리표시자 채우기~~ ✅ **완료** (「하니아빠」, 0건)
-2. ~~**[나]** Bubblewrap TWA 빌드 + 서명 키 생성~~ ✅ **완료** (`twa/app-release-bundle.aab`, git 미추적)
-3. **[사용자]** Play 개발자 계정 $25 결제 + 신원 확인 시작 (며칠 소요) ← **현재 여기**
-4. **[사용자]** assetlinks 호스팅 방식 결정 — 2-2의 A/B/C 중 선택 (A 권장)
-5. **[나]** 스토어 등록 문안 + 스크린샷 규격 정리 + feature graphic(1024×500) 제작
+1. ~~**[사용자]** 개발자명 확정 → 자리표시자 채우기~~ ✅ (「하니아빠」, 0건)
+2. ~~**[나]** Bubblewrap TWA 빌드 + 서명 키 생성~~ ✅ (`twa/app-release-bundle.aab`)
+3. ~~**[나]** 스토어 자산 — 아이콘·feature graphic·문안~~ ✅ (`store/`, `스토어_등록정보.md`)
+4. ~~**[나]** assetlinks 호스팅 저장소 생성~~ ✅ (`neofil0308-commits.github.io`, Google API 검증됨)
+5. **[사용자]** Play 개발자 계정 $25 결제 + 신원 확인 시작 (며칠 소요) ← **현재 여기 · 유일한 병목**
 6. **[사용자]** Play Console에 AAB 업로드 → 데이터 보안·연령층·콘텐츠 등급 양식 제출(3장 답안 사용)
-7. **[나]** Play Console의 **앱 서명 키 SHA-256**으로 `.well-known/assetlinks.json` 생성 → 도메인 루트에 게시
+7. **[나]** Play Console의 **앱 서명 키 SHA-256**을 assetlinks 배열에 추가
 8. **[사용자]** 비공개 테스트 요건 충족(해당 시) → 프로덕션 출시 심사 제출
+
+> 5번이 며칠 걸리는 유일한 항목이다. 그 사이 실기기 사이드로드(2-2 끝)로 앱을 미리 확인할 수 있다.
 
 ### 백업해야 할 것 (git에 없음)
 `twa/android.keystore` + `twa/keystore-password.txt`. `/twa/`는 `.gitignore`로 막혀 있어
