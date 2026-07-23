@@ -10,6 +10,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="하니의 한글 모험">
+<link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="stylesheet" href="assets/fonts/fonts.css">
 <link rel="stylesheet" href="styles.css">
@@ -495,7 +496,7 @@ function resumeAdventure(){
 }
 function openTodayLetter(){if(typeof accessAllowed==='function'&&!accessAllowed()){openUnlockModal();return;}var oep=(typeof curEpisode==='function')?curEpisode():null;if(oep&&oep.type==='combine'){if(typeof openCombine==='function')openCombine();return;}if(oep&&(oep.type==='sentence'||oep.type==='finale')){if(typeof openStory==='function')openStory();return;}/* lettersTab은 openLetterDetail이 자음/모음 표시(글리프 색·부제)를 고르는 데 쓴다.
    옛 '글자 친구들' 목록 화면은 제거됐으므로 탭 DOM 조작 없이 값만 맞춘다. */
-var isV=VOWS.indexOf(todayLetter)>=0;lettersTab=isV?'vow':'con';openLetterDetail(todayLetter);}
+var isV=(typeof isVowelCh==='function')?isVowelCh(todayLetter.ch):(VOWS.indexOf(todayLetter)>=0);lettersTab=isV?'vow':'con';openLetterDetail(todayLetter);}
 /* 부모 잠금 + 리포트 */
 var parentUnlocked=false,gateAns=0;
 var gateModal=document.getElementById('gateModal');
