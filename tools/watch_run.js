@@ -45,9 +45,8 @@ const ARGS = [
   '--disable-component-update', '--disable-background-networking',
   '--disable-sync', '--disable-default-apps', '--no-service-autorun',
   '--metrics-recording-only', '--disable-breakpad',
-  '--force-color-profile=srgb', '--window-size=1180,940',
+  '--force-color-profile=srgb', '--window-size=1180,940', '--window-position=0,0',
 ];
-const VIEWPORT = { width: 1180, height: 860, deviceScaleFactor: 1 };
 
 // 각 장면: 화면을 여는 setup, (있으면) 정답을 눌러 푸는 solve, 무엇이 맞아야 하는지 assert.
 // solve는 window.__hp.* 드라이버를 부른다(아래에서 페이지에 주입). 전부 페이지 안 JS 문자열.
@@ -268,11 +267,19 @@ async function main() {
 
   const browser = await puppeteer.launch({
     executablePath: CHROME, headless: false, args: ARGS,
-    defaultViewport: VIEWPORT, protocolTimeout: 0,
+    defaultViewport: null, protocolTimeout: 0, // null: 에뮬레이션 없이 실제 창 크기를 그대로 씀
   });
 
   const page = await browser.newPage();
-  await page.setViewport(VIEWPORT);
+  // 창을 실제 화면 크기에 맞춰 좌상단에 붙인다 — 안 그러면 화면보다 큰 창의 아래쪽(하단 막대)이
+  // 노트북에서 화면 밖으로 밀려나 버튼이 안 보인다. 하단 고정 막대가 창 바닥 = 화면 안에 오도록.
+  try {
+    const scr = await page.evaluate(() => ({ w: screen.availWidth, h: screen.availHeight }));
+    const s = await page.target().createCDPSession();
+    const { windowId } = await s.send('Browser.getWindowForTarget');
+    await s.send('Browser.setWindowBounds', { windowId, bounds: {
+      left: 0, top: 0, width: Math.min(1180, scr.w), height: Math.min(940, scr.h) } });
+  } catch (e) {}
 
   // 브라우저 버튼 → node 콜백. note는 모아 두고, next/stop은 대기 중인 약속을 푼다.
   const notes = [];
