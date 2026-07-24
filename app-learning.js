@@ -392,7 +392,7 @@ function initWordGarden(){
   var wbE=document.getElementById('wbExplain');if(wbE)wbE.addEventListener('click',()=>explainWord(wbWord));
   var wbR=document.getElementById('wbReset');if(wbR)wbR.addEventListener('click',()=>{if(wbWord)openWordBuild(wbWord,wbEmoji);});
   // '써보기' → 따라쓰기(trace) 화면. trace의 유일한 입구다.
-  var wbW=document.getElementById('wbWrite');if(wbW)wbW.addEventListener('click',()=>{if(typeof loadCustomTrace==='function'&&wbWord)loadCustomTrace([...wbWord]);if(typeof go==='function')go('trace');});
+  var wbW=document.getElementById('wbWrite');if(wbW)wbW.addEventListener('click',()=>{if(typeof loadCustomTrace==='function'&&wbWord)loadCustomTrace([wbWord]);if(typeof go==='function')go('trace');});
 }
 
 function initLearningScreens(){

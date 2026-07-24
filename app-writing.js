@@ -46,7 +46,9 @@ function glyphInkBox(ch,frac){
     var m=c.measureText(ch);
     if(!m||m.actualBoundingBoxAscent===undefined)return null;
     // flex 중앙정렬 + line-height:1 기준 베이스라인 위치 = S/2 + (fbAsc-fbDesc)/2 (실측 검증됨)
-    var by=S/2+(m.fontBoundingBoxAscent-m.fontBoundingBoxDescent)/2;
+    // 실측 보정: line-height:1 flex 중앙정렬에서 Jua 글리프가 계산 베이스라인보다 살짝 위로 떠
+    // 획순이 음영보다 위로 밀린다 → 베이스라인을 소폭 내려 음영에 얹는다.
+    var by=S/2+(m.fontBoundingBoxAscent-m.fontBoundingBoxDescent)/2+S*0.022;
     var box=[(S/2-m.actualBoundingBoxLeft)/S*100,(by-m.actualBoundingBoxAscent)/S*100,
              (S/2+m.actualBoundingBoxRight)/S*100,(by+m.actualBoundingBoxDescent)/S*100];
     if(box[2]-box[0]<5||box[3]-box[1]<5)return null;
@@ -61,7 +63,7 @@ function calibrateStrokes(data,ink){
     if(st.circle){var c=st.circle;x0=Math.min(x0,c[0]-c[2]);x1=Math.max(x1,c[0]+c[2]);y0=Math.min(y0,c[1]-c[2]);y1=Math.max(y1,c[1]+c[2]);}
     else st.forEach(function(p){x0=Math.min(x0,p[0]);x1=Math.max(x1,p[0]);y0=Math.min(y0,p[1]);y1=Math.max(y1,p[1]);});
   });
-  var IN=3.4; // 획순 선은 획의 중심선이라 잉크 가장자리에서 획 두께 절반쯤 안쪽으로
+  var IN=2.4; // 획순 선은 획의 중심선이라 잉크 가장자리에서 획 두께 절반쯤 안쪽으로(음영에 더 꽉 차게 축소)
   var tx0=ink[0]+IN,ty0=ink[1]+IN,tx1=ink[2]-IN,ty1=ink[3]-IN;
   var sx=(x1-x0)<12?1:(tx1-tx0)/(x1-x0), sy=(y1-y0)<12?1:(ty1-ty0)/(y1-y0);
   sx=Math.max(0.55,Math.min(1.6,sx)); sy=Math.max(0.55,Math.min(1.6,sy));
@@ -75,13 +77,23 @@ function calibrateStrokes(data,ink){
 }
 function strokeSVGMarkup(ch,frac){let data=strokesFor(ch);if(!data)return '';
   var ink=glyphInkBox(ch,frac||0.8);if(ink)data=calibrateStrokes(data,ink);
-  let s='<defs><marker id="ah" markerWidth="4" markerHeight="4" refX="1.8" refY="2" orient="auto"><path d="M0,0 L4,2 L0,4 Z" fill="#ff9ec2"/></marker></defs>';
+  let s='<defs><marker id="ah" markerWidth="5.4" markerHeight="5.4" refX="2.2" refY="2.7" orient="auto"><path d="M0,0 L5.4,2.7 L0,5.4 Z" fill="#ff7fb0"/></marker></defs>';
   // 번호 배지: 시작점 정확히 위가 아니라 획 안쪽(2번째 점 방향 18%)에 놓고, 같은 좌표에서 겹치면 획 방향으로 밀어 분리(ㅁㄹㄷㅌ 등).
   // 배지는 글자를 덮지 않게 작게(r5) — 통글자 가이드 위에 획순만 얹는 방식이라 배지가 크면 글자를 가림.
-  var placed=[],R=5;
+  // 배지 크기는 획 수에 반비례(획 많은 ㅃ·ㅆ·겹받침은 작게 해 서로 덜 겹치고 글자를 덜 가림).
+  var R=data.length>=6?4:(data.length>=4?4.5:5),MIN=2*R+1,FS=Math.round(R*1.32*10)/10;
+  var placed=[];
   function clamp(v){return Math.max(R,Math.min(100-R,v));}
-  function placeBadge(bx,by,dx,dy){var len=Math.sqrt(dx*dx+dy*dy)||1;var ux=dx/len,uy=dy/len;for(var g=0;g<8;g++){var hit=false;for(var i=0;i<placed.length;i++){var ddx=bx-placed[i][0],ddy=by-placed[i][1];if(ddx*ddx+ddy*ddy<(2*R)*(2*R)){hit=true;break;}}if(!hit)break;bx+=ux*7;by+=uy*7;}bx=clamp(bx);by=clamp(by);placed.push([bx,by]);return [bx,by];}
-  data.forEach((st,idx)=>{let bx,by,dx,dy;if(st.circle){const c=st.circle;s+='<circle cx="'+c[0]+'" cy="'+c[1]+'" r="'+c[2]+'" fill="none" stroke="#ff9ec2" stroke-width="3.2"/>';bx=c[0];by=c[1]-c[2];dx=0;dy=c[2];}else{const pts=st.map(p=>p.join(',')).join(' ');s+='<polyline points="'+pts+'" fill="none" stroke="#ff9ec2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#ah)"/>';var p0=st[0],p1=st[1]||st[0];bx=p0[0]+(p1[0]-p0[0])*0.18;by=p0[1]+(p1[1]-p0[1])*0.18;dx=p1[0]-p0[0];dy=p1[1]-p0[1];}var bp=placeBadge(bx,by,dx,dy);bx=bp[0];by=bp[1];s+='<circle cx="'+bx+'" cy="'+by+'" r="5" fill="#ff7fb0"/><text x="'+bx+'" y="'+(by+2.3)+'" text-anchor="middle" font-size="6.6" fill="#fff" font-family="Jua">'+(idx+1)+'</text>';});return s;}
+  function collides(bx,by){for(var i=0;i<placed.length;i++){var ddx=bx-placed[i][0],ddy=by-placed[i][1];if(ddx*ddx+ddy*ddy<MIN*MIN)return true;}return false;}
+  // 겹치면 획 방향 앞/뒤 → 획에 수직 양쪽으로 점점 크게 밀며 빈자리를 찾는다(한쪽으로만 밀던 예전보다 촘촘한 글자에 강함).
+  function placeBadge(bx,by,dx,dy){
+    var len=Math.sqrt(dx*dx+dy*dy)||1,ux=dx/len,uy=dy/len,px=-uy,py=ux;
+    if(!collides(bx,by)){bx=clamp(bx);by=clamp(by);placed.push([bx,by]);return [bx,by];}
+    for(var g=1;g<=12;g++){var step=g*MIN*0.55;
+      var cand=[[bx+ux*step,by+uy*step],[bx-ux*step,by-uy*step],[bx+px*step,by+py*step],[bx-px*step,by-py*step]];
+      for(var k=0;k<cand.length;k++){var cx=clamp(cand[k][0]),cy=clamp(cand[k][1]);if(!collides(cx,cy)){placed.push([cx,cy]);return [cx,cy];}}}
+    var fx=clamp(bx),fy=clamp(by);placed.push([fx,fy]);return [fx,fy];}
+  data.forEach((st,idx)=>{let bx,by,dx,dy;if(st.circle){const c=st.circle;s+='<circle cx="'+c[0]+'" cy="'+c[1]+'" r="'+c[2]+'" fill="none" stroke="#ff9ec2" stroke-width="3.2"/>';bx=c[0];by=c[1]-c[2];dx=0;dy=c[2];}else{const pts=st.map(p=>p.join(',')).join(' ');s+='<polyline points="'+pts+'" fill="none" stroke="#ff9ec2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#ah)"/>';var p0=st[0],p1=st[1]||st[0];bx=p0[0]+(p1[0]-p0[0])*0.08;by=p0[1]+(p1[1]-p0[1])*0.08;dx=p1[0]-p0[0];dy=p1[1]-p0[1];}var bp=placeBadge(bx,by,dx,dy);bx=bp[0];by=bp[1];s+='<circle cx="'+bx+'" cy="'+by+'" r="'+R+'" fill="#ff7fb0"/><text x="'+bx+'" y="'+(by+R*0.46)+'" text-anchor="middle" font-size="'+FS+'" fill="#fff" font-family="Jua">'+(idx+1)+'</text>';});return s;}
 function renderStrokes(ch){var on=strokeOn&&!!strokesFor(ch);strokeSvg.innerHTML=on?strokeSVGMarkup(ch,0.8):'';if(typeof traceGuide!=='undefined'&&traceGuide)traceGuide.style.opacity=on?'0.55':'0.5';}
 let drawing=false,lx,ly;
 function tpos(e){const r=canvas.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}
@@ -92,7 +104,45 @@ function sayTrace(ch){if([...ch].length>1){speak(ch);return;}
   const o=(typeof ALL_LETTER_OBJS!=='undefined')?ALL_LETTER_OBJS[ch]:null;
   speak((o&&(o.name||o.sound))||ch);}
 function fitGuide(){const h=traceStage.getBoundingClientRect().height||330;const n=[...traceChar].length;const frac=n>=3?0.33:(n===2?0.52:0.80);traceGuide.style.fontSize=Math.round(h*frac)+'px';}
-function selectTrace(ch,silent){traceChar=ch;traceGuide.textContent=ch;fitGuide();clearTrace();renderStrokes(ch);if(!silent)sayTrace(ch);}
+
+/* ===== 따라쓰기 단어 모드: 음절칸 분할 =====
+   단어는 여러 음절이라 단일 SVG(0-100)에 획순을 못 얹는다 → 글자 숲 미니처럼 음절칸으로 쪼개
+   칸마다 음영·합성 획순(composedStrokes)·그리기 캔버스를 둔다. 낱자(자음/모음/받침 음절)는 기존 단일 스테이지 유지. */
+const traceCellsHost=document.getElementById('traceCells');
+let traceCells=[],traceWordMode=false;
+function traceCellPos(rec,e){const r=rec.canvas.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}
+function traceCellAttach(rec){let d=false,ux,uy;
+  rec.canvas.addEventListener('pointerdown',e=>{d=true;const p=traceCellPos(rec,e);ux=p.x;uy=p.y;try{rec.canvas.setPointerCapture(e.pointerId);}catch(_){}});
+  rec.canvas.addEventListener('pointermove',e=>{if(!d)return;e.preventDefault();const p=traceCellPos(rec,e);rec.ctx.beginPath();rec.ctx.moveTo(ux,uy);rec.ctx.lineTo(p.x,p.y);rec.ctx.stroke();ux=p.x;uy=p.y;});
+  rec.canvas.addEventListener('pointerup',()=>d=false);rec.canvas.addEventListener('pointercancel',()=>d=false);}
+function traceCellSize(rec){const r=rec.canvas.getBoundingClientRect();if(r.width===0)return;const dpr=window.devicePixelRatio||1;rec.canvas.width=r.width*dpr;rec.canvas.height=r.height*dpr;rec.ctx.setTransform(dpr,0,0,dpr,0,0);rec.ctx.lineCap='round';rec.ctx.lineJoin='round';rec.ctx.lineWidth=15;rec.ctx.strokeStyle='#222';}
+function traceCellsSize(){traceCells.forEach(traceCellSize);}
+function traceCellsClear(){traceCells.forEach(rec=>{rec.ctx.save();rec.ctx.setTransform(1,0,0,1,0,0);rec.ctx.clearRect(0,0,rec.canvas.width,rec.canvas.height);rec.ctx.restore();});}
+function traceCellsRenderStrokes(){traceCells.forEach(rec=>{var on=strokeOn&&!!strokesFor(rec.ch);rec.svg.innerHTML=on?strokeSVGMarkup(rec.ch,0.8):'';rec.guide.style.opacity=on?'0.55':'0.5';});}
+function enterTraceWord(word){
+  traceWordMode=true;traceCells=[];
+  traceGuide.style.display='none';strokeSvg.style.display='none';canvas.style.display='none';
+  var grid=traceStage.querySelector('.trace-grid');if(grid)grid.style.display='none';
+  traceCellsHost.style.display='flex';traceCellsHost.innerHTML='';
+  [...word].filter(function(c){return c!==' ';}).forEach(function(ch){
+    var cell=document.createElement('div');cell.className='trace-cell';
+    cell.innerHTML='<div class="tc-grid"></div><div class="tc-guide">'+ch+'</div><svg viewBox="0 0 100 100"></svg><canvas></canvas>';
+    traceCellsHost.appendChild(cell);
+    var rec={ch:ch,guide:cell.querySelector('.tc-guide'),svg:cell.querySelector('svg'),canvas:cell.querySelector('canvas')};
+    rec.ctx=rec.canvas.getContext('2d');traceCellAttach(rec);traceCells.push(rec);
+  });
+  traceCellsSize();traceCellsClear();traceCellsRenderStrokes();
+}
+function exitTraceWord(){
+  traceWordMode=false;traceCells=[];
+  if(traceCellsHost){traceCellsHost.style.display='none';traceCellsHost.innerHTML='';}
+  traceGuide.style.display='';strokeSvg.style.display='';canvas.style.display='';
+  var grid=traceStage.querySelector('.trace-grid');if(grid)grid.style.display='';
+}
+function selectTrace(ch,silent){traceChar=ch;
+  if([...ch].length>1){enterTraceWord(ch);}
+  else{exitTraceWord();traceGuide.textContent=ch;fitGuide();clearTrace();renderStrokes(ch);}
+  if(!silent)sayTrace(ch);}
 const traceChips=document.getElementById('traceChips');
 function makeTraceChip(ch,on){const b=document.createElement('button');b.className='chip t'+(on?' on':'');b.textContent=ch;const long=[...ch].length>1;b.style.fontSize=long?'.85rem':'1.3rem';b.style.width=long?'auto':'50px';b.style.padding=long?'0 12px':'0';b.addEventListener('click',()=>{selectTrace(ch);document.querySelectorAll('#traceChips .chip').forEach(x=>x.classList.remove('on'));b.classList.add('on');});return b;}
 function buildTraceChips(mode){traceChips.innerHTML='';let list=mode==='자음'?CONS.map(c=>c.ch):(mode==='모음'?VOWS.map(v=>v.ch):(mode==='받침'?BATCHIM_SYLL:TRACE_WORDS));list.forEach((ch,i)=>traceChips.appendChild(makeTraceChip(ch,i===0)));selectTrace(list[0],true);}
@@ -109,18 +159,18 @@ function initTraceWriting(){
   canvas.addEventListener('pointerdown',e=>{drawing=true;const p=tpos(e);lx=p.x;ly=p.y;try{canvas.setPointerCapture(e.pointerId);}catch(_){}});
   canvas.addEventListener('pointermove',e=>{if(!drawing)return;e.preventDefault();const p=tpos(e);ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(p.x,p.y);ctx.stroke();lx=p.x;ly=p.y;});
   canvas.addEventListener('pointerup',()=>drawing=false);canvas.addEventListener('pointercancel',()=>drawing=false);
-  window.addEventListener('resize',()=>{if(document.getElementById('trace').classList.contains('active'))sizeTrace();});
+  window.addEventListener('resize',()=>{if(document.getElementById('trace').classList.contains('active')){if(traceWordMode)traceCellsSize();else sizeTrace();}});
   const traceModes=document.getElementById('traceModes');
   ['자음','모음','받침','단어'].forEach((mo,i)=>{const b=document.createElement('button');if(i===0)b.className='on';b.textContent=mo;b.addEventListener('click',()=>{document.querySelectorAll('#traceModes button').forEach(x=>x.classList.remove('on'));b.classList.add('on');buildTraceChips(mo);});traceModes.appendChild(b);});
   buildTraceChips('자음');
-  document.getElementById('traceClear').addEventListener('click',clearTrace);
+  document.getElementById('traceClear').addEventListener('click',()=>{if(traceWordMode)traceCellsClear();else clearTrace();});
   document.getElementById('traceSound').addEventListener('click',()=>sayTrace(traceChar));
   const strokeBtn=document.getElementById('traceStrokeBtn');
-  strokeBtn.addEventListener('click',()=>{strokeOn=!strokeOn;strokeBtn.classList.toggle('off',!strokeOn);renderStrokes(traceChar);});
+  strokeBtn.addEventListener('click',()=>{strokeOn=!strokeOn;strokeBtn.classList.toggle('off',!strokeOn);if(traceWordMode)traceCellsRenderStrokes();else renderStrokes(traceChar);});
 }
 function initWritingScreens(){
   initMiniTrace();
   initTraceWriting();
   // Jua 로드 전에 계측하면 대체 폰트 기준이라 어긋난다 — 로드 완료 후 한 번 다시 그림.
-  try{if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){mtRenderStrokes();renderStrokes(traceChar);});}catch(e){}
+  try{if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){mtRenderStrokes();if(traceWordMode)traceCellsRenderStrokes();else renderStrokes(traceChar);});}catch(e){}
 }
